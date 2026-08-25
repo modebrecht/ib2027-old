@@ -1,0 +1,1391 @@
+<!DOCTYPE html>
+<html lang="de" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A3: Aufbau eines Computers • Arbeitsblatt</title>
+    <script src="assets/js/tailwind.min.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        bgDark: '#050914',
+                        surface: '#0f172a',
+                        evaE: '#FF6B00',
+                        evaV: '#00F0FF',
+                        evaA: '#00FF66',
+                        slate: {
+                            50: '#fafafa', 100: '#f5f5f5', 200: '#e5e5e5', 300: '#d4d4d4',
+                            400: '#b4bdca', 500: '#a3a3a3', 600: '#616161', 700: '#404040',
+                            800: '#303846', 900: '#1a1f26', 950: '#111418'
+                        },
+                        onedrive: {
+                            50: '#eff6ff', 100: '#dbeafe', 400: '#66a1ff', 500: '#0078d4',
+                            600: '#106ebe', 700: '#005a9e', 800: '#004578',
+                            900: '#00335c', 950: '#001f3f'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Segoe UI', 'Inter', 'system-ui', '-apple-system', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="assets/css/fontawesome.min.css">
+<link rel="stylesheet" href="assets/css/worksheet-common.css">
+    <style>
+        @import url('assets/fonts/inter.css');
+        * { transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(156, 163, 175, 0.5); border-radius: 4px; }
+        @media print {
+            .no-print { display: none !important; }
+            html, body { height: auto !important; min-height: auto !important; margin: 0 !important; padding: 0 !important; }
+            body { background: white !important; color: black !important; font-size: 11pt; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .print-card { border: 1px solid #cbd5e1 !important; box-shadow: none !important; break-inside: avoid; page-break-inside: avoid; }
+            input, textarea, select { border: 1px solid #94a3b8 !important; background: #fff !important; color: #000 !important; }
+            /* Carousel: beim Drucken/PDF immer ALLE 15 Bauteil-Karten zeigen, unabhängig vom aktuellen Ansichtsmodus */
+            .comp-card { display: block !important; margin-top: 1.5rem !important; }
+            .comp-card:first-child { margin-top: 0 !important; }
+            /* Sicherheitsnetz: Dunkelmodus-Farben beim Drucken immer überschreiben, egal wie gedruckt
+               wird (App-Button, Strg+P, Rechtsklick-Drucken) - sonst bleiben Karten dunkel mit heller
+               Schrift, weil @media print sonst nur body zurücksetzt, nicht die .dark-Klasse selbst. */
+            .dark, .dark * { background-color: #fff !important; color: #000 !important; border-color: #cbd5e1 !important; }
+        }
+
+        :root {
+            --img-zoom: 1;
+        }
+        .comp-img {
+            transform: scale(var(--img-zoom, 1));
+            transform-origin: center center;
+            transition: transform 0.15s ease-out;
+        }
+
+        @keyframes pulseScale {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 4px 12px rgba(0, 120, 212, 0.25);
+            }
+            50% {
+                transform: scale(1.10);
+                box-shadow: 0 8px 24px rgba(0, 120, 212, 0.55);
+            }
+        }
+        .btn-pulse-scale {
+            animation: pulseScale 1.4s ease-in-out infinite !important;
+        }
+    
+        .premium-progress{position:relative;overflow:hidden;background:linear-gradient(90deg,#0078d4 0%,#7c3aed 38%,#10b981 68%,#0078d4 100%);background-size:240% 100%;box-shadow:0 0 12px rgba(0,120,212,.34);animation:premiumProgressFlow 3.4s linear infinite}
+        .premium-progress::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 20%,rgba(255,255,255,.72) 48%,transparent 76%);transform:translateX(-130%);animation:premiumProgressShine 2.3s ease-in-out infinite}
+        @keyframes premiumProgressFlow{to{background-position:240% 0}}
+        @keyframes premiumProgressShine{0%,35%{transform:translateX(-130%)}75%,100%{transform:translateX(130%)}}
+        @media(prefers-reduced-motion:reduce){.premium-progress,.premium-progress::after{animation:none!important}}
+</style>
+</head>
+<body class="bg-slate-100 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-full flex flex-col font-sans antialiased">
+
+    <header class="sticky top-0 z-40 worksheet-header no-print">
+        <div class="max-w-[1920px] w-full mx-auto px-4 sm:px-8 py-2.5 flex items-center justify-between gap-4">
+            <div class="flex items-center gap-3 min-w-0">
+                <div class="w-9 h-9 rounded-lg bg-onedrive-500 text-white flex items-center justify-center font-black shadow-md shadow-onedrive-500/20 shrink-0">
+                    <i class="fa-solid fa-desktop text-base"></i>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div>
+                        <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Fortschritt</span>
+                        <span id="headerPercentText" class="text-sm font-extrabold text-onedrive-600 dark:text-onedrive-400">0% erledigt</span>
+                    </div>
+                    <div class="relative w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center font-bold text-[10px] sm:text-xs text-slate-700 dark:text-slate-200 shrink-0 ml-1">
+                        <svg class="absolute inset-0 w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+                            <circle cx="18" cy="18" r="16" fill="none" class="stroke-slate-200 dark:stroke-slate-800" stroke-width="4"></circle>
+                            <circle id="headerSvgCircle" cx="18" cy="18" r="16" fill="none" class="stroke-onedrive-500 transition-all duration-500 ease-out" stroke-width="4" stroke-dasharray="100.53" stroke-dashoffset="100.53" stroke-linecap="round"></circle>
+                        </svg>
+                        <span id="headerPercentNumber" class="relative z-10">0%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2 shrink-0">
+                <button onclick="showInfoModal()" title="Anleitung &amp; Hinweise" class="p-2 text-onedrive-600 dark:text-onedrive-400 hover:bg-onedrive-50 dark:hover:bg-onedrive-950/50 rounded-lg border border-onedrive-200 dark:border-onedrive-800">
+                    <i class="fa-solid fa-circle-info text-sm"></i>
+                </button>
+                <button id="viewToggleBtn" onclick="toggleCarouselView()" title="Listenansicht umschalten" class="p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
+                    <i id="viewToggleIcon" class="fa-solid fa-list text-sm"></i>
+                </button>
+                <button onclick="toggleDarkMode()" title="Dunkelmodus umschalten" class="p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
+                    <i id="themeIcon" class="fa-solid fa-moon text-sm"></i>
+                </button>
+                <button id="hdrPdfBtn" onclick="handleDownloadPdf()" class="p-2 rounded-lg bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-500 transition border border-slate-200 dark:border-slate-700 opacity-60 cursor-not-allowed" title="Erst bei 100% Ausfüllung möglich">
+                    <i id="printIcon" class="fa-solid fa-file-pdf text-sm"></i>
+                </button>
+                <button onclick="confirmReset()" title="Zurücksetzen" class="p-2 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/50 rounded-lg border border-rose-200 dark:border-rose-900/50">
+                    <i class="fa-solid fa-rotate-right text-sm"></i>
+                </button>
+            </div>
+        </div>
+        <div class="w-full bg-slate-200 dark:bg-slate-800 h-1">
+            <div id="progressBar" class="premium-progress h-1 transition-all duration-500" style="width: 0%"></div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto w-full px-4 sm:px-6 py-6 space-y-6 flex-grow">
+
+        <section class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 print-card space-y-3">
+            <!-- Components Grid / Carousel -->
+            <div id="carouselTrack" class="hardware-grid grid grid-cols-1 gap-3">
+
+                <!-- 0. Einführung + Vorname/Klasse/Datum -->
+                <div class="comp-card rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 p-4">
+                    <div class="mb-3 border-b border-slate-200 dark:border-slate-700/50 pb-2 flex justify-between items-start">
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-900 dark:text-slate-100">Die Bauteile im PC-Gehäuse (Hardware-Analyse)</h3>
+                        </div>
+                        <div class="hidden md:flex w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-400 items-center justify-center text-xl shrink-0">
+                            <i class="fa-solid fa-desktop"></i>
+                        </div>
+                    </div>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">Recherchiere die 14 Bauteile eines Computers. Beschreibe jeweils die <strong>Funktion</strong> und erstelle einen passenden <strong>Alltags-Vergleich (Analogie)</strong>. Das erste Bauteil (CPU) ist als Beispiel bereits ausgefüllt.</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-500 dark:text-slate-400 mb-1">
+                                <i class="fa-solid fa-user mr-1 text-onedrive-500"></i> Vorname
+                            </label>
+                            <input type="text" id="studentName" readonly tabindex="-1" style="pointer-events: none;" class="w-full px-3.5 py-2 text-sm bg-white/50 dark:bg-black/20 border border-slate-300 dark:border-slate-700/50 rounded-xl font-medium text-slate-500 dark:text-slate-400 opacity-90 cursor-not-allowed">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-500 dark:text-slate-400 mb-1">
+                                <i class="fa-solid fa-users mr-1 text-onedrive-500"></i> Klasse
+                            </label>
+                            <input type="text" id="studentClass" readonly tabindex="-1" style="pointer-events: none;" class="w-full px-3.5 py-2 text-sm bg-white/50 dark:bg-black/20 border border-slate-300 dark:border-slate-700/50 rounded-xl font-medium text-slate-500 dark:text-slate-400 opacity-90 cursor-not-allowed" value="B24">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-500 dark:text-slate-400 mb-1">
+                                <i class="fa-solid fa-calendar mr-1 text-onedrive-500"></i> Datum
+                            </label>
+                            <input type="text" id="studentDate" readonly tabindex="-1" style="pointer-events: none;" class="w-full px-3.5 py-2 text-sm bg-white/50 dark:bg-black/20 border border-slate-300 dark:border-slate-700/50 rounded-xl font-medium text-slate-500 dark:text-slate-400 opacity-90 cursor-not-allowed">
+                        </div>
+                    </div>
+                    <div class="mt-5 flex items-center justify-center">
+                        <button type="button" onclick="showInfoModal()" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-onedrive-500 hover:bg-onedrive-600 text-white text-xs sm:text-sm font-bold shadow-md shadow-onedrive-500/25 transition-all transform hover:scale-105 active:scale-95 cursor-pointer" title="Anleitung &amp; Tipps anzeigen">
+                            <i class="fa-solid fa-circle-info text-base"></i>
+                            <span>Anleitung &amp; Hinweise</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 1. Prozessor -->
+                <div class="comp-card rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 relative group overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                    <div class="w-full aspect-[720/393] max-h-[520px] overflow-hidden bg-slate-900 relative">
+                        
+<img src="assets/VL-CPU.webp" alt="Prozessor (CPU)" loading="lazy" class="comp-img w-full h-full object-contain">
+                        <div class="no-print absolute top-3 left-3 z-10 flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-slate-900/85 text-slate-200 shadow-lg border border-white/20 backdrop-blur-md text-xs font-semibold select-none" title="Bild-Zoom anpassen">
+                            <i class="fa-solid fa-magnifying-glass text-onedrive-400 text-[11px]"></i>
+                            <input type="range" min="100" max="160" value="100" step="1" oninput="setGlobalImageZoom(this.value)" class="zoom-slider-input w-14 sm:w-20 h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-onedrive-500" title="Zoom">
+                            <span class="zoom-val-badge text-[10px] font-mono text-slate-300 w-7 text-right">100%</span>
+                        </div>
+                        <button onclick="open3dModal('assets/3d/cpu-3d.html')" type="button" class="no-print absolute top-3 right-3 px-3 py-1.5 rounded-xl bg-slate-900/85 hover:bg-onedrive-500 text-slate-200 hover:text-white font-bold text-xs flex items-center gap-1.5 shadow-lg border border-white/20 transition-all transform hover:scale-105 backdrop-blur-md cursor-pointer z-10" title="Interaktives 3D-Modell der CPU öffnen">
+                            <i class="fa-solid fa-cube text-onedrive-400"></i>
+                            <span>3D-Modell</span>
+                        </button>
+                        <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent px-3.5 py-2 pt-5">
+                            <h4 class="font-bold text-white text-[15px] drop-shadow-md">1. Prozessor (CPU - Central Processing Unit)</h4>
+                            <span class="text-xs text-slate-200 font-mono drop-shadow-md">Kürzel: CPU</span>
+                        </div>
+                    </div>
+                    <div class="relative z-10 p-3">
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 flex items-center gap-1.5"><i class="fa-solid fa-microchip text-onedrive-500"></i> Funktion (Was macht es?)</label>
+                                <textarea id="comp_cpu_func" oninput="updateProgress()" rows="4" placeholder="Funktion beschreiben..." class="w-full p-3 text-sm bg-white/50 dark:bg-black/20 border border-slate-300 dark:border-slate-700/50 rounded-xl focus:ring-2 focus:ring-onedrive-500 focus:outline-none dark:text-slate-100 backdrop-blur-sm transition-all">Die CPU (der Prozessor) führt alle Berechnungen und logischen Befehle aus – sie ist die zentrale Recheneinheit des Computers.</textarea>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 flex items-center gap-1.5"><i class="fa-solid fa-lightbulb text-amber-500"></i> Alltags-Vergleich (Analogie) <span class="text-slate-400 dark:text-slate-500 font-normal normal-case">(optional)</span></label>
+                                <textarea id="comp_cpu_ana" oninput="updateProgress()" rows="4" placeholder="Analogie angeben..." class="w-full p-3 text-sm bg-white/50 dark:bg-black/20 border border-slate-300 dark:border-slate-700/50 rounded-xl focus:ring-2 focus:ring-amber-500 focus:outline-none dark:text-slate-100 backdrop-blur-sm transition-all">Die CPU ist wie das Gehirn des Computers: Sie denkt, trifft Entscheidungen und steuert alle anderen Bauteile.</textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Mainboard -->
+                <div class="comp-card rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 relative group overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                    <div class="w-full aspect-[720/393] max-h-[520px] overflow-hidden bg-slate-900 grid grid-cols-2 gap-px relative">
+                        <img src="assets/VL-MB1.webp" alt="Mainboard (Ansicht 1)" loading="lazy" class="comp-img w-full h-full object-contain">
+                        <img src="assets/VL-MB2.webp" alt="Mainboard (Ansicht 2)" loading="lazy" class="comp-img w-full h-full object-contain">
+                        <div class="no-print absolute top-3 left-3 z-10 flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-slate-900/85 text-slate-200 shadow-lg border border-white/20 backdrop-blur-md text-xs font-semibold select-none" title="Bild-Zoom anpassen">
+                            <i class="fa-solid fa-magnifying-glass text-onedrive-400 text-[11px]"></i>
+                            <input type="range" min="100" max="160" value="100" step="1" oninput="setGlobalImageZoom(this.value)" class="zoom-slider-input w-14 sm:w-20 h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-onedrive-500" title="Zoom">
+                            <span class="zoom-val-badge text-[10px] font-mono text-slate-300 w-7 text-right">100%</span>
+                        </div>
+                        <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent px-3.5 py-2 pt-5">
+                            <h4 class="font-bold text-white text-[15px] drop-shadow-md">2. Mainboard (Motherboard / Hauptplatine)</h4>
+                            <span class="text-xs text-slate-200 font-mono drop-shadow-md">Kürzel: MB</span>
+                        </div>
+                    </div>
+                    <div class="relative z-10 p-3">
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 flex items-center gap-1.5"><i class="fa-solid fa-microchip text-onedrive-500"></i> Funktion (Was macht es?)</label>
+                                <textarea id="comp_mb_func" oninput="updateProgress()" rows="4" placeholder="Funktion beschreiben..." class="w-full p-3 text-sm bg-white/50 dark:bg-black/20 border border-slate-300 dark:border-slate-700/50 rounded-xl focus:ring-2 focus:ring-onedrive-500 focus:outline-none dark:text-slate-100 backdrop-blur-sm transition-all"></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 flex items-center gap-1.5"><i class="fa-solid fa-lightbulb text-amber-500"></i> Alltags-Vergleich (Analogie) <span class="text-slate-400 dark:text-slate-500 font-normal normal-case">(optional)</span></label>
+                                <textarea id="comp_mb_ana" oninput="updateProgress()" rows="4" placeholder="Analogie angeben..." class="w-full p-3 text-sm bg-white/50 dark:bg-black/20 border border-slate-300 dark:border-slate-700/50 rounded-xl focus:ring-2 focus:ring-amber-500 focus:outline-none dark:text-slate-100 backdrop-blur-sm transition-all"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. PC-Gehäuse -->
+                <div class="comp-card rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 relative group overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                    <div class="w-full aspect-[720/393] max-h-[520px] overflow-hidden bg-slate-900 relative">
+                        
+<img src="assets/VL-Chassis.webp" alt="PC-Gehäuse" loading="lazy" class="comp-img w-full h-full object-contain">
+                        <div class="no-print absolute top-3 left-3 z-10 flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-slate-900/85 text-slate-200 shadow-lg border border-white/20 backdrop-blur-md text-xs font-semibold select-none" title="Bild-Zoom anpassen">
+                            <i class="fa-solid fa-magnifying-glass text-onedrive-400 text-[11px]"></i>
+                            <input type="range" min="100" max="160" value="100" step="1" oninput="setGlobalImageZoom(this.value)" class="zoom-slider-input w-14 sm:w-20 h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-onedrive-500" title="Zoom">
+                            <span class="zoom-val-badge text-[10px] font-mono text-slate-300 w-7 text-right">100%</span>
+                        </div>
+                        <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent px-3.5 py-2 pt-5">
+                            <h4 class="font-bold text-white text-[15px] drop-shadow-md">3. PC-Gehäuse (Computer Case / Chassis)</h4>
+                            <span class="text-xs text-slate-200 font-mono drop-shadow-md">Formfaktoren: Tower, Desktop, Mini-ITX</span>
+                        </div>
+                    </div>
+                    <div class="relative z-10 p-3">
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 flex items-center gap-1.5"><i class="fa-solid fa-microchip text-onedrive-500"></i> Funktion (Was macht es?)</label>
+                                <textarea id="comp_case_func" oninput="updateProgress()" rows="4" placeholder="Funktion beschreiben..." class="w-full p-3 text-sm bg-white/50 dark:bg-black/20 border border-slate-300 dark:border-slate-700/50 rounded-xl focus:ring-2 focus:ring-onedrive-500 focus:outline-none dark:text-slate-100 backdrop-blur-sm transition-all"></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 flex items-center gap-1.5"><i class="fa-solid fa-lightbulb text-amber-500"></i> Alltags-Vergleich (Analogie) <span class="text-slate-400 dark:text-slate-500 font-normal normal-case">(optional)</span></label>
+                                <textarea id="comp_case_ana" oninput="updateProgress()" rows="4" placeholder="Analogie angeben..." class="w-full p-3 text-sm bg-white/50 dark:bg-black/20 border border-slate-300 dark:border-slate-700/50 rounded-xl focus:ring-2 focus:ring-amber-500 focus:outline-none dark:text-slate-100 backdrop-blur-sm transition-all"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. Arbeitsspeicher -->
+                <div class="comp-card rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 relative group overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                    <div class="w-full aspect-[720/393] max-h-[520px] overflow-hidden bg-slate-900 relative">
+                        
+<img src="assets/VL-RAM.webp" alt="Arbeitsspeicher (RAM)" loading="lazy" class="comp-img w-full h-full object-contain">
+                        <div class="no-print absolute top-3 left-3 z-10 flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-slate-900/85 text-slate-200 shadow-lg border border-white/20 backdrop-blur-md text-xs font-semibold select-none" title="Bild-Zoom anpassen">
+                            <i class="fa-solid fa-magnifying-glass text-onedrive-400 text-[11px]"></i>
+                            <input type="range" min="100" max="160" value="100" step="1" oninput="setGlobalImageZoom(this.value)" class="zoom-slider-input w-14 sm:w-20 h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-onedrive-500" title="Zoom">
+                            <span class="zoom-val-badge text-[10px] font-mono text-slate-300 w-7 text-right">100%</span>
+                        </div>
+                        <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent px-3.5 py-2 pt-5">
+                            <h4 class="font-bold text-white text-[15px] drop-shadow-md">4. Arbeitsspeicher (RAM - Random Access Memory)</h4>
+                            <span class="text-xs text-slate-200 font-mono drop-shadow-md">Kürzel: RAM</span>
+                        </div>
+                    </div>
+                    <div class="relative z-10 p-3">
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 flex items-center gap-1.5"><i class="fa-solid fa-microchip text-onedrive-500"></i> Funktion (Was macht es?)</label>
+                                <textarea id="comp_ram_func" oninput="updateProgress()" rows="4" placeholder="Funktion beschreiben..." class="w-full p-3 text-sm bg-white/50 dark:bg-black/20 border border-slate-300 dark:border-slate-700/50 rounded-xl focus:ring-2 focus:ring-onedrive-500 focus:outline-none dark:text-slate-100 backdrop-blur-sm transition-all"></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 flex items-center gap-1.5"><i class="fa-solid fa-lightbulb text-amber-500"></i> Alltags-Vergleich (Analogie) <span class="text-slate-400 dark:text-slate-500 font-normal normal-case">(optional)</span></label>
+                                <textarea id="comp_ram_ana" oninput="updateProgress()" rows="4" placeholder="Analogie angeben..." class="w-full p-3 text-sm bg-white/50 dark:bg-black/20 border border-slate-300 dark:border-slate-700/50 rounded-xl focus:ring-2 focus:ring-amber-500 focus:outline-none dark:text-slate-100 backdrop-blur-sm transition-all"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. SSD -->
+                <div class="comp-card rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 relative group overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                    <div class="w-full aspect-[720/393] max-h-[520px] overflow-hidden bg-slate-900 relative">
+                        
+<img src="assets/VL-SSD.webp" alt="Solid State Drive (SSD)" loading="lazy" class="comp-img w-full h-full object-contain">
+                        <div class="no-print absolute top-3 left-3 z-10 flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-slate-900/85 text-slate-200 shadow-lg border border-white/20 backdrop-blur-md text-xs font-semibold select-none" title="Bild-Zoom anpassen">
+                            <i class="fa-solid fa-magnifying-glass text-onedrive-400 text-[11px]"></i>
+                            <input type="range" min="100" max="160" value="100" step="1" oninput="setGlobalImageZoom(this.value)" class="zoom-slider-input w-14 sm:w-20 h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-onedrive-500" title="Zoom">
+                            <span class="zoom-val-badge text-[10px] font-mono text-slate-300 w-7 text-right">100%</span>
+                        </div>
+                        <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent px-3.5 py-2 pt-5">
+                            <h4 class="font-bold text-white text-[15px] drop-shadow-md">5. Solid State Drive (SSD)</h4>
+                            <span class="text-xs text-slate-200 font-mono drop-shadow-md">Typ: Elektronischer Flash-Massenspeicher (2.5" SATA)</span>
+                        </div>
+                    </div>
+                    <div class="relative z-10 p-3">
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 flex items-center gap-1.5"><i class="fa-solid fa-microchip text-onedrive-500"></i> Funktion (Was macht es?)</label>
+                                <textarea id="comp_ssd_func" oninput="updateProgress()" rows="4" placeholder="Funktion beschreiben..." class="w-full p-3 text-sm bg-white/50 dark:bg-black/20 border border-slate-300 dark:border-slate-700/50 rounded-xl focus:ring-2 focus:ring-onedrive-500 focus:outline-none dark:text-slate-100 backdrop-blur-sm transition-all"></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 flex items-center gap-1.5"><i class="fa-solid fa-lightbulb text-amber-500"></i> Alltags-Vergleich (Analogie) <span class="text-slate-400 dark:text-slate-500 font-normal normal-case">(optional)</span></label>
+                                <textarea id="comp_ssd_ana" oninput="updateProgress()" rows="4" placeholder="Analogie angeben..." class="w-full p-3 text-sm bg-white/50 dark:bg-black/20 border border-slate-300 dark:border-slate-700/50 rounded-xl focus:ring-2 focus:ring-amber-500 focus:outline-none dark:text-slate-100 backdrop-blur-sm transition-all"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 6. NVMe-SSD -->
+                <div class="comp-card rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 relative group overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                    <div class="w-full aspect-[720/393] max-h-[520px] overflow-hidden bg-slate-900 relative">
+                        
+<img src="assets/VL-NVMe.webp" alt="NVMe-SSD (M.2)" loading="lazy" class="comp-img w-full h-full object-contain">
+                        <div class="no-print absolute top-3 left-3 z-10 flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-slate-900/85 text-slate-200 shadow-lg border border-white/20 backdrop-blur-md text-xs font-semibold select-none" title="Bild-Zoom anpassen">
+                            <i class="fa-solid fa-magnifying-glass text-onedrive-400 text-[11px]"></i>
+                            <input type="range" min="100" max="160" value="100" step="1" oninput="setGlobalImageZoom(this.value)" class="zoom-slider-input w-14 sm:w-20 h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-onedrive-500" title="Zoom">
+                            <span class="zoom-val-badge text-[10px] font-mono text-slate-300 w-7 text-right">100%</span>
+                        </div>
+                        <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent px-3.5 py-2 pt-5">
+                            <h4 class="font-bold text-white text-[15px] drop-shadow-md">6. NVMe-SSD (M.2)</h4>
+                            <span class="text-xs text-slate-200 font-mono drop-shadow-md">Typ: Flash-Speicher direkt über die PCIe-Schnittstelle</span>
+                        </div>
+                    </div>
+                    <div class="relative z-10 p-3">
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 flex items-center gap-1.5"><i class="fa-solid fa-microchip text-onedrive-500"></i> Funktion (Was macht es?)</label>
+                                <textarea id="comp_nvme_func" oninput="updateProgress()" rows="4" placeholder="Funktion beschreiben..." class="w-full p-3 text-sm bg-white/50 dark:bg-black/20 border border-slate-300 dark:border-slate-700/50 rounded-xl focus:ring-2 focus:ring-onedrive-500 focus:outline-none dark:text-slate-100 backdrop-blur-sm transition-all"></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 flex items-center gap-1.5"><i class="fa-solid fa-lightbulb text-amber-500"></i> Alltags-Vergleich (Analogie) <span class="text-slate-400 dark:text-slate-500 font-normal normal-case">(optional)</span></label>
+                                <textarea id="comp_nvme_ana" oninput="updateProgress()" rows="4" placeholder="Analogie angeben..." class="w-full p-3 text-sm bg-white/50 dark:bg-black/20 border border-slate-300 dark:border-slate-700/50 rounded-xl focus:ring-2 focus:ring-amber-500 focus:outline-none dark:text-slate-100 backdrop-blur-sm transition-all"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 7. Festplatte -->
+                <div class="comp-card rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 relative group overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                    <div class="w-full aspect-[720/393] max-h-[520px] overflow-hidden bg-slate-900 relative">
+                        
+<img src="assets/VL-HDD.webp" alt="Festplatte (HDD)" loading="lazy" class="comp-img w-full h-full object-contain">
+                        <div class="no-print absolute top-3 left-3 z-10 flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-slate-900/85 text-slate-200 shadow-lg border border-white/20 backdrop-blur-md text-xs font-semibold select-none" title="Bild-Zoom anpassen">
+                            <i class="fa-solid fa-magnifying-glass text-onedrive-400 text-[11px]"></i>
+                            <input type="range" min="100" max="160" value="100" step="1" oninput="setGlobalImageZoom(this.value)" class="zoom-slider-input w-14 sm:w-20 h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-onedrive-500" title="Zoom">
+                            <span class="zoom-val-badge text-[10px] font-mono text-slate-300 w-7 text-right">100%</span>
+                        </div>
+                        <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent px-3.5 py-2 pt-5">
+                            <h4 class="font-bold text-white text-[15px] drop-shadow-md">7. Festplatte (HDD - Hard Disk Drive)</h4>
+                            <span class="text-xs text-slate-200 font-mono drop-shadow-md">Typ: Magnetischer Massenspeicher</span>
+                        </div>
+                    </div>
+                    <div class="relative z-10 p-3">
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 flex items-center gap-1.5"><i class="fa-solid fa-microchip text-onedrive-500"></i> Funktion (Was macht es?)</label>
+                                <textarea id="comp_hdd_func" oninput="updateProgress()" rows="4" placeholder="Funktion beschreiben..." class="w-full p-3 text-sm bg-white/50 dark:bg-black/20 border border-slate-300 dark:border-slate-700/50 rounded-xl focus:ring-2 focus:ring-onedrive-500 focus:outline-none dark:text-slate-100 backdrop-blur-sm transition-all"></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 flex items-center gap-1.5"><i class="fa-solid fa-lightbulb text-amber-500"></i> Alltags-Vergleich (Analogie) <span class="text-slate-400 dark:text-slate-500 font-normal normal-case">(optional)</span></label>
+                                <textarea id="comp_hdd_ana" oninput="updateProgress()" rows="4" placeholder="Analogie angeben..." class="w-full p-3 text-sm bg-white/50 dark:bg-black/20 border border-slate-300 dark:border-slate-700/50 rounded-xl focus:ring-2 focus:ring-amber-500 focus:outline-none dark:text-slate-100 backdrop-blur-sm transition-all"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 8. Grafikkarte -->
+                <div class="comp-card rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 relative group overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                    <div class="w-full aspect-[720/393] max-h-[520px] overflow-hidden bg-slate-900 relative">
+                        
+<img src="assets/VL-GPU.webp" alt="Grafikkarte (GPU)" loading="lazy" class="comp-img w-full h-full object-contain">
+                        <div class="no-print absolute top-3 left-3 z-10 flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-slate-900/85 text-slate-200 shadow-lg border border-white/20 backdrop-blur-md text-xs font-semibold select-none" title="Bild-Zoom anpassen">
+                            <i class="fa-solid fa-magnifying-glass text-onedrive-400 text-[11px]"></i>
+                            <input type="range" min="100" max="160" value="100" step="1" oninput="setGlobalImageZoom(this.value)" class="zoom-slider-input w-14 sm:w-20 h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-onedrive-500" title="Zoom">
+                            <span class="zoom-val-badge text-[10px] font-mono text-slate-300 w-7 text-right">100%</span>
+                        </div>
+                        <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent px-3.5 py-2 pt-5">
+                            <h4 class="font-bold text-white text-[15px] drop-shadow-md">8. Grafikkarte (GPU - Graphics Processing Unit)</h4>
+                            <span class="text-xs text-slate-200 font-mono drop-shadow-md">Kürzel: GPU</span>
+                        </div>
+                    </div>
+                    <div class="relative z-10 p-3">
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 flex items-center gap-1.5"><i class="fa-solid fa-microchip text-onedrive-500"></i> Funktion (Was macht es?)</label>
+                                <textarea id="comp_gpu_func" oninput="updateProgress()" rows="4" placeholder="Funktion beschreiben..." class="w-full p-3 text-sm bg-white/50 dark:bg-black/20 border border-slate-300 dark:border-slate-700/50 rounded-xl focus:ring-2 focus:ring-onedrive-500 focus:outline-none dark:text-slate-100 backdrop-blur-sm transition-all"></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 flex items-center gap-1.5"><i class="fa-solid fa-lightbulb text-amber-500"></i> Alltags-Vergleich (Analogie) <span class="text-slate-400 dark:text-slate-500 font-normal normal-case">(optional)</span></label>
+                                <textarea id="comp_gpu_ana" oninput="updateProgress()" rows="4" placeholder="Analogie angeben..." class="w-full p-3 text-sm bg-white/50 dark:bg-black/20 border border-slate-300 dark:border-slate-700/50 rounded-xl focus:ring-2 focus:ring-amber-500 focus:outline-none dark:text-slate-100 backdrop-blur-sm transition-all"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 9. Netzteil -->
+                <div class="comp-card rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 relative group overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                    <div class="w-full aspect-[720/393] max-h-[520px] overflow-hidden bg-slate-900 relative">
+                        
+<img src="assets/VL-PSU.webp" alt="Netzteil (PSU)" loading="lazy" class="comp-img w-full h-full object-contain">
+                        <div class="no-print absolute top-3 left-3 z-10 flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-slate-900/85 text-slate-200 shadow-lg border border-white/20 backdrop-blur-md text-xs font-semibold select-none" title="Bild-Zoom anpassen">
+                            <i class="fa-solid fa-magnifying-glass text-onedrive-400 text-[11px]"></i>
+                            <input type="range" min="100" max="160" value="100" step="1" oninput="setGlobalImageZoom(this.value)" class="zoom-slider-input w-14 sm:w-20 h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-onedrive-500" title="Zoom">
+                            <span class="zoom-val-badge text-[10px] font-mono text-slate-300 w-7 text-right">100%</span>
+                        </div>
+                        <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent px-3.5 py-2 pt-5">
+                            <h4 class="font-bold text-white text-[15px] drop-shadow-md">9. Netzteil (PSU - Power Supply Unit)</h4>
+                            <span class="text-xs text-slate-200 font-mono drop-shadow-md">Kürzel: PSU</span>
+                        </div>
+                    </div>
+                    <div class="relative z-10 p-3">
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 flex items-center gap-1.5"><i class="fa-solid fa-microchip text-onedrive-500"></i> Funktion (Was macht es?)</label>
+                                <textarea id="comp_psu_func" oninput="updateProgress()" rows="4" placeholder="Funktion beschreiben..." class="w-full p-3 text-sm bg-white/50 dark:bg-black/20 border border-slate-300 dark:border-slate-700/50 rounded-xl focus:ring-2 focus:ring-onedrive-500 focus:outline-none dark:text-slate-100 backdrop-blur-sm transition-all"></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 flex items-center gap-1.5"><i class="fa-solid fa-lightbulb text-amber-500"></i> Alltags-Vergleich (Analogie) <span class="text-slate-400 dark:text-slate-500 font-normal normal-case">(optional)</span></label>
+                                <textarea id="comp_psu_ana" oninput="updateProgress()" rows="4" placeholder="Analogie angeben..." class="w-full p-3 text-sm bg-white/50 dark:bg-black/20 border border-slate-300 dark:border-slate-700/50 rounded-xl focus:ring-2 focus:ring-amber-500 focus:outline-none dark:text-slate-100 backdrop-blur-sm transition-all"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 10. CPU-Kühler -->
+                <div class="comp-card rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 relative group overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                    <div class="w-full aspect-[720/393] max-h-[520px] overflow-hidden bg-slate-900 relative">
+                        
+<img src="assets/VL-CPUCOOLER.webp" alt="CPU-Kühler (Prozessorkühler)" loading="lazy" class="comp-img w-full h-full object-contain">
+                        <div class="no-print absolute top-3 left-3 z-10 flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-slate-900/85 text-slate-200 shadow-lg border border-white/20 backdrop-blur-md text-xs font-semibold select-none" title="Bild-Zoom anpassen">
+                            <i class="fa-solid fa-magnifying-glass text-onedrive-400 text-[11px]"></i>
+                            <input type="range" min="100" max="160" value="100" step="1" oninput="setGlobalImageZoom(this.value)" class="zoom-slider-input w-14 sm:w-20 h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-onedrive-500" title="Zoom">
+                            <span class="zoom-val-badge text-[10px] font-mono text-slate-300 w-7 text-right">100%</span>
+                        </div>
+                        <button onclick="open3dModal('assets/3d/cpu-3d.html')" type="button" class="no-print absolute top-3 right-3 px-3 py-1.5 rounded-xl bg-slate-900/85 hover:bg-onedrive-500 text-slate-200 hover:text-white font-bold text-xs flex items-center gap-1.5 shadow-lg border border-white/20 transition-all transform hover:scale-105 backdrop-blur-md cursor-pointer z-10" title="Interaktives 3D-Modell öffnen">
+                            <i class="fa-solid fa-cube text-onedrive-400"></i>
+                            <span>3D-Modell</span>
+                        </button>
+                        <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent px-3.5 py-2 pt-5">
+                            <h4 class="font-bold text-white text-[15px] drop-shadow-md">10. CPU-Kühler (Prozessorkühler / CPU-Cooler)</h4>
+                            <span class="text-xs text-slate-200 font-mono drop-shadow-md">Varianten: Luftkühlung (Kühlkörper &amp; Lüfter) oder Wasserkühlung (AIO)</span>
+                        </div>
+                    </div>
+                    <div class="relative z-10 p-3">
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 flex items-center gap-1.5"><i class="fa-solid fa-microchip text-onedrive-500"></i> Funktion (Was macht es?)</label>
+                                <textarea id="comp_cool_func" oninput="updateProgress()" rows="4" placeholder="Funktion beschreiben..." class="w-full p-3 text-sm bg-white/50 dark:bg-black/20 border border-slate-300 dark:border-slate-700/50 rounded-xl focus:ring-2 focus:ring-onedrive-500 focus:outline-none dark:text-slate-100 backdrop-blur-sm transition-all"></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 flex items-center gap-1.5"><i class="fa-solid fa-lightbulb text-amber-500"></i> Alltags-Vergleich (Analogie) <span class="text-slate-400 dark:text-slate-500 font-normal normal-case">(optional)</span></label>
+                                <textarea id="comp_cool_ana" oninput="updateProgress()" rows="4" placeholder="Analogie angeben..." class="w-full p-3 text-sm bg-white/50 dark:bg-black/20 border border-slate-300 dark:border-slate-700/50 rounded-xl focus:ring-2 focus:ring-amber-500 focus:outline-none dark:text-slate-100 backdrop-blur-sm transition-all"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 11. Netzwerkkarte -->
+                <div class="comp-card rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 relative group overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                    <div class="w-full aspect-[720/393] max-h-[520px] overflow-hidden bg-slate-900 relative">
+                        
+<img src="assets/VL-Network.webp" alt="Netzwerkkarte / WLAN-Modul" loading="lazy" class="comp-img w-full h-full object-contain">
+                        <div class="no-print absolute top-3 left-3 z-10 flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-slate-900/85 text-slate-200 shadow-lg border border-white/20 backdrop-blur-md text-xs font-semibold select-none" title="Bild-Zoom anpassen">
+                            <i class="fa-solid fa-magnifying-glass text-onedrive-400 text-[11px]"></i>
+                            <input type="range" min="100" max="160" value="100" step="1" oninput="setGlobalImageZoom(this.value)" class="zoom-slider-input w-14 sm:w-20 h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-onedrive-500" title="Zoom">
+                            <span class="zoom-val-badge text-[10px] font-mono text-slate-300 w-7 text-right">100%</span>
+                        </div>
+                        <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent px-3.5 py-2 pt-5">
+                            <h4 class="font-bold text-white text-[15px] drop-shadow-md">11. Netzwerkkarte / WLAN-Modul (NIC)</h4>
+                            <span class="text-xs text-slate-200 font-mono drop-shadow-md">Typ: LAN (Ethernet) / Wi-Fi Karte</span>
+                        </div>
+                    </div>
+                    <div class="relative z-10 p-3">
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 flex items-center gap-1.5"><i class="fa-solid fa-microchip text-onedrive-500"></i> Funktion (Was macht es?)</label>
+                                <textarea id="comp_net_func" oninput="updateProgress()" rows="4" placeholder="Funktion beschreiben..." class="w-full p-3 text-sm bg-white/50 dark:bg-black/20 border border-slate-300 dark:border-slate-700/50 rounded-xl focus:ring-2 focus:ring-onedrive-500 focus:outline-none dark:text-slate-100 backdrop-blur-sm transition-all"></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 flex items-center gap-1.5"><i class="fa-solid fa-lightbulb text-amber-500"></i> Alltags-Vergleich (Analogie) <span class="text-slate-400 dark:text-slate-500 font-normal normal-case">(optional)</span></label>
+                                <textarea id="comp_net_ana" oninput="updateProgress()" rows="4" placeholder="Analogie angeben..." class="w-full p-3 text-sm bg-white/50 dark:bg-black/20 border border-slate-300 dark:border-slate-700/50 rounded-xl focus:ring-2 focus:ring-amber-500 focus:outline-none dark:text-slate-100 backdrop-blur-sm transition-all"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 12. Soundkarte -->
+                <div class="comp-card rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 relative group overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                    <div class="w-full aspect-[720/393] max-h-[520px] overflow-hidden bg-slate-900 relative">
+                        
+<img src="assets/VL-Sound.webp" alt="Soundkarte" loading="lazy" class="comp-img w-full h-full object-contain">
+                        <div class="no-print absolute top-3 left-3 z-10 flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-slate-900/85 text-slate-200 shadow-lg border border-white/20 backdrop-blur-md text-xs font-semibold select-none" title="Bild-Zoom anpassen">
+                            <i class="fa-solid fa-magnifying-glass text-onedrive-400 text-[11px]"></i>
+                            <input type="range" min="100" max="160" value="100" step="1" oninput="setGlobalImageZoom(this.value)" class="zoom-slider-input w-14 sm:w-20 h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-onedrive-500" title="Zoom">
+                            <span class="zoom-val-badge text-[10px] font-mono text-slate-300 w-7 text-right">100%</span>
+                        </div>
+                        <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent px-3.5 py-2 pt-5">
+                            <h4 class="font-bold text-white text-[15px] drop-shadow-md">12. Soundkarte (Audio-Interface)</h4>
+                            <span class="text-xs text-slate-200 font-mono drop-shadow-md">Typ: PCIe-Erweiterungskarte für Audio-Ein-/Ausgabe</span>
+                        </div>
+                    </div>
+                    <div class="relative z-10 p-3">
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 flex items-center gap-1.5"><i class="fa-solid fa-microchip text-onedrive-500"></i> Funktion (Was macht es?)</label>
+                                <textarea id="comp_sound_func" oninput="updateProgress()" rows="4" placeholder="Funktion beschreiben..." class="w-full p-3 text-sm bg-white/50 dark:bg-black/20 border border-slate-300 dark:border-slate-700/50 rounded-xl focus:ring-2 focus:ring-onedrive-500 focus:outline-none dark:text-slate-100 backdrop-blur-sm transition-all"></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 flex items-center gap-1.5"><i class="fa-solid fa-lightbulb text-amber-500"></i> Alltags-Vergleich (Analogie) <span class="text-slate-400 dark:text-slate-500 font-normal normal-case">(optional)</span></label>
+                                <textarea id="comp_sound_ana" oninput="updateProgress()" rows="4" placeholder="Analogie angeben..." class="w-full p-3 text-sm bg-white/50 dark:bg-black/20 border border-slate-300 dark:border-slate-700/50 rounded-xl focus:ring-2 focus:ring-amber-500 focus:outline-none dark:text-slate-100 backdrop-blur-sm transition-all"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 13. CD/DVD-Laufwerk (zusammengefasst) -->
+                <div class="comp-card rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 relative group overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                    <div class="w-full aspect-[720/393] max-h-[520px] overflow-hidden bg-slate-900 grid grid-cols-2 gap-px relative">
+                        
+<img src="assets/VL-CD.webp" alt="CD-Laufwerk" loading="lazy" class="comp-img w-full h-full object-contain">
+<img src="assets/VL-DVD.webp" alt="DVD-Laufwerk" loading="lazy" class="comp-img w-full h-full object-contain">
+                        <div class="no-print absolute top-3 left-3 z-10 flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-slate-900/85 text-slate-200 shadow-lg border border-white/20 backdrop-blur-md text-xs font-semibold select-none" title="Bild-Zoom anpassen">
+                            <i class="fa-solid fa-magnifying-glass text-onedrive-400 text-[11px]"></i>
+                            <input type="range" min="100" max="160" value="100" step="1" oninput="setGlobalImageZoom(this.value)" class="zoom-slider-input w-14 sm:w-20 h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-onedrive-500" title="Zoom">
+                            <span class="zoom-val-badge text-[10px] font-mono text-slate-300 w-7 text-right">100%</span>
+                        </div>
+                        <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent px-3.5 py-2 pt-5">
+                            <h4 class="font-bold text-white text-[15px] drop-shadow-md">13. CD-/DVD-Laufwerk (optisches Laufwerk)</h4>
+                            <span class="text-xs text-slate-200 font-mono drop-shadow-md">Speichermedium: Compact Disc (CD) / Digital Versatile Disc (DVD)</span>
+                        </div>
+                    </div>
+                    <div class="relative z-10 p-3">
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 flex items-center gap-1.5"><i class="fa-solid fa-microchip text-onedrive-500"></i> Funktion (Was macht es?)</label>
+                                <textarea id="comp_cddvd_func" oninput="updateProgress()" rows="4" placeholder="Funktion beschreiben..." class="w-full p-3 text-sm bg-white/50 dark:bg-black/20 border border-slate-300 dark:border-slate-700/50 rounded-xl focus:ring-2 focus:ring-onedrive-500 focus:outline-none dark:text-slate-100 backdrop-blur-sm transition-all"></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 flex items-center gap-1.5"><i class="fa-solid fa-lightbulb text-amber-500"></i> Alltags-Vergleich (Analogie) <span class="text-slate-400 dark:text-slate-500 font-normal normal-case">(optional)</span></label>
+                                <textarea id="comp_cddvd_ana" oninput="updateProgress()" rows="4" placeholder="Analogie angeben..." class="w-full p-3 text-sm bg-white/50 dark:bg-black/20 border border-slate-300 dark:border-slate-700/50 rounded-xl focus:ring-2 focus:ring-amber-500 focus:outline-none dark:text-slate-100 backdrop-blur-sm transition-all"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 14. CMOS-Batterie -->
+                <div class="comp-card rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 relative group overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                    <div class="w-full aspect-[720/393] max-h-[520px] overflow-hidden bg-slate-900 relative">
+                        
+<img src="assets/VL-CMOS.webp" alt="CMOS-Batterie" loading="lazy" class="comp-img w-full h-full object-contain">
+                        <div class="no-print absolute top-3 left-3 z-10 flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-slate-900/85 text-slate-200 shadow-lg border border-white/20 backdrop-blur-md text-xs font-semibold select-none" title="Bild-Zoom anpassen">
+                            <i class="fa-solid fa-magnifying-glass text-onedrive-400 text-[11px]"></i>
+                            <input type="range" min="100" max="160" value="100" step="1" oninput="setGlobalImageZoom(this.value)" class="zoom-slider-input w-14 sm:w-20 h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-onedrive-500" title="Zoom">
+                            <span class="zoom-val-badge text-[10px] font-mono text-slate-300 w-7 text-right">100%</span>
+                        </div>
+                        <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent px-3.5 py-2 pt-5">
+                            <h4 class="font-bold text-white text-[15px] drop-shadow-md">14. CMOS-Batterie (BIOS-Pufferbatterie)</h4>
+                            <span class="text-xs text-slate-200 font-mono drop-shadow-md">Typ: Knopfzelle (meist CR2032)</span>
+                        </div>
+                    </div>
+                    <div class="relative z-10 p-3">
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 flex items-center gap-1.5"><i class="fa-solid fa-microchip text-onedrive-500"></i> Funktion (Was macht es?)</label>
+                                <textarea id="comp_cmos_func" oninput="updateProgress()" rows="4" placeholder="Funktion beschreiben..." class="w-full p-3 text-sm bg-white/50 dark:bg-black/20 border border-slate-300 dark:border-slate-700/50 rounded-xl focus:ring-2 focus:ring-onedrive-500 focus:outline-none dark:text-slate-100 backdrop-blur-sm transition-all"></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 flex items-center gap-1.5"><i class="fa-solid fa-lightbulb text-amber-500"></i> Alltags-Vergleich (Analogie) <span class="text-slate-400 dark:text-slate-500 font-normal normal-case">(optional)</span></label>
+                                <textarea id="comp_cmos_ana" oninput="updateProgress()" rows="4" placeholder="Analogie angeben..." class="w-full p-3 text-sm bg-white/50 dark:bg-black/20 border border-slate-300 dark:border-slate-700/50 rounded-xl focus:ring-2 focus:ring-amber-500 focus:outline-none dark:text-slate-100 backdrop-blur-sm transition-all"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Carousel Controls (Bottom): Zurück / Dots / Weiter -->
+        <div id="carouselNavRow" class="no-print flex items-center justify-between gap-3">
+            <button id="carouselPrevBtn" onclick="carouselPrev()" type="button" class="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-bold rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 shadow-sm transition disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-white">
+                <i class="fa-solid fa-chevron-left"></i> <span class="hidden sm:inline">Zurück</span>
+            </button>
+            <div class="flex items-center gap-1.5 flex-wrap justify-center" id="carouselDots">
+                <!-- Dots werden per JS für alle 15 Bauteile erzeugt -->
+            </div>
+            <button id="carouselNextBtn" onclick="carouselNext()" type="button" class="btn-pulse-scale inline-flex items-center gap-2 px-4 py-2.5 text-sm font-bold rounded-xl bg-onedrive-500 hover:bg-onedrive-600 text-white shadow-sm transition disabled:opacity-30 disabled:cursor-not-allowed">
+                <span class="hidden sm:inline">Weiter</span> <i class="fa-solid fa-chevron-right"></i>
+            </button>
+        </div>
+
+    </main>
+
+
+    <script src="assets/js/a3-thumbnails.js"></script>
+    <script src="assets/js/pdf-engine.js"></script>
+    <script>
+        let currentPercentage = 0;
+
+        /* Carousel state (A3: Slide 0 = Einführung/Vorname/Klasse/Datum, Slides 1-14 = Bauteile) */
+        const CAROUSEL_TOTAL = 15;
+        let carouselIndex = 0;
+        let carouselMode = 'carousel'; // 'carousel' | 'list'
+        let hasStarted = false;
+
+        /* On page load initialization */
+        window.addEventListener('DOMContentLoaded', () => {
+            initDarkMode();
+            loadProgress();
+            applyDefaultClassAndDate();
+
+            // Sync global Vorname
+            var globalVorname = localStorage.getItem('studentVorname') || localStorage.getItem('student_vorname');
+            var nameEl = document.getElementById('studentName');
+            if (nameEl) {
+                if (!nameEl.value && globalVorname) {
+                    nameEl.value = globalVorname;
+                } else if (nameEl.value && nameEl.value.trim()) {
+                    localStorage.setItem('studentVorname', nameEl.value.trim());
+                    localStorage.setItem('student_vorname', nameEl.value.trim());
+                }
+            }
+
+            setupUniversalAutoSave();
+            initCarousel();
+            initImageZoom();
+            updateProgress();
+        });
+
+                function setGlobalImageZoom(val) {
+            val = parseInt(val, 10) || 100;
+            if (val < 100) val = 100;
+            var actualScale = val / 100;
+            document.documentElement.style.setProperty('--img-zoom', actualScale.toFixed(2));
+            localStorage.setItem('a3_img_zoom', String(val));
+            document.querySelectorAll('.zoom-slider-input').forEach(function(el) { el.value = val; });
+            document.querySelectorAll('.zoom-val-badge').forEach(function(el) { el.textContent = val + '%'; });
+        }
+
+        function initImageZoom() {
+            var savedZoom = parseInt(localStorage.getItem('a3_img_zoom'), 10) || 100;
+            if (savedZoom < 100) savedZoom = 100;
+            setGlobalImageZoom(savedZoom);
+        }
+
+        function applyDefaultClassAndDate() {
+            var classInput = document.getElementById('studentClass');
+            if (classInput) {
+                classInput.value = 'B24';
+            }
+
+            var dateInput = document.getElementById('studentDate');
+
+            var d = new Date();
+            var yyyy = d.getFullYear();
+            var mm = String(d.getMonth() + 1).padStart(2, '0');
+            var dd = String(d.getDate()).padStart(2, '0');
+            var todayStr = dd + '.' + mm + '.' + yyyy;
+
+            if (dateInput) {
+                dateInput.value = todayStr;
+            }
+        }
+
+        function setupUniversalAutoSave() {
+            var pageKey = 'hw_autosave_' + location.pathname.split('/').pop();
+            
+            function saveAll() {
+                var data = {};
+                document.querySelectorAll('input, textarea, select').forEach(function(el) {
+                    if (el.id) {
+                        if (el.type === 'checkbox') {
+                            data[el.id] = el.checked;
+                        } else if (el.type === 'radio') {
+                            if (el.checked) data[el.name] = el.value;
+                        } else {
+                            data[el.id] = el.value;
+                        }
+                    } else if (el.name && el.type === 'radio') {
+                        if (el.checked) data[el.name] = el.value;
+                    }
+                });
+                localStorage.setItem(pageKey, JSON.stringify(data));
+            }
+
+            try {
+                var saved = localStorage.getItem(pageKey);
+                if (saved) {
+                    var data = JSON.parse(saved);
+                    Object.keys(data).forEach(function(key) {
+                        var el = document.getElementById(key);
+                        if (el) {
+                            if (el.type === 'checkbox') {
+                                el.checked = !!data[key];
+                            } else if (el.type === 'radio') {
+                                if (el.value === data[key]) el.checked = true;
+                            } else {
+                                if (data[key] !== undefined && data[key] !== null && data[key] !== '') {
+                                    el.value = data[key];
+                                }
+                            }
+                        } else {
+                            var radio = document.querySelector('input[name="' + key + '"][value="' + data[key] + '"]');
+                            if (radio) radio.checked = true;
+                        }
+                    });
+                }
+            } catch(e) {}
+
+            applyDefaultClassAndDate();
+
+            // Sync global Vorname
+            var globalVorname = localStorage.getItem('studentVorname') || localStorage.getItem('student_vorname');
+            var nameEl = document.getElementById('studentName');
+            if (nameEl) {
+                if (!nameEl.value && globalVorname) {
+                    nameEl.value = globalVorname;
+                } else if (nameEl.value && nameEl.value.trim()) {
+                    localStorage.setItem('studentVorname', nameEl.value.trim());
+                    localStorage.setItem('student_vorname', nameEl.value.trim());
+                }
+            }
+
+            saveAll();
+
+            document.querySelectorAll('input, textarea, select').forEach(function(el) {
+                el.addEventListener('input', saveAll);
+                el.addEventListener('change', saveAll);
+            });
+        }
+
+        function initDarkMode() {
+            const savedTheme = localStorage.getItem('ib-theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+                document.documentElement.classList.add('dark');
+                updateThemeIcon(true);
+            } else {
+                document.documentElement.classList.remove('dark');
+                updateThemeIcon(false);
+            }
+        }
+
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.setItem('ib-theme', isDark ? 'dark' : 'light');
+            updateThemeIcon(isDark);
+        }
+
+        function updateThemeIcon(isDark) {
+            const icon = document.getElementById('themeIcon');
+            if (icon) {
+                if (isDark) {
+                    icon.className = 'fa-solid fa-sun text-sm text-amber-400';
+                } else {
+                    icon.className = 'fa-solid fa-moon text-sm';
+                }
+            }
+        }
+
+        /* Check if a slide/component has been completed */
+        function isSlideCompleted(idx) {
+            if (!hasStarted) return false;
+            if (idx === 0) {
+                var nameEl = document.getElementById('studentName');
+                return nameEl ? (nameEl.value.trim() !== '') : false;
+            }
+            var slides = document.querySelectorAll('#carouselTrack > .comp-card');
+            if (slides && slides[idx]) {
+                var funcInput = slides[idx].querySelector('textarea[id$="_func"]');
+                return funcInput ? (funcInput.value.trim() !== '') : false;
+            }
+            return false;
+        }
+
+        /* ===== Carousel (A3: 15 Bauteil-Karten, eine Karte + Pfeile / Listenansicht) ===== */
+        function initCarousel() {
+            var dotsWrap = document.getElementById('carouselDots');
+            if (dotsWrap && dotsWrap.children.length === 0) {
+                for (var i = 0; i < CAROUSEL_TOTAL; i++) {
+                    var dot = document.createElement('button');
+                    dot.type = 'button';
+                    dot.className = 'carousel-dot transition-all flex items-center justify-center';
+                    dot.setAttribute('data-idx', String(i));
+                    dot.setAttribute('aria-label', i === 0 ? 'Zur Einführung' : ('Zu Bauteil ' + i));
+                    dot.onclick = (function (idx) { return function () { carouselShow(idx); }; })(i);
+                    dotsWrap.appendChild(dot);
+                }
+            }
+
+            var saved = localStorage.getItem('a3_view_mode');
+            carouselMode = (saved === 'list') ? 'list' : 'carousel';
+            carouselIndex = 0;
+            renderCarousel();
+        }
+
+        function renderCarousel() {
+            var slides = document.querySelectorAll('#carouselTrack > .comp-card');
+            var isList = (carouselMode === 'list');
+
+            slides.forEach(function (slide, i) {
+                if (isList) {
+                    slide.style.display = 'block';
+                    slide.style.marginTop = (i === 0) ? '0' : '1.5rem';
+                } else {
+                    slide.style.display = (i === carouselIndex) ? 'block' : 'none';
+                    slide.style.marginTop = '0';
+                }
+            });
+
+            var prevBtn = document.getElementById('carouselPrevBtn');
+            var nextBtn = document.getElementById('carouselNextBtn');
+            var navRow = document.getElementById('carouselNavRow');
+
+            if (navRow) navRow.style.display = isList ? 'none' : 'flex';
+
+            if (prevBtn) prevBtn.disabled = isList ? true : (carouselIndex === 0);
+
+            var isLastSlide = (carouselIndex === CAROUSEL_TOTAL - 1);
+            if (nextBtn) {
+                if (!isList && isLastSlide) {
+                    if (currentPercentage === 100) {
+                        nextBtn.disabled = false;
+                        nextBtn.className = 'btn-pulse-scale inline-flex items-center gap-2 px-4 py-2.5 text-sm font-bold rounded-xl bg-onedrive-500 hover:bg-onedrive-600 text-white shadow-sm transition';
+                        nextBtn.innerHTML = '<span class="hidden sm:inline">PDF erzeugen</span> <i class="fa-solid fa-file-pdf"></i>';
+                    } else {
+                        nextBtn.disabled = true;
+                        nextBtn.className = 'inline-flex items-center gap-2 px-4 py-2.5 text-sm font-bold rounded-xl bg-onedrive-500 hover:bg-onedrive-600 text-white shadow-sm transition disabled:opacity-30 disabled:cursor-not-allowed';
+                        nextBtn.innerHTML = '<span class="hidden sm:inline">Alle Felder ausfüllen</span> <i class="fa-solid fa-triangle-exclamation"></i>';
+                    }
+                } else {
+                    nextBtn.disabled = isList;
+                    var pulseClass = (!isList && carouselIndex === 0) ? ' btn-pulse-scale' : '';
+                    nextBtn.className = 'inline-flex items-center gap-2 px-4 py-2.5 text-sm font-bold rounded-xl bg-onedrive-500 hover:bg-onedrive-600 text-white shadow-sm transition disabled:opacity-30 disabled:cursor-not-allowed' + pulseClass;
+                    nextBtn.innerHTML = '<span class="hidden sm:inline">Weiter</span> <i class="fa-solid fa-chevron-right"></i>';
+                }
+            }
+
+            document.querySelectorAll('.carousel-dot').forEach(function (dot) {
+                var idx = parseInt(dot.getAttribute('data-idx'), 10);
+                var isCompleted = isSlideCompleted(idx);
+                var isActive = (!isList && idx === carouselIndex);
+
+                if (isCompleted) {
+                    if (isActive) {
+                        dot.className = 'carousel-dot h-5 w-8 rounded-full bg-onedrive-500 text-white flex items-center justify-center shadow-md ring-2 ring-onedrive-400/50 transition-all cursor-pointer';
+                        dot.innerHTML = '<i class="fa-solid fa-check text-[11px] font-black"></i>';
+                    } else {
+                        dot.className = 'carousel-dot h-5 w-5 rounded-full bg-onedrive-500/90 hover:bg-onedrive-600 text-white flex items-center justify-center shadow-sm transition-all hover:scale-110 cursor-pointer';
+                        dot.innerHTML = '<i class="fa-solid fa-check text-[10px] font-black"></i>';
+                    }
+                    dot.title = (idx === 0 ? 'Einführung (Erledigt)' : ('Bauteil ' + idx + ' (Ausgefüllt)'));
+                } else {
+                    if (isActive) {
+                        dot.className = 'carousel-dot h-3 w-7 rounded-full bg-onedrive-500 shadow-sm ring-2 ring-onedrive-400/30 transition-all cursor-pointer flex items-center justify-center';
+                        dot.innerHTML = '';
+                    } else {
+                        dot.className = 'carousel-dot h-2.5 w-2.5 rounded-full bg-slate-300 dark:bg-slate-700 hover:bg-slate-400 dark:hover:bg-slate-600 transition-all cursor-pointer';
+                        dot.innerHTML = '';
+                    }
+                    dot.title = (idx === 0 ? 'Einführung' : ('Bauteil ' + idx + ' (Noch nicht ausgefüllt)'));
+                }
+            });
+
+            var toggleIcon = document.getElementById('viewToggleIcon');
+            var viewToggleBtn = document.getElementById('viewToggleBtn');
+            if (toggleIcon) {
+                if (isList) {
+                    toggleIcon.className = 'fa-solid fa-square text-sm';
+                    if (viewToggleBtn) viewToggleBtn.title = 'Kartenansicht (eine Karte + Pfeile)';
+                } else {
+                    toggleIcon.className = 'fa-solid fa-list text-sm';
+                    if (viewToggleBtn) viewToggleBtn.title = 'Listenansicht (alle Karten untereinander)';
+                }
+            }
+        }
+
+        function carouselShow(i) {
+            if (carouselMode === 'list') return;
+            if (i < 0) i = 0;
+            if (i > CAROUSEL_TOTAL - 1) i = CAROUSEL_TOTAL - 1;
+            if (i > 0 && !hasStarted) {
+                hasStarted = true;
+                localStorage.setItem('a3_has_started', 'true');
+                updateProgress();
+            }
+            carouselIndex = i;
+            renderCarousel();
+            var trackEl = document.getElementById('carouselTrack');
+            if (trackEl) trackEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function carouselNext() {
+            if (!hasStarted) {
+                hasStarted = true;
+                localStorage.setItem('a3_has_started', 'true');
+                updateProgress();
+            }
+            if (carouselIndex === CAROUSEL_TOTAL - 1) {
+                if (currentPercentage === 100) handleDownloadPdf();
+                return;
+            }
+            carouselShow(carouselIndex + 1);
+        }
+        function carouselPrev() { carouselShow(carouselIndex - 1); }
+
+        /* Pfeiltasten-Navigation: links/rechts wechseln die Bauteil-Karte,
+           ausser der Fokus liegt gerade in einem Eingabefeld (dort sollen die
+           Pfeiltasten weiterhin den Textcursor bewegen). */
+        document.addEventListener('keydown', function (e) {
+            if (carouselMode === 'list') return;
+            var tag = (document.activeElement && document.activeElement.tagName) || '';
+            if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+            if (e.key === 'ArrowLeft') { e.preventDefault(); carouselPrev(); }
+            else if (e.key === 'ArrowRight') { e.preventDefault(); carouselNext(); }
+        });
+
+        function toggleCarouselView() {
+            carouselMode = (carouselMode === 'list') ? 'carousel' : 'list';
+            localStorage.setItem('a3_view_mode', carouselMode);
+            if (carouselMode === 'carousel') carouselIndex = 0;
+            renderCarousel();
+            var trackEl = document.getElementById('carouselTrack');
+            if (trackEl) trackEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function updateProgress() {
+            const allInputs = document.querySelectorAll('input[type="text"], textarea, select');
+            /* Nur die 14 Funktions-Beschreibungen zaehlen zur Fortschritts-Berechnung:
+               - Analogie-Felder (_ana) sind optional
+               - Vorname/Klasse/Datum werden automatisch beim Laden befuellt (keine eigene
+                 Leistung der Schueler:innen) und wuerden sonst schon bei 0 bearbeiteten
+                 Feldern einen unehrlichen Startwert > 0% erzeugen */
+            const textInputs = Array.prototype.filter.call(allInputs, function (el) {
+                return el.id && el.id.indexOf('comp_') === 0 && el.id.endsWith('_func');
+            });
+            let filled = 0;
+            let total = textInputs.length;
+
+            textInputs.forEach(input => {
+                if (input.value.trim() !== '') {
+                    filled++;
+                    if (input.id !== 'comp_cpu_func' && !hasStarted) {
+                        hasStarted = true;
+                        localStorage.setItem('a3_has_started', 'true');
+                    }
+                }
+            });
+
+            if (!hasStarted) {
+                currentPercentage = 0;
+            } else {
+                currentPercentage = Math.min(100, Math.round((filled / total) * 100));
+            }
+
+            const pBar = document.getElementById('progressBar');
+            const headerPText = document.getElementById('headerPercentText');
+            const percentNum = document.getElementById('headerPercentNumber');
+            const svgCircle = document.getElementById('headerSvgCircle');
+
+            if (pBar) pBar.style.width = currentPercentage + '%';
+            if (headerPText) headerPText.innerText = currentPercentage + '% erledigt';
+            if (percentNum) percentNum.innerText = currentPercentage + '%';
+            if (svgCircle) {
+                svgCircle.style.strokeDashoffset = 100.53 - (100.53 * currentPercentage / 100);
+            }
+
+            // Print button lock/unlock state
+            var hdrPdfBtn = document.getElementById('hdrPdfBtn');
+            var printIcon = document.getElementById('printIcon');
+            if (hdrPdfBtn && printIcon) {
+                if (currentPercentage === 100) {
+                    hdrPdfBtn.className = 'btn-pulse-scale p-2 rounded-lg bg-onedrive-500 hover:bg-onedrive-600 text-white transition border border-onedrive-600 shadow-sm cursor-pointer';
+                    printIcon.className = 'fa-solid fa-file-pdf text-sm';
+                    hdrPdfBtn.title = 'Arbeitsblatt als PDF herunterladen';
+                } else {
+                    hdrPdfBtn.className = 'p-2 rounded-lg bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-500 transition border border-slate-200 dark:border-slate-700 opacity-60 cursor-not-allowed';
+                    printIcon.className = 'fa-solid fa-file-pdf text-sm';
+                    hdrPdfBtn.title = `Erst bei 100% Ausfüllung möglich (${currentPercentage}%)`;
+                }
+            }
+
+            saveProgressToStorage();
+            if (typeof renderCarousel === 'function') renderCarousel();
+        }
+
+        /* LocalStorage Persistence */
+        function saveProgressToStorage() {
+            const formData = {};
+            const inputs = document.querySelectorAll('input[type="text"], input[type="date"], textarea, select');
+            
+            inputs.forEach(input => {
+                if (input.id) {
+                    formData[input.id] = input.value;
+                }
+            });
+
+            const stateToSave = {
+                form: formData,
+                percent: currentPercentage
+            };
+
+            localStorage.setItem('onedrive_hardware_worksheet_8sek', JSON.stringify(stateToSave));
+            
+            const status = document.getElementById('saveStatus');
+            if (status) {
+                status.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> Gespeichert';
+            }
+        }
+
+        const A3_COMPONENTS = [
+            { heading: '1. Prozessor (CPU – Central Processing Unit)', key: 'comp_cpu', image: 'assets/VL-CPU.webp' },
+            { heading: '2. Mainboard (Motherboard / Hauptplatine)', key: 'comp_mb', image: 'assets/VL-MB1.webp' },
+            { heading: '3. PC-Gehäuse (Computer Case / Chassis)', key: 'comp_case', image: 'assets/VL-Chassis.webp' },
+            { heading: '4. Arbeitsspeicher (RAM – Random Access Memory)', key: 'comp_ram', image: 'assets/VL-RAM.webp' },
+            { heading: '5. Solid State Drive (SSD)', key: 'comp_ssd', image: 'assets/VL-SSD.webp' },
+            { heading: '6. NVMe-SSD (M.2)', key: 'comp_nvme', image: 'assets/VL-NVMe.webp' },
+            { heading: '7. Festplatte (HDD – Hard Disk Drive)', key: 'comp_hdd', image: 'assets/VL-HDD.webp' },
+            { heading: '8. Grafikkarte (GPU – Graphics Processing Unit)', key: 'comp_gpu', image: 'assets/VL-GPU.webp' },
+            { heading: '9. Netzteil (PSU – Power Supply Unit)', key: 'comp_psu', image: 'assets/VL-PSU.webp' },
+            { heading: '10. CPU-Kühler (Prozessorkühler / CPU-Cooler)', key: 'comp_cool', image: 'assets/VL-CPUCOOLER.webp' },
+            { heading: '11. Netzwerkkarte / WLAN-Modul (NIC)', key: 'comp_net', image: 'assets/VL-Network.webp' },
+            { heading: '12. Soundkarte (Audio-Interface)', key: 'comp_sound', image: 'assets/VL-Sound.webp' },
+            { heading: '13. CD-/DVD-Laufwerk (optisches Laufwerk)', key: 'comp_cddvd', image: 'assets/VL-CD.webp' },
+            { heading: '14. CMOS-Batterie (BIOS-Pufferbatterie)', key: 'comp_cmos', image: 'assets/VL-CMOS.webp' }
+        ];
+
+        function handleDownloadPdf() {
+            const percentNum = document.getElementById('headerPercentNumber');
+            if (!percentNum || percentNum.innerText !== '100%') {
+                showToast('Fülle bitte zuerst alle Felder aus (100%), um das PDF herunterzuladen.');
+                return;
+            }
+
+            const thumbnails = window.A3_THUMBNAILS || {};
+
+            const sections = A3_COMPONENTS.map(c => ({
+                heading: c.heading,
+                imageData: thumbnails[c.key] || null,
+                image: c.image,
+                fields: [
+                    { label: 'Funktion', value: (document.getElementById(c.key + '_func') || {}).value || '' },
+                    { label: 'Alltags-Vergleich (Analogie)', value: (document.getElementById(c.key + '_ana') || {}).value || '', optional: true }
+                ]
+            }));
+
+            downloadTextWorksheetPDF({
+                title: 'Die Bauteile im PC-Gehäuse (Hardware-Analyse)',
+                filenamePrefix: 'A3_Computeraufbau',
+                sections: sections
+            });
+        }
+
+        function loadProgress() {
+            hasStarted = (localStorage.getItem('a3_has_started') === 'true');
+            const saved = localStorage.getItem('onedrive_hardware_worksheet_8sek');
+            if (!saved) return;
+
+            try {
+                const data = JSON.parse(saved);
+                if (data.percent > 0) {
+                    hasStarted = true;
+                }
+                if (data.form) {
+                    Object.keys(data.form).forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) {
+                            if (id === 'studentClass' && (!data.form[id] || !data.form[id].trim())) el.value = 'B24';
+                            else if (id === 'studentDate' && !data.form[id]) el.value = new Date().toISOString().split('T')[0];
+                            else if (data.form[id]) {
+                                el.value = data.form[id];
+                                if (id.indexOf('comp_') === 0 && id !== 'comp_cpu_func' && id !== 'comp_cpu_ana' && data.form[id].trim()) {
+                                    hasStarted = true;
+                                }
+                            }
+                        }
+                    });
+                }
+            } catch (e) {
+                console.error("Fehler beim Laden des Speicherstands", e);
+            }
+        }
+
+        function confirmReset() {
+            showConfirmModal('Möchtest du wirklich alle Eingaben auf diesem Arbeitsblatt zurücksetzen?', () => {
+                hasStarted = false;
+                localStorage.removeItem('a3_has_started');
+                localStorage.removeItem('onedrive_hardware_worksheet_8sek');
+                localStorage.removeItem('hw_autosave_' + location.pathname.split('/').pop());
+                document.querySelectorAll('input[type="text"], textarea').forEach(i => i.value = '');
+                // CPU als Referenzbeispiel wiederherstellen
+                var cpuFunc = document.getElementById('comp_cpu_func');
+                if (cpuFunc) cpuFunc.value = 'Die CPU (der Prozessor) führt alle Berechnungen und logischen Befehle aus – sie ist die zentrale Recheneinheit des Computers.';
+                var cpuAna = document.getElementById('comp_cpu_ana');
+                if (cpuAna) cpuAna.value = 'Die CPU ist wie das Gehirn des Computers: Sie denkt, trifft Entscheidungen und steuert alle anderen Bauteile.';
+                applyDefaultClassAndDate();
+                var nameEl = document.getElementById('studentName');
+                var globalVorname = localStorage.getItem('studentVorname') || localStorage.getItem('student_vorname');
+                if (nameEl && globalVorname) nameEl.value = globalVorname;
+                carouselIndex = 0;
+                updateProgress();
+                renderCarousel();
+                showToast('Arbeitsblatt wurde zurückgesetzt.');
+            });
+        }
+
+        /* Custom Toast Notification System */
+        function showToast(message) {
+            let toast = document.getElementById('customToast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'customToast';
+                toast.className = 'fixed bottom-5 right-5 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-2xl z-50 transition-all duration-300 transform translate-y-10 opacity-0 flex items-center gap-2.5 text-xs font-semibold border border-slate-700 max-w-md';
+                document.body.appendChild(toast);
+            }
+            toast.innerHTML = `<i class="fa-solid fa-circle-info text-onedrive-400 text-base shrink-0"></i> <span>${message}</span>`;
+            toast.classList.remove('translate-y-10', 'opacity-0');
+
+            setTimeout(() => {
+                toast.classList.add('translate-y-10', 'opacity-0');
+            }, 3500);
+        }
+
+        /* Custom Confirmation Modal */
+        function showConfirmModal(message, onConfirm) {
+            let modal = document.getElementById('customModal');
+            if (!modal) {
+                modal = document.createElement('div');
+                modal.id = 'customModal';
+                modal.className = 'fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4';
+                document.body.appendChild(modal);
+            }
+
+            modal.innerHTML = `
+                <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 max-w-sm w-full p-6 space-y-4">
+                    <div class="flex items-center gap-3 text-rose-600 dark:text-rose-400 font-bold text-base">
+                        <i class="fa-solid fa-triangle-exclamation text-xl"></i>
+                        <span>Aktion bestätigen</span>
+                    </div>
+                    <p class="text-xs text-slate-600 dark:text-slate-300">${message}</p>
+                    <div class="flex justify-end gap-2 pt-2">
+                        <button id="modalCancelBtn" class="px-3.5 py-1.5 text-xs font-semibold rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200">
+                            Abbrechen
+                        </button>
+                        <button id="modalConfirmBtn" class="px-3.5 py-1.5 text-xs font-semibold rounded-xl bg-rose-600 hover:bg-rose-700 text-white">
+                            Zurücksetzen
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            modal.style.display = 'flex';
+
+            document.getElementById('modalCancelBtn').onclick = () => {
+                modal.style.display = 'none';
+            };
+
+            document.getElementById('modalConfirmBtn').onclick = () => {
+                modal.style.display = 'none';
+                onConfirm();
+            };
+        }
+
+        /* Custom Info Modal */
+        function showInfoModal() {
+            let modal = document.getElementById('infoModal');
+            if (!modal) {
+                modal = document.createElement('div');
+                modal.id = 'infoModal';
+                modal.className = 'fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4';
+                document.body.appendChild(modal);
+            }
+
+            modal.innerHTML = `
+                <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 max-w-md w-full p-6 space-y-4">
+                    <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+                        <div class="flex items-center gap-3 text-onedrive-600 dark:text-onedrive-400 font-bold text-base">
+                            <div class="w-8 h-8 rounded-lg bg-onedrive-50 dark:bg-onedrive-900/50 flex items-center justify-center">
+                                <i class="fa-solid fa-circle-info text-lg text-onedrive-500"></i>
+                            </div>
+                            <span>Anleitung &amp; Hinweise</span>
+                        </div>
+                        <button id="infoModalCloseX" class="w-7 h-7 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center transition">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                    <div class="space-y-3 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                        <div class="flex items-start gap-2.5">
+                            <span class="w-5 h-5 rounded-full bg-onedrive-100 dark:bg-onedrive-900/60 text-onedrive-600 dark:text-onedrive-400 text-[11px] font-extrabold flex items-center justify-center shrink-0 mt-0.5">1</span>
+                            <p><strong>14 Bauteile erforschen:</strong> Gehe der Reihe nach alle 14 Bauteil-Karten durch.</p>
+                        </div>
+                        <div class="flex items-start gap-2.5">
+                            <span class="w-5 h-5 rounded-full bg-onedrive-100 dark:bg-onedrive-900/60 text-onedrive-600 dark:text-onedrive-400 text-[11px] font-extrabold flex items-center justify-center shrink-0 mt-0.5">2</span>
+                            <p><strong>Eintragen:</strong> Beschreibe jeweils die <em>Funktion</em> und überlege dir eine passende <em>Alltags-Analogie</em>.</p>
+                        </div>
+                        <div class="flex items-start gap-2.5">
+                            <span class="w-5 h-5 rounded-full bg-amber-100 dark:bg-amber-900/60 text-amber-600 dark:text-amber-400 text-[11px] font-extrabold flex items-center justify-center shrink-0 mt-0.5">3</span>
+                            <p><strong>3D-Modell:</strong> Klicke bei CPU und CPU-Kühler auf <span class="text-amber-500 font-bold">3D-Modell</span>, um die Hardware interaktiv in 3D zu erforschen.</p>
+                        </div>
+                        <div class="flex items-start gap-2.5">
+                            <span class="w-5 h-5 rounded-full bg-onedrive-100 dark:bg-onedrive-900/60 text-onedrive-600 dark:text-onedrive-400 text-[11px] font-extrabold flex items-center justify-center shrink-0 mt-0.5">4</span>
+                            <p><strong>Abschluss:</strong> Bei 100% Fortschritt kannst du dein persönliches PDF-Arbeitsblatt herunterladen.</p>
+                        </div>
+                    </div>
+                    <div class="flex justify-end pt-2">
+                        <button id="infoModalOkBtn" class="px-4 py-2 text-xs font-bold rounded-xl bg-onedrive-500 hover:bg-onedrive-600 text-white shadow-md shadow-onedrive-500/20 transition cursor-pointer">
+                            Verstanden
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            modal.style.display = 'flex';
+
+            document.getElementById('infoModalCloseX').onclick = () => { modal.style.display = 'none'; };
+            document.getElementById('infoModalOkBtn').onclick = () => { modal.style.display = 'none'; };
+            modal.onclick = (e) => {
+                if (e.target === modal) modal.style.display = 'none';
+            };
+        }
+
+        /* 3D Model Modal Handlers */
+        function open3dModal(url) {
+            const modal = document.getElementById('modal3D');
+            const iframe = document.getElementById('iframe3D');
+            if (modal && iframe) {
+                iframe.src = url || 'assets/3d/cpu-3d.html';
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function close3dModal() {
+            const modal = document.getElementById('modal3D');
+            const iframe = document.getElementById('iframe3D');
+            if (modal && iframe) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                iframe.src = '';
+                document.body.style.overflow = '';
+            }
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const modal3d = document.getElementById('modal3D');
+                if (modal3d && !modal3d.classList.contains('hidden')) {
+                    close3dModal();
+                }
+                const infoModal = document.getElementById('infoModal');
+                if (infoModal && infoModal.style.display === 'flex') {
+                    infoModal.style.display = 'none';
+                }
+                const customModal = document.getElementById('customModal');
+                if (customModal && customModal.style.display === 'flex') {
+                    customModal.style.display = 'none';
+                }
+            }
+        });
+    </script>
+
+    <!-- 3D Model Modal Viewer -->
+    <div id="modal3D" class="no-print fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden items-center justify-center p-2 sm:p-6 transition-all duration-300">
+        <div class="bg-slate-900 border border-slate-700/80 rounded-2xl w-full max-w-5xl h-[88vh] flex flex-col shadow-2xl overflow-hidden relative">
+            <div class="flex items-center justify-between px-4 py-3 border-b border-slate-800 bg-slate-950/80">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold">
+                        <i class="fa-solid fa-cube text-sm"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-bold text-white leading-none">Interaktiver 3D-CPU Inspektor</h3>
+                        <p class="text-[11px] text-slate-400 font-mono mt-0.5">Velocity Network Core VA-C7 240 G (LGA1700 / AM5)</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <a id="btn3DFullscreen" href="assets/3d/cpu-3d.html" target="_blank" rel="noopener" class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold flex items-center gap-1.5 transition" title="In neuem Tab in Vollbild öffnen">
+                        <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i> <span class="hidden sm:inline">Neuer Tab</span>
+                    </a>
+                    <button onclick="close3dModal()" type="button" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-rose-600/80 text-slate-300 hover:text-white flex items-center justify-center transition" title="Schließen (Esc)">
+                        <i class="fa-solid fa-xmark text-base"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="flex-grow w-full h-full relative bg-slate-950">
+                <iframe id="iframe3D" src="" class="w-full h-full border-0" allow="fullscreen" loading="lazy"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- Global Unified Student Vorname Sync & First-Time Prompt -->
+    <script>
+      (function() {
+        function getSavedVorname() {
+          return localStorage.getItem('studentVorname') || localStorage.getItem('student_vorname') || '';
+        }
+
+        function setSavedVorname(name) {
+          if (name && name.trim()) {
+            var clean = name.trim();
+            localStorage.setItem('studentVorname', clean);
+            localStorage.setItem('student_vorname', clean);
+            syncVornameInputs(clean);
+          }
+        }
+
+        function syncVornameInputs(name) {
+          var el = document.getElementById('studentName');
+          if (el && name) {
+            el.value = name;
+          }
+        }
+
+        function checkAndPromptVorname() {
+          var name = getSavedVorname();
+          var el = document.getElementById('studentName');
+          if (el && el.value && el.value.trim()) {
+            name = el.value.trim();
+            setSavedVorname(name);
+          }
+          if (!name) {
+            setTimeout(function() {
+              var entered = prompt("Willkommen! Wie lautet dein Vorname?");
+              if (entered && entered.trim()) {
+                setSavedVorname(entered);
+              }
+            }, 300);
+          } else {
+            syncVornameInputs(name);
+          }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+          var el = document.getElementById('studentName');
+          if (el) {
+            var existing = getSavedVorname();
+            if (existing) el.value = existing;
+            el.addEventListener('input', function() {
+              setSavedVorname(el.value);
+            });
+            el.addEventListener('change', function() {
+              setSavedVorname(el.value);
+            });
+          }
+          checkAndPromptVorname();
+        });
+
+        window.addEventListener('storage', function(e) {
+          if (e.key === 'studentVorname' || e.key === 'student_vorname') {
+            if (e.newValue) syncVornameInputs(e.newValue);
+          }
+        });
+      })();
+    </script>
+
+</body>
+</html>

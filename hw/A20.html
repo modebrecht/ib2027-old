@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="de" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A10: EcoQuest • Green IT Zukunftsreise</title>
+    <script src="assets/js/tailwind.min.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        cyber: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            400: '#4ade80',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#052e16',
+                            950: '#021A0E'
+                        },
+                        neon: {
+                            cyan: '#06b6d4',
+                            amber: '#f59e0b',
+                            rose: '#f43f5e',
+                            violet: '#a855f7'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Segoe UI', 'Inter', 'system-ui', '-apple-system', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="assets/css/fontawesome.min.css">
+    <style>
+        @import url('assets/fonts/inter.css');
+        
+        * { transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease, transform 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
+
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(34, 197, 94, 0.4); border-radius: 4px; }
+
+        @keyframes floatSlow {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-8px) rotate(0.5deg); }
+        }
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 15px rgba(34, 197, 94, 0.25); }
+            50% { box-shadow: 0 0 30px rgba(34, 197, 94, 0.5); }
+        }
+        @keyframes popIn {
+            0% { opacity: 0; transform: scale(0.9) translateY(10px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        @keyframes badgeUnlock {
+            0% { transform: scale(0) rotate(-20deg); opacity: 0; }
+            60% { transform: scale(1.15) rotate(5deg); opacity: 1; }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+
+        .animate-float { animation: floatSlow 5s ease-in-out infinite; }
+        .animate-glow { animation: pulseGlow 3s infinite; }
+        .animate-pop { animation: popIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .animate-badge { animation: badgeUnlock 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+
+        .quest-card {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+        .light .quest-card {
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .choice-option {
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        .choice-option::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 4px; height: 100%;
+            background: transparent;
+            transition: background-color 0.2s ease;
+        }
+        .choice-option:hover::before {
+            background: #22c55e;
+        }
+        .choice-option.selected {
+            border-color: #22c55e !important;
+            background-color: rgba(34, 197, 94, 0.12) !important;
+        }
+        .choice-option.selected::before {
+            background: #22c55e !important;
+        }
+
+        @media print {
+            .no-print { display: none !important; }
+            html, body { height: auto !important; min-height: auto !important; margin: 0 !important; padding: 0 !important; background: white !important; color: black !important; font-size: 11pt; }
+            .print-certificate { border: 2px solid #16a34a !important; box-shadow: none !important; break-inside: avoid; page-break-inside: avoid; background: white !important; color: black !important; display: block !important; }
+            .print-only { display: block !important; }
+            input, textarea { border: 1px solid #94a3b8 !important; background: #fff !important; color: #000 !important; }
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-full flex flex-col font-sans antialiased selection:bg-cyber-500 selection:text-white transition-colors duration-300">
+
+    <!-- Top Sticky Quest HUD -->
+    <header class="sticky top-0 z-50 bg-slate-900/90 dark:bg-slate-950/90 backdrop-blur-xl border-b border-cyber-500/20 shadow-lg no-print">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-4">
+            
+            <!-- Brand & Status -->
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyber-500 to-emerald-700 text-white flex items-center justify-center font-black shadow-md shadow-cyber-500/30 shrink-0">
+                    <i class="fa-solid fa-gamepad text-lg animate-pulse"></i>
+                </div>
+                <div>
+                    <span class="block text-[10px] font-black uppercase tracking-widest text-cyber-400">EcoQuest Status</span>
+                    <span id="headerStatusText" class="text-sm font-extrabold text-white flex items-center gap-1.5">
+                        <span id="stageNameDisplay">Station 1: Der Ursprung</span>
+                    </span>
+                </div>
+            </div>
+
+            <!-- Stats HUD -->
+            <div class="flex items-center gap-3 sm:gap-6">
+                <!-- Eco Karma Score -->
+                <div class="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-800/80 border border-cyber-500/30 text-xs font-bold shadow-inner">
+                    <i class="fa-solid fa-leaf text-cyber-400"></i>
+                    <span class="text-[10px] uppercase tracking-wider text-slate-400 hidden sm:inline">Karma:</span>
+                    <span id="karmaScoreDisplay" class="font-black text-cyber-400 text-sm">0</span>
+                    <span class="text-slate-500 text-[10px]">/ 150</span>
+                </div>
+
+                <!-- CO2 Savings -->
+                <div class="hidden md:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-800/80 border border-cyan-500/30 text-xs font-bold">
+                    <i class="fa-solid fa-cloud-arrow-down text-cyan-400"></i>
+                    <span class="text-[10px] uppercase tracking-wider text-slate-400">CO₂ Ersparnis:</span>
+                    <span id="co2SavedDisplay" class="font-black text-cyan-400 text-sm">0 kg</span>
+                </div>
+
+                <!-- Controls -->
+                <div class="flex items-center gap-2">
+                    <button onclick="toggleDarkMode()" title="Dunkelmodus umschalten" class="p-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg border border-slate-700 transition">
+                        <i id="themeIcon" class="fa-solid fa-moon text-sm"></i>
+                    </button>
+                    <button onclick="saveQuestProgress(true)" title="Speichern" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-cyber-600 hover:bg-cyber-500 text-white shadow-md shadow-cyber-600/30 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-floppy-disk"></i>
+                        <span class="hidden sm:inline">Speichern</span>
+                    </button>
+                    <button onclick="confirmQuestReset()" title="Quest zurücksetzen" class="p-2 text-rose-400 hover:bg-rose-950/50 rounded-lg border border-rose-950 transition">
+                        <i class="fa-solid fa-rotate-right text-sm"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Global Quest Progress Bar -->
+        <div class="w-full bg-slate-950 h-1.5">
+            <div id="questProgressBar" class="bg-gradient-to-r from-cyber-500 via-cyan-400 to-emerald-400 h-1.5 transition-all duration-500 shadow-sm shadow-cyber-500" style="width: 20%"></div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-5xl mx-auto w-full px-4 sm:px-6 py-6 sm:py-10 space-y-8 flex-grow">
+
+        <!-- Hero Card & Student Info -->
+        <div class="quest-card rounded-3xl p-6 sm:p-8 border border-cyber-500/30 shadow-2xl relative overflow-hidden group print-card">
+            <!-- Background Image Overlay -->
+            <div class="absolute inset-0 opacity-40 group-hover:opacity-50 transition-opacity duration-700 pointer-events-none">
+                <img src="assets/eco_quest_hero.jpg" class="w-full h-full object-cover object-center" alt="Eco Quest Hero Artwork">
+                <div class="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/70 to-slate-950/30"></div>
+            </div>
+
+            <div class="relative z-10 space-y-6">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyber-500/20 text-cyber-300 text-xs font-extrabold uppercase tracking-widest border border-cyber-500/40">
+                    <i class="fa-solid fa-compass text-cyber-400"></i> Interactive Cyber-Rundreise • Modul A10
+                </div>
+
+                <div class="space-y-2">
+                    <h1 class="text-3xl sm:text-5xl font-black tracking-tight text-white leading-tight uppercase italic">
+                        EcoQuest: <span class="bg-gradient-to-r from-cyber-400 via-cyan-400 to-emerald-300 bg-clip-text text-transparent">Der digitale Fußabdruck</span>
+                    </h1>
+                    <p class="text-slate-300 text-sm sm:text-base max-w-2xl font-medium leading-relaxed">
+                        Reise durch 5 Zukunfts-Stationen der IT. Treffe kluge Entscheidungen, reduziere deinen CO₂-Rucksack und sammle Eco-Karma!
+                    </p>
+                </div>
+
+                <!-- Student Metadata Inputs -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 border-t border-slate-800">
+                    <div>
+                        <label for="studentName" class="block text-[11px] font-extrabold uppercase text-slate-400 mb-1">Vorname & Nachname *</label>
+                        <input type="text" id="studentName" oninput="saveQuestProgress()" placeholder="Dein Name..." class="w-full px-3.5 py-2 text-sm bg-slate-900/90 border border-slate-700 rounded-xl focus:border-cyber-400 focus:ring-2 focus:ring-cyber-500/30 text-white outline-none font-semibold">
+                    </div>
+                    <div>
+                        <label for="studentClass" class="block text-[11px] font-extrabold uppercase text-slate-400 mb-1">Klasse</label>
+                        <input type="text" id="studentClass" oninput="saveQuestProgress()" placeholder="Klasse..." value="B24" class="w-full px-3.5 py-2 text-sm bg-slate-900/90 border border-slate-700 rounded-xl focus:border-cyber-400 focus:ring-2 focus:ring-cyber-500/30 text-white outline-none font-semibold">
+                    </div>
+                    <div>
+                        <label for="studentDate" class="block text-[11px] font-extrabold uppercase text-slate-400 mb-1">Datum</label>
+                        <input type="date" id="studentDate" onchange="saveQuestProgress()" class="w-full px-3.5 py-2 text-sm bg-slate-900/90 border border-slate-700 rounded-xl focus:border-cyber-400 focus:ring-2 focus:ring-cyber-500/30 text-white outline-none font-semibold">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quest Stages Navigation Map -->
+        <div class="no-print bg-slate-900/60 p-4 rounded-2xl border border-slate-800">
+            <div class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3 flex items-center justify-between">
+                <span><i class="fa-solid fa-route text-cyber-400 mr-1"></i> Quest Etappen-Karte:</span>
+                <span id="stageProgressCounter" class="text-cyber-400 font-bold">1 / 5 abgeschlossen</span>
+            </div>
+            
+            <div class="grid grid-cols-5 gap-2 text-center">
+                <button onclick="goToStage(1)" id="stageBtn1" class="p-2.5 rounded-xl border text-xs font-bold transition flex flex-col items-center gap-1 border-cyber-500 bg-cyber-500/20 text-white shadow-sm shadow-cyber-500/20">
+                    <span class="w-6 h-6 rounded-full bg-cyber-500 text-slate-950 font-black text-[11px] flex items-center justify-center">1</span>
+                    <span class="truncate hidden sm:inline text-[10px]">Ursprung</span>
+                </button>
+                <button onclick="goToStage(2)" id="stageBtn2" class="p-2.5 rounded-xl border text-xs font-bold transition flex flex-col items-center gap-1 border-slate-800 bg-slate-900/60 text-slate-500 opacity-60">
+                    <span class="w-6 h-6 rounded-full bg-slate-800 text-slate-400 font-black text-[11px] flex items-center justify-center">2</span>
+                    <span class="truncate hidden sm:inline text-[10px]">Cloud</span>
+                </button>
+                <button onclick="goToStage(3)" id="stageBtn3" class="p-2.5 rounded-xl border text-xs font-bold transition flex flex-col items-center gap-1 border-slate-800 bg-slate-900/60 text-slate-500 opacity-60">
+                    <span class="w-6 h-6 rounded-full bg-slate-800 text-slate-400 font-black text-[11px] flex items-center justify-center">3</span>
+                    <span class="truncate hidden sm:inline text-[10px]">Incident</span>
+                </button>
+                <button onclick="goToStage(4)" id="stageBtn4" class="p-2.5 rounded-xl border text-xs font-bold transition flex flex-col items-center gap-1 border-slate-800 bg-slate-900/60 text-slate-500 opacity-60">
+                    <span class="w-6 h-6 rounded-full bg-slate-800 text-slate-400 font-black text-[11px] flex items-center justify-center">4</span>
+                    <span class="truncate hidden sm:inline text-[10px]">Schule</span>
+                </button>
+                <button onclick="goToStage(5)" id="stageBtn5" class="p-2.5 rounded-xl border text-xs font-bold transition flex flex-col items-center gap-1 border-slate-800 bg-slate-900/60 text-slate-500 opacity-60">
+                    <span class="w-6 h-6 rounded-full bg-slate-800 text-slate-400 font-black text-[11px] flex items-center justify-center">5</span>
+                    <span class="truncate hidden sm:inline text-[10px]">Finale</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Dynamic Quest Stage Container -->
+        <div id="questStageContent" class="space-y-6">
+
+            <!-- STAGE 1: Der Smartphone-Ursprung -->
+            <div id="stage1Card" class="quest-card rounded-3xl p-6 sm:p-8 border border-slate-800 shadow-xl space-y-6 animate-pop">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                    <div class="flex items-center gap-3">
+                        <span class="px-3 py-1 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30 text-xs font-black uppercase tracking-wider">
+                            Station 1
+                        </span>
+                        <h2 class="text-xl sm:text-2xl font-extrabold text-white">Die Geburt deines Smartphones</h2>
+                    </div>
+                    <i class="fa-solid fa-mobile-screen-button text-2xl text-amber-400 animate-float"></i>
+                </div>
+
+                <p class="text-sm text-slate-300 leading-relaxed">
+                    Szenario: Dein Altes Handy schwächelt. Du stehst im Store und brauchst ein neues Gerät für Schule & Freizeit. Welche Wahl triffst du?
+                </p>
+
+                <!-- Choices Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- Option A -->
+                    <div onclick="selectChoice(1, 'A', 0, 80, 0, 'Neuware Pro')" id="choice_1_A" class="choice-option p-4 rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-cyber-500/50 space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-black text-slate-400 uppercase">Option A</span>
+                            <span class="text-xs font-bold text-rose-400">80 kg CO₂</span>
+                        </div>
+                        <h3 class="font-bold text-sm text-white">Brandneues Flagship Pro Max</h3>
+                        <p class="text-xs text-slate-400 leading-relaxed">1.200 €, neueste Technik. Verursacht 70 kg Gesteinsabraum & 80 kg Herstellungs-CO₂.</p>
+                        <div class="pt-2 text-[11px] font-bold text-slate-500 flex justify-between">
+                            <span>Karma: +0 Pkt.</span>
+                            <span>Neuware</span>
+                        </div>
+                    </div>
+
+                    <!-- Option B -->
+                    <div onclick="selectChoice(1, 'B', 30, 20, 60, 'Refurbished Hero')" id="choice_1_B" class="choice-option p-4 rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-cyber-500/50 space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-black text-cyber-400 uppercase">Option B</span>
+                            <span class="text-xs font-bold text-cyber-400">-60 kg CO₂</span>
+                        </div>
+                        <h3 class="font-bold text-sm text-white">Refurbished Premium (Gebraucht)</h3>
+                        <p class="text-xs text-slate-400 leading-relaxed">450 €, wie neu mit Garantie. Spart ca. 60 kg Herstellungs-CO₂ und verlängert das Geräteleben.</p>
+                        <div class="pt-2 text-[11px] font-bold text-cyber-400 flex justify-between">
+                            <span>Karma: +30 Pkt.</span>
+                            <span>🏆 Refurbished Pioneer</span>
+                        </div>
+                    </div>
+
+                    <!-- Option C -->
+                    <div onclick="selectChoice(1, 'C', 40, 15, 65, 'Modular Fairphone')" id="choice_1_C" class="choice-option p-4 rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-cyber-500/50 space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-black text-cyan-400 uppercase">Option C</span>
+                            <span class="text-xs font-bold text-cyan-400">-65 kg CO₂</span>
+                        </div>
+                        <h3 class="font-bold text-sm text-white">Fairphone / Modulares Handy</h3>
+                        <p class="text-xs text-slate-400 leading-relaxed">550 €, leicht selbst reparierbar, faires Kobalt & Lithium. Maximale Langlebigkeit.</p>
+                        <div class="pt-2 text-[11px] font-bold text-cyan-400 flex justify-between">
+                            <span>Karma: +40 Pkt.</span>
+                            <span>🏆 Fair Tech Hero</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reflection Note for Station 1 -->
+                <div class="space-y-2 pt-2">
+                    <label for="ref_stage1" class="block text-xs font-bold text-slate-300">
+                        Begründung: Warum beeinflusst die Entscheidung für Refurbished oder Modular den CO₂-Rucksack am stärksten?
+                    </label>
+                    <input type="text" id="ref_stage1" oninput="saveQuestProgress()" placeholder="Erkläre kurz (1-2 Sätze)..." class="w-full p-3 text-sm bg-slate-900 border border-slate-700 rounded-xl focus:border-cyber-400 outline-none text-white font-medium">
+                </div>
+
+                <!-- Next Stage Button -->
+                <div class="flex justify-end pt-2">
+                    <button onclick="goToStage(2)" class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-cyber-500 to-emerald-600 hover:from-cyber-400 hover:to-emerald-500 text-slate-950 font-black text-xs uppercase tracking-wider shadow-lg shadow-cyber-500/20 flex items-center gap-2">
+                        <span>Weiter zu Station 2</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- STAGE 2: Der Daten- & KI-Sturm -->
+            <div id="stage2Card" class="quest-card rounded-3xl p-6 sm:p-8 border border-slate-800 shadow-xl space-y-6 hidden animate-pop">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                    <div class="flex items-center gap-3">
+                        <span class="px-3 py-1 rounded-full bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 text-xs font-black uppercase tracking-wider">
+                            Station 2
+                        </span>
+                        <h2 class="text-xl sm:text-2xl font-extrabold text-white">Der Daten- & KI-Cloudstorm</h2>
+                    </div>
+                    <i class="fa-solid fa-cloud text-2xl text-cyan-400 animate-float"></i>
+                </div>
+
+                <p class="text-sm text-slate-300 leading-relaxed">
+                    Szenario: Deine tägliche Digitalnutzung. Fotos, 4K-Streams und KI-Prompts laufen rund um die Uhr. Wie managest du deine Daten in der Cloud?
+                </p>
+
+                <!-- Choices Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- Option A -->
+                    <div onclick="selectChoice(2, 'A', 5, 25, 0, 'Dauer-Streaming')" id="choice_2_A" class="choice-option p-4 rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-cyber-500/50 space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-black text-slate-400 uppercase">Option A</span>
+                            <span class="text-xs font-bold text-rose-400">+25 kg CO₂/J.</span>
+                        </div>
+                        <h3 class="font-bold text-sm text-white">4K-Autoplay + 100GB Datenmüll</h3>
+                        <p class="text-xs text-slate-400 leading-relaxed">Streams auf höchster Stufe, Tausende unscharfe Fotos in der Cloud gespeichert, KI für jede Kleinigkeit.</p>
+                        <div class="pt-2 text-[11px] font-bold text-slate-500 flex justify-between">
+                            <span>Karma: +5 Pkt.</span>
+                            <span>Hoher Strombedarf</span>
+                        </div>
+                    </div>
+
+                    <!-- Option B -->
+                    <div onclick="selectChoice(2, 'B', 30, 10, 15, 'Daten-Hygiene Ninja')" id="choice_2_B" class="choice-option p-4 rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-cyber-500/50 space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-black text-cyber-400 uppercase">Option B</span>
+                            <span class="text-xs font-bold text-cyber-400">-15 kg CO₂/J.</span>
+                        </div>
+                        <h3 class="font-bold text-sm text-white">Daten-Hygiene & WLAN-Streaming</h3>
+                        <p class="text-xs text-slate-400 leading-relaxed">Regelmäßiges Löschen alter Cloud-Dateien, Videos auf Full-HD drosseln, WLAN statt 5G nutzen.</p>
+                        <div class="pt-2 text-[11px] font-bold text-cyber-400 flex justify-between">
+                            <span>Karma: +30 Pkt.</span>
+                            <span>🏆 Data Ninja</span>
+                        </div>
+                    </div>
+
+                    <!-- Option C -->
+                    <div onclick="selectChoice(2, 'C', 35, 8, 17, 'Bewusste KI-Nutzung')" id="choice_2_C" class="choice-option p-4 rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-cyber-500/50 space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-black text-cyan-400 uppercase">Option C</span>
+                            <span class="text-xs font-bold text-cyan-400">-17 kg CO₂/J.</span>
+                        </div>
+                        <h3 class="font-bold text-sm text-white">Bewusster KI-Einsatz & Offline-Modus</h3>
+                        <p class="text-xs text-slate-400 leading-relaxed">Gezielte KI-Prompts statt unnötigem Bilder-Generieren, Musik offline speichern statt Dauerstream.</p>
+                        <div class="pt-2 text-[11px] font-bold text-cyan-400 flex justify-between">
+                            <span>Karma: +35 Pkt.</span>
+                            <span>🏆 Green Cloud Master</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reflection Note for Station 2 -->
+                <div class="space-y-2 pt-2">
+                    <label for="ref_stage2" class="block text-xs font-bold text-slate-300">
+                        Erkenntnis: Warum verbraucht Daten-Aufräumen (Löschen in der Cloud) indirekt echten Strom in Rechenzentren?
+                    </label>
+                    <input type="text" id="ref_stage2" oninput="saveQuestProgress()" placeholder="Erkläre kurz..." class="w-full p-3 text-sm bg-slate-900 border border-slate-700 rounded-xl focus:border-cyber-400 outline-none text-white font-medium">
+                </div>
+
+                <!-- Nav Buttons -->
+                <div class="flex justify-between pt-2">
+                    <button onclick="goToStage(1)" class="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs uppercase flex items-center gap-2">
+                        <i class="fa-solid fa-arrow-left"></i> Zurück
+                    </button>
+                    <button onclick="goToStage(3)" class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-cyber-500 to-emerald-600 hover:from-cyber-400 hover:to-emerald-500 text-slate-950 font-black text-xs uppercase tracking-wider shadow-lg flex items-center gap-2">
+                        <span>Weiter zu Station 3</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- STAGE 3: Der Defekt-Incident -->
+            <div id="stage3Card" class="quest-card rounded-3xl p-6 sm:p-8 border border-slate-800 shadow-xl space-y-6 hidden animate-pop">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                    <div class="flex items-center gap-3">
+                        <span class="px-3 py-1 rounded-full bg-rose-500/20 text-rose-400 border border-rose-500/30 text-xs font-black uppercase tracking-wider">
+                            Station 3
+                        </span>
+                        <h2 class="text-xl sm:text-2xl font-extrabold text-white">Der Incident: Display gebrochen!</h2>
+                    </div>
+                    <i class="fa-solid fa-screwdriver-wrench text-2xl text-rose-400 animate-float"></i>
+                </div>
+
+                <p class="text-sm text-slate-300 leading-relaxed">
+                    Szenario: Das Smartphone fällt auf den Asphalt – Display gesprungen, Akku hält nur noch 2 Stunden. Wie reagierst du?
+                </p>
+
+                <!-- Choices Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- Option A -->
+                    <div onclick="selectChoice(3, 'A', 0, 50, 0, 'Schublade')" id="choice_3_A" class="choice-option p-4 rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-cyber-500/50 space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-black text-slate-400 uppercase">Option A</span>
+                            <span class="text-xs font-bold text-rose-400">+Elektroschrott</span>
+                        </div>
+                        <h3 class="font-bold text-sm text-white">Ab in die Schublade & Neukauf</h3>
+                        <p class="text-xs text-slate-400 leading-relaxed">Das defekte Gerät landet ungenutzt in der Schublade zu den anderen Altgeräten. Neues Handy gekauft.</p>
+                        <div class="pt-2 text-[11px] font-bold text-slate-500 flex justify-between">
+                            <span>Karma: +0 Pkt.</span>
+                            <span>Rohstoffe blockiert</span>
+                        </div>
+                    </div>
+
+                    <!-- Option B -->
+                    <div onclick="selectChoice(3, 'B', 35, 10, 40, 'iFixit Repair')" id="choice_3_B" class="choice-option p-4 rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-cyber-500/50 space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-black text-cyber-400 uppercase">Option B</span>
+                            <span class="text-xs font-bold text-cyber-400">-40 kg CO₂</span>
+                        </div>
+                        <h3 class="font-bold text-sm text-white">iFixit Self-Repair / Reparatur-Café</h3>
+                        <p class="text-xs text-slate-400 leading-relaxed">Ersatzteil online bestellt und selbst oder mit Hilfe im Repair-Café repariert. Gerät läuft 2 Jahre weiter!</p>
+                        <div class="pt-2 text-[11px] font-bold text-cyber-400 flex justify-between">
+                            <span>Karma: +35 Pkt.</span>
+                            <span>🏆 Repair Master</span>
+                        </div>
+                    </div>
+
+                    <!-- Option C -->
+                    <div onclick="selectChoice(3, 'C', 25, 15, 35, 'Wertstoffhof Recycling')" id="choice_3_C" class="choice-option p-4 rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-cyber-500/50 space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-black text-cyan-400 uppercase">Option C</span>
+                            <span class="text-xs font-bold text-cyan-400">Urban Mining</span>
+                        </div>
+                        <h3 class="font-bold text-sm text-white">Profi-Reparatur oder Wertstoffhof</h3>
+                        <p class="text-xs text-slate-400 leading-relaxed">Im Laden reparieren lassen ODER Fachgerechte Rückgabe am Wertstoffhof (Urban Mining für Gold & Kupfer).</p>
+                        <div class="pt-2 text-[11px] font-bold text-cyan-400 flex justify-between">
+                            <span>Karma: +25 Pkt.</span>
+                            <span>🏆 Recycler Hero</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reflection Note for Station 3 -->
+                <div class="space-y-2 pt-2">
+                    <label for="ref_stage3" class="block text-xs font-bold text-slate-300">
+                        Urban Mining Check: Wie viele ungenutzte Alt-Geräte (Handys/Tablets) liegen bei dir zu Hause rum?
+                    </label>
+                    <input type="number" min="0" max="99" id="ref_stage3" oninput="saveQuestProgress()" placeholder="Anzahl z. B. 3..." class="w-36 p-3 text-sm bg-slate-900 border border-slate-700 rounded-xl focus:border-cyber-400 outline-none text-white font-black text-center">
+                </div>
+
+                <!-- Nav Buttons -->
+                <div class="flex justify-between pt-2">
+                    <button onclick="goToStage(2)" class="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs uppercase flex items-center gap-2">
+                        <i class="fa-solid fa-arrow-left"></i> Zurück
+                    </button>
+                    <button onclick="goToStage(4)" class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-cyber-500 to-emerald-600 hover:from-cyber-400 hover:to-emerald-500 text-slate-950 font-black text-xs uppercase tracking-wider shadow-lg flex items-center gap-2">
+                        <span>Weiter zu Station 4</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- STAGE 4: Die Schule der Zukunft -->
+            <div id="stage4Card" class="quest-card rounded-3xl p-6 sm:p-8 border border-slate-800 shadow-xl space-y-6 hidden animate-pop">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                    <div class="flex items-center gap-3">
+                        <span class="px-3 py-1 rounded-full bg-violet-500/20 text-violet-400 border border-violet-500/30 text-xs font-black uppercase tracking-wider">
+                            Station 4
+                        </span>
+                        <h2 class="text-xl sm:text-2xl font-extrabold text-white">Die Grüne Schule (Beschaffungs-Komitee)</h2>
+                    </div>
+                    <i class="fa-solid fa-school text-2xl text-violet-400 animate-float"></i>
+                </div>
+
+                <p class="text-sm text-slate-300 leading-relaxed">
+                    Szenario: Deine Schule kauft 300 Laptops für die Schüler. Du sitzt im Schüler-Kaufberater-Komitee! Welche Empfehlung gibst du der Schulleitung?
+                </p>
+
+                <!-- Choices Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- Option A -->
+                    <div onclick="selectChoice(4, 'A', 5, 120, 0, 'Gaming Laptops')" id="choice_4_A" class="choice-option p-4 rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-cyber-500/50 space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-black text-slate-400 uppercase">Option A</span>
+                            <span class="text-xs font-bold text-rose-400">120 Tonnen CO₂</span>
+                        </div>
+                        <h3 class="font-bold text-sm text-white">High-End Gaming Laptops (Neu)</h3>
+                        <p class="text-xs text-slate-400 leading-relaxed">Sehr teuer, hoher Stromverbrauch, schwere Netzteile. Werden nach 3 Jahren ersetzt.</p>
+                        <div class="pt-2 text-[11px] font-bold text-slate-500 flex justify-between">
+                            <span>Karma: +5 Pkt.</span>
+                            <span>Hohe TCO</span>
+                        </div>
+                    </div>
+
+                    <!-- Option B -->
+                    <div onclick="selectChoice(4, 'B', 35, 30, 90, 'Refurbished Business')" id="choice_4_B" class="choice-option p-4 rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-cyber-500/50 space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-black text-cyber-400 uppercase">Option B</span>
+                            <span class="text-xs font-bold text-cyber-400">-90 Tonnen CO₂</span>
+                        </div>
+                        <h3 class="font-bold text-sm text-white">Refurbished Business Laptops</h3>
+                        <p class="text-xs text-slate-400 leading-relaxed">Robuste Markengeräte aus Firmenleasing, TCO Certified, austauschbarer Akku & 5 Jahre Garantie.</p>
+                        <div class="pt-2 text-[11px] font-bold text-cyber-400 flex justify-between">
+                            <span>Karma: +35 Pkt.</span>
+                            <span>🏆 School Eco Ambassador</span>
+                        </div>
+                    </div>
+
+                    <!-- Option C -->
+                    <div onclick="selectChoice(4, 'C', 40, 25, 95, 'Green IN & THROUGH')" id="choice_4_C" class="choice-option p-4 rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-cyber-500/50 space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-black text-cyan-400 uppercase">Option C</span>
+                            <span class="text-xs font-bold text-cyan-400">-95 Tonnen CO₂</span>
+                        </div>
+                        <h3 class="font-bold text-sm text-white">Green-IT Konzept mit Reparierbarkeit</h3>
+                        <p class="text-xs text-slate-400 leading-relaxed">Energieeffiziente Geräte mit Solar-Ladeanschluss & schuleigenem Ersatzteil-Lager (Green THROUGH IT).</p>
+                        <div class="pt-2 text-[11px] font-bold text-cyan-400 flex justify-between">
+                            <span>Karma: +40 Pkt.</span>
+                            <span>🏆 Visionary Pioneer</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reflection Note for Station 4 -->
+                <div class="space-y-2 pt-2">
+                    <label for="ref_stage4" class="block text-xs font-bold text-slate-300">
+                        Fachbegriff-Check: Erkläre den Unterschied zwischen „Green IN IT“ (Technik selbst nachhaltig) und „Green THROUGH IT“ (IT spart anderswo CO₂):
+                    </label>
+                    <textarea id="ref_stage4" oninput="saveQuestProgress()" rows="2" placeholder="Erkläre kurz..." class="w-full p-3 text-sm bg-slate-900 border border-slate-700 rounded-xl focus:border-cyber-400 outline-none text-white font-medium"></textarea>
+                </div>
+
+                <!-- Nav Buttons -->
+                <div class="flex justify-between pt-2">
+                    <button onclick="goToStage(3)" class="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs uppercase flex items-center gap-2">
+                        <i class="fa-solid fa-arrow-left"></i> Zurück
+                    </button>
+                    <button onclick="goToStage(5)" class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-cyber-500 to-emerald-600 hover:from-cyber-400 hover:to-emerald-500 text-slate-950 font-black text-xs uppercase tracking-wider shadow-lg flex items-center gap-2">
+                        <span>Zum Finale & Auswertung</span>
+                        <i class="fa-solid fa-trophy"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- STAGE 5: Das Finale & Auswertung Zertifikat -->
+            <div id="stage5Card" class="quest-card rounded-3xl p-6 sm:p-10 border border-cyber-500/40 shadow-2xl space-y-8 hidden animate-pop print-certificate">
+                
+                <!-- Finale Header -->
+                <div class="text-center space-y-3 border-b border-slate-800 pb-6">
+                    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyber-500/20 text-cyber-300 border border-cyber-500/40 text-xs font-black uppercase tracking-widest animate-pulse">
+                        <i class="fa-solid fa-award text-amber-400 text-sm"></i> Quest Erfolgreich Beendet!
+                    </div>
+                    <h2 class="text-3xl sm:text-4xl font-black text-white uppercase italic tracking-tight">
+                        Dein EcoQuest Zertifikat & Auswertung
+                    </h2>
+                    <p class="text-slate-400 text-xs sm:text-sm max-w-xl mx-auto">
+                        Informatische Bildung • Modul A10: Green IT & Digitale Zukunftsreise
+                    </p>
+                </div>
+
+                <!-- Final Impact Dashboard -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
+                    <div class="p-5 bg-slate-900/90 rounded-2xl border border-cyber-500/30 space-y-2">
+                        <span class="text-[10px] font-black uppercase tracking-widest text-slate-400 block">Eco-Karma Gesamt:</span>
+                        <span id="finalKarmaDisplay" class="text-4xl font-black text-cyber-400 block">0</span>
+                        <span id="finalRankBadge" class="inline-block text-xs font-bold px-3 py-1 bg-cyber-500/20 text-cyber-300 rounded-full border border-cyber-500/30">
+                            Eco Pathfinder
+                        </span>
+                    </div>
+
+                    <div class="p-5 bg-slate-900/90 rounded-2xl border border-cyan-500/30 space-y-2">
+                        <span class="text-[10px] font-black uppercase tracking-widest text-slate-400 block">Eingespartes CO₂:</span>
+                        <span id="finalCo2Display" class="text-4xl font-black text-cyan-400 block">0 kg</span>
+                        <span class="text-[11px] text-slate-400 font-bold block">Vermeidbarer Fußabdruck</span>
+                    </div>
+
+                    <div class="p-5 bg-slate-900/90 rounded-2xl border border-violet-500/30 space-y-2">
+                        <span class="text-[10px] font-black uppercase tracking-widest text-slate-400 block">Trophäen Freigeschaltet:</span>
+                        <span id="finalBadgeCount" class="text-4xl font-black text-violet-400 block">0 / 4</span>
+                        <span class="text-[11px] text-slate-400 font-bold block">Freigeschaltete Badges</span>
+                    </div>
+                </div>
+
+                <!-- Unlocked Trophies Container -->
+                <div class="space-y-3">
+                    <h3 class="text-xs font-black uppercase tracking-widest text-slate-400 flex items-center gap-2">
+                        <i class="fa-solid fa-trophy text-amber-400"></i> Deine Freigeschalteten Trophäen:
+                    </h3>
+                    <div id="unlockedBadgesGrid" class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        <!-- Populated dynamically via JS -->
+                    </div>
+                </div>
+
+                <!-- Final Personal Commitments -->
+                <div class="space-y-4 bg-slate-900/60 p-5 rounded-2xl border border-slate-800">
+                    <h3 class="text-sm font-extrabold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-bullseye text-cyber-400"></i> Deine 2 persönlichen Vorsätze für die nächsten 4 Wochen:
+                    </h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <input type="text" id="final_action1" oninput="saveQuestProgress()" placeholder="Vorsatz 1 (z. B. Smartphone erst nach 4 Jahren tauschen)..." class="p-3 text-sm bg-slate-900 border border-slate-700 rounded-xl focus:border-cyber-400 outline-none text-white font-medium">
+                        <input type="text" id="final_action2" oninput="saveQuestProgress()" placeholder="Vorsatz 2 (z. B. Cloud-Speicher aufräumen & Daten löschen)..." class="p-3 text-sm bg-slate-900 border border-slate-700 rounded-xl focus:border-cyber-400 outline-none text-white font-medium">
+                    </div>
+                </div>
+
+                <!-- PDF & Export Footer Action -->
+                <div class="pt-4 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-slate-800 no-print">
+                    <button onclick="goToStage(4)" class="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs uppercase flex items-center gap-2">
+                        <i class="fa-solid fa-arrow-left"></i> Zurück zu Station 4
+                    </button>
+
+                    <div class="flex items-center gap-3">
+                        <button onclick="handleQuestPrint()" id="printBtn" class="px-6 py-3 rounded-xl bg-gradient-to-r from-cyber-500 to-emerald-600 hover:from-cyber-400 hover:to-emerald-500 text-slate-950 font-black text-xs uppercase tracking-wider shadow-lg shadow-cyber-500/20 transition flex items-center gap-2">
+                            <i class="fa-solid fa-file-pdf text-sm"></i>
+                            <span>Zertifikat als PDF Speichern</span>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="max-w-5xl mx-auto w-full px-6 py-8 text-center space-y-2 no-print border-t border-slate-800/60 mt-12">
+        <div class="text-[10px] font-black uppercase tracking-widest text-slate-400">
+            A10 • EcoQuest: Green IT & Digitale Zukunftsreise • Informatische Bildung
+        </div>
+        <p class="text-[11px] text-slate-400 max-w-md mx-auto leading-relaxed">
+            Dieses interaktive Quest-Arbeitsblatt vermittelt ein fundiertes Verständnis für Ressourcenbewusstsein, Hardware-Lebenszyklus und nachhaltige Digitalisierung.
+        </p>
+    </footer>
+
+    <!-- Universal Script & Quest Logic -->
+    <script src="assets/js/worksheet-common.js"></script>
+    <script>
+        const questState = {
+            currentStage: 1,
+            choices: { 1: null, 2: null, 3: null, 4: null },
+            karma: 0,
+            co2Saved: 0,
+            badges: []
+        };
+
+        const stageChoicesData = {
+            1: {
+                'A': { karma: 0, co2: 0, badge: null },
+                'B': { karma: 30, co2: 60, badge: 'Refurbished Pioneer' },
+                'C': { karma: 40, co2: 65, badge: 'Fair Tech Hero' }
+            },
+            2: {
+                'A': { karma: 5, co2: 0, badge: null },
+                'B': { karma: 30, co2: 15, badge: 'Data Hygiene Ninja' },
+                'C': { karma: 35, co2: 17, badge: 'Green Cloud Master' }
+            },
+            3: {
+                'A': { karma: 0, co2: 0, badge: null },
+                'B': { karma: 35, co2: 40, badge: 'Repair Master' },
+                'C': { karma: 25, co2: 35, badge: 'Recycler Hero' }
+            },
+            4: {
+                'A': { karma: 5, co2: 0, badge: null },
+                'B': { karma: 35, co2: 90, badge: 'School Eco Ambassador' },
+                'C': { karma: 40, co2: 95, badge: 'Visionary Pioneer' }
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setupUniversalAutoSave();
+            loadQuestState();
+            updateQuestUI();
+        });
+
+        function selectChoice(stage, optionKey, karmaPoints, co2Value, extraSaved, badgeName) {
+            questState.choices[stage] = optionKey;
+            
+            // Highlight selected card
+            ['A', 'B', 'C'].forEach(opt => {
+                const el = document.getElementById(`choice_${stage}_${opt}`);
+                if (el) {
+                    if (opt === optionKey) {
+                        el.classList.add('selected');
+                    } else {
+                        el.classList.remove('selected');
+                    }
+                }
+            });
+
+            recalculateQuestStats();
+            saveQuestProgress();
+            
+            if (badgeName) {
+                showBadgeNotification(badgeName);
+            }
+        }
+
+        function recalculateQuestStats() {
+            let totalKarma = 0;
+            let totalCo2 = 0;
+            const activeBadges = [];
+
+            for (let st = 1; st <= 4; st++) {
+                const sel = questState.choices[st];
+                if (sel && stageChoicesData[st][sel]) {
+                    const data = stageChoicesData[st][sel];
+                    totalKarma += data.karma;
+                    totalCo2 += data.co2;
+                    if (data.badge && !activeBadges.includes(data.badge)) {
+                        activeBadges.push(data.badge);
+                    }
+                }
+            }
+
+            questState.karma = totalKarma;
+            questState.co2Saved = totalCo2;
+            questState.badges = activeBadges;
+
+            document.getElementById('karmaScoreDisplay').innerText = totalKarma;
+            document.getElementById('co2SavedDisplay').innerText = `${totalCo2} kg`;
+
+            // Update Final Stage Displays
+            document.getElementById('finalKarmaDisplay').innerText = totalKarma;
+            document.getElementById('finalCo2Display').innerText = `${totalCo2} kg`;
+            document.getElementById('finalBadgeCount').innerText = `${activeBadges.length} / 4`;
+
+            let rankName = 'Eco-Starter';
+            if (totalKarma >= 120) rankName = 'Cyber Eco Guardian 🏆';
+            else if (totalKarma >= 80) rankName = 'Green Tech Hero 🌿';
+            else if (totalKarma >= 40) rankName = 'Eco Pathfinder 🧭';
+            document.getElementById('finalRankBadge').innerText = rankName;
+
+            renderUnlockedBadgesGrid(activeBadges);
+        }
+
+        function renderUnlockedBadgesGrid(badges) {
+            const container = document.getElementById('unlockedBadgesGrid');
+            if (!container) return;
+            container.innerHTML = '';
+
+            if (badges.length === 0) {
+                container.innerHTML = `<div class="col-span-full text-center py-4 text-xs text-slate-500 font-medium">Noch keine Trophäen freigeschaltet. Wähle nachhaltige Optionen!</div>`;
+                return;
+            }
+
+            badges.forEach(b => {
+                const badgeEl = document.createElement('div');
+                badgeEl.className = 'p-3 bg-slate-900 border border-cyber-500/40 rounded-xl text-center space-y-1 animate-badge';
+                badgeEl.innerHTML = `
+                    <i class="fa-solid fa-award text-amber-400 text-lg block mb-1"></i>
+                    <span class="text-xs font-black text-white block truncate">${b}</span>
+                    <span class="text-[9px] font-bold text-cyber-400 uppercase block">Freigeschaltet</span>
+                `;
+                container.appendChild(badgeEl);
+            });
+        }
+
+        function goToStage(stageNum) {
+            questState.currentStage = stageNum;
+
+            // Hide all stage cards
+            for (let i = 1; i <= 5; i++) {
+                const card = document.getElementById(`stage${i}Card`);
+                const btn = document.getElementById(`stageBtn${i}`);
+                if (card) card.classList.add('hidden');
+                if (btn) {
+                    btn.className = 'p-2.5 rounded-xl border text-xs font-bold transition flex flex-col items-center gap-1 border-slate-800 bg-slate-900/60 text-slate-500 opacity-60';
+                }
+            }
+
+            // Show selected stage
+            const activeCard = document.getElementById(`stage${stageNum}Card`);
+            const activeBtn = document.getElementById(`stageBtn${stageNum}`);
+            if (activeCard) activeCard.classList.remove('hidden');
+            if (activeBtn) {
+                activeBtn.className = 'p-2.5 rounded-xl border text-xs font-bold transition flex flex-col items-center gap-1 border-cyber-500 bg-cyber-500/20 text-white shadow-sm shadow-cyber-500/20';
+            }
+
+            // Header title update
+            const names = ['Station 1: Der Ursprung', 'Station 2: Die Cloud', 'Station 3: Der Incident', 'Station 4: Die Schule', 'Station 5: Das Finale'];
+            document.getElementById('stageNameDisplay').innerText = names[stageNum - 1] || 'Station';
+            
+            // Progress Bar Width
+            const pct = stageNum * 20;
+            document.getElementById('questProgressBar').style.width = `${pct}%`;
+            document.getElementById('stageProgressCounter').innerText = `${stageNum} / 5 Etappen`;
+
+            window.scrollTo({ top: 120, behavior: 'smooth' });
+            saveQuestProgress();
+        }
+
+        function showBadgeNotification(badgeName) {
+            const toast = document.createElement('div');
+            toast.className = 'fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-5 py-3 rounded-2xl border border-cyber-500 shadow-2xl flex items-center gap-3 animate-badge';
+            toast.innerHTML = `
+                <div class="w-8 h-8 rounded-full bg-cyber-500 text-slate-950 flex items-center justify-center font-black">
+                    <i class="fa-solid fa-trophy text-sm"></i>
+                </div>
+                <div>
+                    <span class="block text-[9px] font-black uppercase text-cyber-400 tracking-wider">Trophäe freigeschaltet!</span>
+                    <span class="text-xs font-extrabold text-white">${badgeName}</span>
+                </div>
+            `;
+            document.body.appendChild(toast);
+            setTimeout(() => { toast.remove(); }, 3500);
+        }
+
+        function saveQuestProgress(manual = false) {
+            const data = {
+                studentName: document.getElementById('studentName')?.value || '',
+                studentClass: document.getElementById('studentClass')?.value || '',
+                studentDate: document.getElementById('studentDate')?.value || '',
+                currentStage: questState.currentStage,
+                choices: questState.choices,
+                ref_stage1: document.getElementById('ref_stage1')?.value || '',
+                ref_stage2: document.getElementById('ref_stage2')?.value || '',
+                ref_stage3: document.getElementById('ref_stage3')?.value || '',
+                ref_stage4: document.getElementById('ref_stage4')?.value || '',
+                final_action1: document.getElementById('final_action1')?.value || '',
+                final_action2: document.getElementById('final_action2')?.value || ''
+            };
+
+            localStorage.setItem('onedrive_a10_ecoquest', JSON.stringify(data));
+            
+            // Mirror generic autosave for index.html done check
+            const filledChoices = Object.values(questState.choices).filter(v => v !== null).length;
+            const completionPercent = Math.round((filledChoices / 4) * 100);
+            
+            const indexSave = {
+                percent: completionPercent,
+                timestamp: new Date().toISOString()
+            };
+            localStorage.setItem('hw_autosave_A10.html', JSON.stringify(indexSave));
+
+            if (manual && typeof showToast === 'function') {
+                showToast('Quest-Fortschritt wurde gespeichert!');
+            }
+        }
+
+        function loadQuestState() {
+            const saved = localStorage.getItem('onedrive_a10_ecoquest');
+            if (saved) {
+                try {
+                    const data = JSON.parse(saved);
+                    if (data.studentName && document.getElementById('studentName')) document.getElementById('studentName').value = data.studentName;
+                    if (data.studentClass && document.getElementById('studentClass')) document.getElementById('studentClass').value = data.studentClass;
+                    if (data.studentDate && document.getElementById('studentDate')) document.getElementById('studentDate').value = data.studentDate;
+                    
+                    if (data.choices) questState.choices = data.choices;
+                    
+                    ['ref_stage1', 'ref_stage2', 'ref_stage3', 'ref_stage4', 'final_action1', 'final_action2'].forEach(id => {
+                        if (data[id] && document.getElementById(id)) document.getElementById(id).value = data[id];
+                    });
+
+                    // Restore selected UI cards
+                    for (let st = 1; st <= 4; st++) {
+                        const sel = questState.choices[st];
+                        if (sel) {
+                            const el = document.getElementById(`choice_${st}_${sel}`);
+                            if (el) el.classList.add('selected');
+                        }
+                    }
+
+                    recalculateQuestStats();
+                    if (data.currentStage) goToStage(data.currentStage);
+                } catch(e) {}
+            }
+        }
+
+        function confirmQuestReset() {
+            if (confirm('Möchtest du wirklich die gesamte Quest zurücksetzen und neu starten?')) {
+                localStorage.removeItem('onedrive_a10_ecoquest');
+                localStorage.removeItem('hw_autosave_A10.html');
+                location.reload();
+            }
+        }
+
+        function handleQuestPrint() {
+            window.print();
+        }
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,1876 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Informatische Bildung | 2026</title>
+  <link rel="icon" href="favicon.ico" sizes="any" />
+  <link rel="icon" href="favicon.png" type="image/png" sizes="256x256" />
+  <style>
+    :root {
+      --bg: #f5f5f5;
+      --card: #ffffff;
+      --card-soft: #fafafa;
+      --line: #e5e5e5;
+      --text: #1f1f1f;
+      --muted: #616161;
+      --yellow: #f9c642;
+      --yellow-dark: #d59b00;
+      --blue: #2563eb;
+      --blue-soft: #eef4ff;
+      --selected: #e8f0fb;
+      --shadow: 0 2px 8px rgba(0,0,0,.04);
+      --shadow-strong: 0 10px 24px rgba(0,0,0,.08);
+      --font-scale: 1;
+      
+      --google-red: #ea4335;
+      --google-blue: #4285f4;
+      --google-green: #34a853;
+      --google-yellow: #fbbc05;
+      --ms-red: #f25022;
+      --ms-green: #7fba00;
+      --ms-blue: #00a4ef;
+      --ms-yellow: #ffb900;
+    }
+
+    body[data-theme="dark"] {
+      --bg: #111418;
+      --card: #1a1f26;
+      --card-soft: #20262e;
+      --line: #303846;
+      --text: #f2f4f8;
+      --muted: #b4bdca;
+      --yellow: #f5c84f;
+      --yellow-dark: #c89200;
+      --blue: #66a1ff;
+      --blue-soft: #23324e;
+      --selected: #22314b;
+      --shadow: 0 2px 12px rgba(0,0,0,.25);
+      --shadow-strong: 0 12px 28px rgba(0,0,0,.35);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 16px;
+      transition: background .2s ease, color .2s ease;
+      min-height: 100vh;
+    }
+
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      position: relative;
+    }
+
+    .site-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--blue), #1d4ed8);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .brand-title {
+      font-size: calc(22px * var(--font-scale));
+      font-weight: 700;
+      margin: 0;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-subtitle {
+      font-size: calc(13px * var(--font-scale));
+      color: var(--muted);
+      margin: 2px 0 0 0;
+    }
+
+    .gear-btn {
+      width: 42px;
+      height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--card);
+      color: var(--text);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: var(--shadow);
+      transition: transform .15s ease, background .2s ease, border-color .2s ease;
+    }
+
+    .gear-btn:hover { transform: rotate(20deg); }
+
+    .gear-svg {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+    }
+
+    .settings-panel {
+      position: absolute;
+      right: 0;
+      top: 52px;
+      width: 280px;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      box-shadow: var(--shadow-strong);
+      padding: 16px;
+      display: none;
+      z-index: 20;
+    }
+
+    .settings-panel.open { display: block; }
+
+    .settings-title {
+      font-size: 13px;
+      font-weight: 700;
+      margin: 0 0 12px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+
+    .settings-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .settings-row:first-of-type { border-top: 0; }
+
+    .settings-label {
+      font-size: calc(15px * var(--font-scale));
+      font-weight: 600;
+    }
+
+    .font-size-row {
+      display: block;
+    }
+
+    .font-size-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .font-size-value {
+      color: var(--muted);
+      font-size: calc(14px * var(--font-scale));
+      font-variant-numeric: tabular-nums;
+      font-weight: 700;
+    }
+
+    .font-size-range {
+      width: 100%;
+      margin: 0;
+      accent-color: var(--blue);
+      cursor: pointer;
+    }
+
+    .font-size-limits {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: calc(12px * var(--font-scale));
+    }
+
+    .reset-font-btn {
+      background: none;
+      border: none;
+      color: var(--blue);
+      cursor: pointer;
+      font-size: calc(12px * var(--font-scale));
+      padding: 0 8px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.2s ease;
+    }
+    .reset-font-btn:hover {
+      color: var(--text);
+      text-decoration: underline;
+    }
+
+    .switch {
+      position: relative;
+      width: 50px;
+      height: 28px;
+      display: inline-block;
+    }
+
+    .switch input { display: none; }
+
+    .slider {
+      position: absolute;
+      inset: 0;
+      background: #b8b8b8;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: .2s ease;
+    }
+
+    .slider::before {
+      content: "";
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      left: 3px;
+      top: 3px;
+      border-radius: 50%;
+      background: white;
+      transition: .2s ease;
+      box-shadow: 0 2px 6px rgba(0,0,0,.15);
+    }
+
+    .switch input:checked + .slider {
+      background: var(--blue);
+    }
+
+    .switch input:checked + .slider::before {
+      transform: translateX(22px);
+    }
+
+    /* Grid Layout for Classes */
+    .columns-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+    .columns-grid.single-col {
+      grid-template-columns: minmax(0, calc((100% - 20px) / 2));
+      justify-content: center;
+    }
+    .hidden-col {
+      display: none !important;
+    }
+
+    .class-filter-buttons {
+      display: flex;
+      gap: 4px;
+      margin-left: auto;
+      background: #f1f5f9;
+      padding: 4px;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      box-shadow: inset 0 2px 4px 0 rgba(0,0,0,0.05);
+    }
+    body[data-theme="dark"] .class-filter-buttons {
+      background: rgba(30, 41, 59, 0.8);
+      border-color: #334155;
+      box-shadow: inset 0 2px 4px 0 rgba(0,0,0,0.2);
+    }
+    .filter-btn {
+      background: transparent;
+      color: #475569;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: calc(13px * var(--font-scale));
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: inherit;
+      white-space: nowrap;
+    }
+    body[data-theme="dark"] .filter-btn {
+      color: #94a3b8;
+    }
+    .filter-btn:hover:not(.active) {
+      background: #e2e8f0;
+      color: #1e293b;
+    }
+    body[data-theme="dark"] .filter-btn:hover:not(.active) {
+      background: #334155;
+      color: #e2e8f0;
+    }
+    .filter-btn.active {
+      background: var(--blue);
+      color: white;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      cursor: default;
+    }
+    body[data-theme="dark"] .filter-btn.active {
+      color: white;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+    }
+
+    .column-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--line);
+    }
+
+    .class-badge {
+      background: #e0eafe;
+      color: #1d4ed8;
+      border: 1px solid #bfdbfe;
+      font-size: calc(13px * var(--font-scale));
+      font-weight: 800;
+      padding: 4px 12px;
+      border-radius: 999px;
+      letter-spacing: 0.05em;
+      box-shadow: 0 1px 3px rgba(37, 99, 235, 0.1);
+    }
+
+    body[data-theme="dark"] .class-badge {
+      background: var(--blue-soft);
+      color: var(--blue);
+      border: 1px solid rgba(102, 161, 255, 0.35);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .column-title {
+      font-size: calc(18px * var(--font-scale));
+      font-weight: 700;
+      margin: 0;
+    }
+
+    /* Kachel / Tile Styles */
+    .kachel {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      margin-bottom: 16px;
+      overflow: hidden;
+      transition: box-shadow .2s ease, border-color .2s ease;
+    }
+
+    .kachel:hover {
+      box-shadow: var(--shadow-strong);
+      border-color: rgba(37, 99, 235, 0.3);
+    }
+
+    .kachel-header {
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      user-select: none;
+      background: var(--card);
+    }
+
+    .kachel-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .kachel-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: var(--card-soft);
+      border: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--blue);
+      flex-shrink: 0;
+    }
+
+    .kachel-title {
+      font-size: calc(17px * var(--font-scale));
+      font-weight: 700;
+      margin: 0;
+      color: var(--text);
+    }
+
+    .kachel-subtitle {
+      font-size: calc(13px * var(--font-scale));
+      color: var(--muted);
+      margin: 2px 0 0 0;
+    }
+
+    .toggle-arrow {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--card-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      transition: transform .25s ease;
+      flex-shrink: 0;
+    }
+
+    .kachel.open .toggle-arrow {
+      transform: rotate(180deg);
+      color: var(--blue);
+      background: var(--blue-soft);
+    }
+
+    .kachel-body {
+      display: none;
+      padding: 0 20px 20px;
+      border-top: 1px solid var(--line);
+      background: var(--card-soft);
+    }
+
+    .kachel.open .kachel-body {
+      display: block;
+    }
+
+    /* Sub-tiles / Unterkacheln */
+    .unterkacheln {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .unterkachel {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .unterkachel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 2px;
+      flex-wrap: wrap;
+    }
+
+    .unterkachel-title {
+      font-size: calc(15px * var(--font-scale));
+      font-weight: 700;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .unterkachel-title span {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: var(--card-soft);
+      border: 1px solid var(--line);
+      font-size: calc(16px * var(--font-scale));
+      flex-shrink: 0;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+
+    .btn-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: var(--blue);
+      color: white;
+      text-decoration: none;
+      transition: all .18s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 2px 6px rgba(37,99,235,.25);
+      flex-shrink: 0;
+    }
+
+    .btn-link:hover {
+      background: #1d4ed8;
+      transform: translateY(-2px) scale(1.05);
+      box-shadow: 0 4px 12px rgba(37,99,235,.35);
+    }
+
+    /* Premium hardware task list */
+    .hw-task-list{gap:10px;margin-top:12px}
+    .hw-task-list .task-card{position:relative;overflow:hidden;isolation:isolate;min-height:66px;padding:10px 12px 10px 14px;border-radius:22px;background:linear-gradient(135deg,var(--card),var(--card-soft));border:1px solid var(--line);box-shadow:0 9px 24px rgba(15,23,42,.06);cursor:pointer;transition:transform .22s cubic-bezier(.2,.9,.2,1),border-color .22s ease,box-shadow .22s ease;animation:taskCardIn .46s cubic-bezier(.2,.9,.2,1) both}
+    .hw-task-list .task-card>div{position:relative;z-index:2;width:100%}
+    .hw-task-list .task-card::before{content:"";position:absolute;inset:0 0 0 48%;z-index:0;background:linear-gradient(90deg,rgba(16,185,129,0),rgba(16,185,129,.08) 22%,rgba(16,185,129,.18));opacity:0;transform:scaleX(0);transform-origin:right center}
+    .hw-task-list .task-card::after{content:"";position:absolute;width:115px;height:115px;border-radius:50%;right:-72px;top:-72px;background:rgba(0,120,212,.075);z-index:0;transition:transform .35s ease,opacity .35s ease}
+    .hw-task-list .task-card:hover,.hw-task-list .task-card:focus-visible{transform:translateY(-2px);border-color:rgba(0,120,212,.40);box-shadow:0 16px 34px rgba(15,23,42,.105);outline:none}
+    .hw-task-list .task-card:hover::after{transform:scale(1.38)}
+    .hw-task-list .unterkachel-title{font-size:calc(15px * var(--font-scale));line-height:1.18;gap:0;flex:1;min-width:0}
+    .hw-task-list .unterkachel-title .task-number{display:inline-flex;width:54px;height:42px;border-radius:15px;align-items:center;justify-content:center;flex:0 0 auto;color:#fff;background:linear-gradient(135deg,#0078d4,#2563eb);border:0;box-shadow:0 9px 19px rgba(0,120,212,.22);font-size:calc(13px * var(--font-scale));font-weight:950;letter-spacing:-.02em}
+    .hw-task-list .unterkachel-title .task-name{display:inline!important;width:auto!important;height:auto!important;min-width:0;border:0!important;border-left:1px solid var(--line)!important;background:transparent!important;box-shadow:none!important;border-radius:0!important;justify-content:flex-start!important;margin-left:13px;padding-left:14px;font-size:inherit!important;color:var(--text);white-space:normal}
+    .hw-task-list .btn-link{width:auto;height:42px;padding:0 14px;border-radius:15px;gap:8px;font-size:calc(11px * var(--font-scale));font-weight:850;background:linear-gradient(135deg,#0078d4,#2563eb);box-shadow:0 9px 19px rgba(37,99,235,.20)}
+    .hw-task-list .task-card.task-done{border-color:rgba(16,185,129,.34);box-shadow:0 10px 26px rgba(16,185,129,.08)}
+    .hw-task-list .task-card.task-done::before{opacity:1;animation:completionSweep .7s cubic-bezier(.2,.9,.2,1) both}
+    .hw-task-list .task-card.task-done::after{background:rgba(16,185,129,.11)}
+    .hw-task-list .task-card.task-done .task-number{background:linear-gradient(135deg,#059669,#34d399);box-shadow:0 9px 20px rgba(16,185,129,.23)}
+    .hw-task-list .task-card.task-done .task-name{border-left-color:rgba(16,185,129,.32)!important}
+    .hw-task-list .task-card.task-done .btn-link{background:linear-gradient(135deg,#059669,#10b981)!important;box-shadow:0 9px 20px rgba(16,185,129,.22)!important}
+    .hw-task-list .task-check{font-size:18px;font-weight:950;line-height:1;animation:checkPop .42s cubic-bezier(.2,1.3,.3,1) both}
+    a.btn-link:empty{display:none!important}
+    .silent-card-link{cursor:pointer}
+    .hw-task-list .task-card:nth-child(2){animation-delay:.035s}.hw-task-list .task-card:nth-child(3){animation-delay:.07s}.hw-task-list .task-card:nth-child(4){animation-delay:.105s}.hw-task-list .task-card:nth-child(5){animation-delay:.14s}.hw-task-list .task-card:nth-child(6){animation-delay:.175s}.hw-task-list .task-card:nth-child(7){animation-delay:.21s}.hw-task-list .task-card:nth-child(8){animation-delay:.245s}.hw-task-list .task-card:nth-child(9){animation-delay:.28s}
+    @keyframes taskCardIn{from{opacity:0;transform:translateY(12px) scale(.988)}to{opacity:1;transform:none}}@keyframes completionSweep{from{transform:scaleX(0);opacity:0}to{transform:scaleX(1);opacity:1}}@keyframes checkPop{from{opacity:0;transform:scale(.4) rotate(-18deg)}to{opacity:1;transform:none}}
+    @media(max-width:560px){.hw-task-list .task-card{min-height:60px;padding:9px 10px;border-radius:19px}.hw-task-list .btn-link{min-width:62px;height:40px;padding:0 11px;border-radius:14px}.hw-task-list .unterkachel-title .task-number{width:46px;height:38px;border-radius:13px}.hw-task-list .unterkachel-title .task-name{margin-left:10px;padding-left:11px}.hw-task-list .task-card::before{inset:0 0 0 44%}}
+    @media(prefers-reduced-motion:reduce){.hw-task-list .task-card,.hw-task-list .task-card::before,.hw-task-list .task-check{animation:none!important;transition:none!important}}
+
+    /* OneDrive Folder Preview (from i.html) */
+    .path {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted);
+      font-size: calc(13px * var(--font-scale));
+      margin-bottom: 10px;
+    }
+
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 36px 1fr auto;
+      align-items: center;
+      min-height: 42px;
+      padding: 0 12px;
+      border-bottom: 1px solid var(--line);
+      gap: 8px;
+    }
+
+    .row:last-child { border-bottom: 0; }
+
+    .row.header {
+      min-height: 34px;
+      font-size: calc(12px * var(--font-scale));
+      font-weight: 600;
+      color: var(--muted);
+      background: var(--card-soft);
+    }
+
+    .folder {
+      width: 22px;
+      height: 15px;
+      border-radius: 2px 3px 3px 3px;
+      background: linear-gradient(#ffd96a, var(--yellow));
+      position: relative;
+      box-shadow: inset 0 -1px 0 rgba(0,0,0,.12);
+    }
+
+    .folder::before {
+      content: "";
+      position: absolute;
+      left: 2px;
+      top: -4px;
+      width: 9px;
+      height: 5px;
+      border-radius: 2px 2px 0 0;
+      background: var(--yellow-dark);
+    }
+
+    .name {
+      font-size: calc(14px * var(--font-scale));
+      font-weight: 500;
+    }
+
+    .count {
+      color: var(--muted);
+      font-size: calc(13px * var(--font-scale));
+    }
+
+    /* ACCOUNTS Graphic */
+    .accounts-graphic {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .account-card {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 14px;
+      background: var(--card-soft);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      text-decoration: none;
+      color: inherit;
+      cursor: pointer;
+      transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease;
+    }
+
+    .account-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow);
+    }
+
+    .account-card.google {
+      border-top: 3px solid var(--google-blue);
+    }
+
+    .account-card.microsoft {
+      border-top: 3px solid var(--ms-blue);
+    }
+
+    .account-logo {
+      width: 44px;
+      height: 44px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .account-title {
+      font-size: calc(15px * var(--font-scale));
+      font-weight: 700;
+      margin: 0 0 4px 0;
+    }
+
+    .account-desc {
+      font-size: calc(12px * var(--font-scale));
+      color: var(--muted);
+      line-height: 1.35;
+      margin: 0 0 10px 0;
+    }
+
+    .account-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      justify-content: center;
+    }
+
+    .badge {
+      font-size: calc(11px * var(--font-scale));
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: var(--card);
+      border: 1px solid var(--line);
+      font-weight: 600;
+    }
+
+    .badge-link {
+      font-size: calc(12px * var(--font-scale));
+      padding: 5px 10px;
+      border-radius: 8px;
+      background: var(--card);
+      border: 1px solid var(--line);
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: background .15s ease, border-color .15s ease, transform .15s ease, color .15s ease;
+    }
+
+    .badge-link:hover {
+      background: var(--blue-soft);
+      border-color: var(--blue);
+      color: var(--blue);
+      transform: translateY(-1px);
+    }
+
+    /* IT Hardware Grid */
+    .hardware-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .hw-item {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 12px;
+      text-align: center;
+    }
+
+    .hw-icon {
+      font-size: 24px;
+      margin-bottom: 6px;
+    }
+
+    .hw-title {
+      font-size: calc(13px * var(--font-scale));
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .hw-sub {
+      font-size: calc(11px * var(--font-scale));
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    @media (max-width: 768px) {
+      .columns-grid,
+      .columns-grid.single-col { grid-template-columns: 1fr; }
+      .columns-grid.single-col { justify-content: stretch; }
+      .accounts-graphic { grid-template-columns: 1fr; }
+    }
+
+    .site-footer {
+      margin-top: 60px;
+      padding: 32px 20px 48px 20px;
+      border-top: 1px solid var(--line);
+      text-align: center;
+    }
+
+    .footer-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .copyright {
+      font-size: calc(13px * var(--font-scale));
+      font-weight: 600;
+      color: var(--muted);
+      letter-spacing: 0.3px;
+    }
+
+    .footer-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: calc(13px * var(--font-scale));
+      font-weight: 600;
+      color: var(--blue);
+      text-decoration: none;
+      padding: 6px 16px;
+      border-radius: 20px;
+      background: var(--blue-soft);
+      border: 1px solid rgba(0, 120, 212, 0.15);
+      transition: all 0.2s ease;
+    }
+
+    .footer-link:hover {
+      background: var(--blue);
+      color: #ffffff;
+      border-color: var(--blue);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 120, 212, 0.25);
+    }
+  </style>
+</head>
+<body data-theme="light">
+  <main>
+    <!-- Topbar & Settings -->
+    <div class="topbar">
+      <div class="site-brand">
+        <div class="brand-icon">IB</div>
+        <div>
+          <h1 class="brand-title">Informatische Bildung</h1>
+        </div>
+      </div>
+
+      <button class="gear-btn" id="gearBtn" aria-label="Einstellungen öffnen" title="Einstellungen">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0l.06.06a2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </button>
+
+      <div class="settings-panel" id="settingsPanel">
+        <p class="settings-title">Einstellungen</p>
+
+        <div class="settings-row">
+          <span class="settings-label">Dunkles Design</span>
+          <label class="switch">
+            <input type="checkbox" id="themeToggle" />
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="settings-row font-size-row">
+          <label class="settings-label">Klassen-Ansicht</label>
+          <div class="class-filter-buttons">
+            <button class="filter-btn active" data-val="all">Alle</button>
+            <button class="filter-btn" data-val="b24">B24</button>
+            <button class="filter-btn" data-val="b25">B25</button>
+          </div>
+        </div>
+
+        <div class="settings-row font-size-row">
+          <div class="font-size-heading">
+            <label class="settings-label" for="fontSizeRange">Schriftgrösse</label>
+            <output class="font-size-value" id="fontSizeValue" for="fontSizeRange">100%</output>
+          </div>
+          <input class="font-size-range" id="fontSizeRange" type="range" min="80" max="250" value="100" step="5" />
+          <div class="font-size-limits">
+            <span aria-hidden="true">80%</span>
+            <button type="button" id="resetFontSizeBtn" class="reset-font-btn" aria-label="Schriftgrösse auf 100% zurücksetzen">Reset</button>
+            <span aria-hidden="true">250%</span>
+          </div>
+        </div>
+
+        <div style="margin-top: 8px; text-align: center;">
+          <span style="font-size: 9px; color: var(--muted); opacity: 0.18; font-family: monospace; letter-spacing: 0.8px; user-select: none;">IB-U V2.0.1</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content: Two Columns -->
+    <div class="columns-grid">
+      
+      <!-- LEFT COLUMN: B24 -->
+      <section aria-label="Klasse B24" id="col-b24">
+        <div class="column-header">
+          <span class="class-badge">B24</span>
+          <h2 class="column-title">Klasse B24</h2>
+        </div>
+
+        <!-- Tile 1: IT Hardware -->
+        <div class="kachel" id="hwKachel">
+          <div class="kachel-header" onclick="toggleKachel(this)">
+            <div class="kachel-title-wrap">
+              <div class="kachel-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+              </div>
+              <div>
+                <h3 class="kachel-title">IT Hardware</h3>
+                <p class="kachel-subtitle">Computeraufbau &amp; Komponenten</p>
+              </div>
+            </div>
+            <div class="toggle-arrow">▼</div>
+          </div>
+
+          <div class="kachel-body">
+            <div class="unterkacheln hw-task-list">
+              <!-- Unterkachel: A1 IT-Hardware Memory -->
+              <div class="unterkachel task-card">
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px;">
+                  <div>
+                    <h4 class="unterkachel-title" id="title-A1" style="margin-bottom: 2px;">
+                       <span class="task-number">A1</span><span class="task-name">IT-Hardware Memory</span>
+                    </h4>
+                  </div>
+                  <a href="hw/A1.html" target="_blank" rel="noopener" class="btn-link" title="In neuem Tab öffnen" aria-label="In neuem Tab öffnen"></a>
+                </div>
+              </div>
+
+              <!-- Unterkachel: A2 EVA Prinzip -->
+              <div class="unterkachel task-card">
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px;">
+                  <div>
+                    <h4 class="unterkachel-title" id="title-A2" style="margin-bottom: 2px;">
+                       <span class="task-number">A2</span><span class="task-name">Das EVA-Prinzip</span>
+                    </h4>
+                  </div>
+                  <a href="hw/A2.html" target="_blank" rel="noopener" class="btn-link" title="In neuem Tab öffnen" aria-label="In neuem Tab öffnen"></a>
+                </div>
+              </div>
+
+              <!-- Unterkachel: A3 Hardware -->
+              <div class="unterkachel task-card">
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px;">
+                  <div>
+                    <h4 class="unterkachel-title" id="title-A3" style="margin-bottom: 2px;">
+                       <span class="task-number">A3</span><span class="task-name">Computeraufbau</span>
+                    </h4>
+                  </div>
+                  <a href="hw/A3.html" target="_blank" rel="noopener" class="btn-link" title="In neuem Tab öffnen" aria-label="In neuem Tab öffnen"></a>
+                </div>
+              </div>
+
+              <!-- Unterkachel: A4 Anschlüsse & Kabel -->
+              <div class="unterkachel task-card">
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px;">
+                  <div>
+                    <h4 class="unterkachel-title" id="title-A4" style="margin-bottom: 2px;">
+                       <span class="task-number">A4</span><span class="task-name">Anschlüsse &amp; PC-Kabel</span>
+                    </h4>
+                  </div>
+                  <a href="hw/A4.html" target="_blank" rel="noopener" class="btn-link" title="In neuem Tab öffnen" aria-label="In neuem Tab öffnen"></a>
+                </div>
+              </div>
+
+              <!-- Unterkachel: A5 Schnittstellen & PC-Kabel -->
+              <div class="unterkachel task-card">
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px;">
+                  <div>
+                    <h4 class="unterkachel-title" id="title-A5" style="margin-bottom: 2px;">
+                       <span class="task-number">A5</span><span class="task-name">Schnittstellen &amp; PC-Kabel</span>
+                    </h4>
+                  </div>
+                  <a href="hw/A5.html" target="_blank" rel="noopener" class="btn-link" title="In neuem Tab öffnen" aria-label="In neuem Tab öffnen"></a>
+                </div>
+              </div>
+
+              <!-- Unterkachel: A6 Mainboard-Anschlüsse -->
+              <div class="unterkachel task-card">
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px;">
+                  <div>
+                    <h4 class="unterkachel-title" id="title-A6" style="margin-bottom: 2px;">
+                       <span class="task-number">A6</span><span class="task-name">Mainboard-Anschlüsse</span>
+                    </h4>
+                  </div>
+                  <a href="hw/A6.html" target="_blank" rel="noopener" class="btn-link" title="In neuem Tab öffnen" aria-label="In neuem Tab öffnen"></a>
+                </div>
+              </div>
+
+              <!-- Unterkachel: A7 TROUBLESHOOTER -->
+              <div class="unterkachel task-card">
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px;">
+                  <div>
+                    <h4 class="unterkachel-title" id="title-A7" style="margin-bottom: 2px;">
+                       <span class="task-number">A7</span><span class="task-name">TROUBLESHOOTER</span>
+                    </h4>
+                  </div>
+                  <a href="hw/A7.html" target="_blank" rel="noopener" class="btn-link" title="In neuem Tab öffnen" aria-label="In neuem Tab öffnen"></a>
+                </div>
+              </div>
+
+              <!-- Unterkachel: A8 EVA-Repetition -->
+              <div class="unterkachel task-card">
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px;">
+                  <div>
+                    <h4 class="unterkachel-title" id="title-A8" style="margin-bottom: 2px;">
+                       <span class="task-number">A8</span><span class="task-name">EVA-Repetition</span>
+                    </h4>
+                  </div>
+                  <a href="hw/A8.html" target="_blank" rel="noopener" class="btn-link" title="In neuem Tab öffnen" aria-label="In neuem Tab öffnen"></a>
+                </div>
+              </div>
+
+              <!-- Unterkachel: A9 EVA-Szenarien -->
+              <div class="unterkachel task-card">
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px;">
+                  <div>
+                    <h4 class="unterkachel-title" id="title-A9" style="margin-bottom: 2px;">
+                       <span class="task-number">A9</span><span class="task-name">EVA-Szenarien</span>
+                    </h4>
+                  </div>
+                  <a href="hw/A9.html" target="_blank" rel="noopener" class="btn-link" title="In neuem Tab öffnen" aria-label="In neuem Tab öffnen"></a>
+                </div>
+              </div>
+
+
+            </div>
+          </div>
+        </div>
+
+                <!-- Tile 2: Vortrag & Präsentation -->
+        <div class="kachel" id="vortragKachel">
+          <div class="kachel-header" onclick="toggleKachel(this)">
+            <div class="kachel-title-wrap">
+              <div class="kachel-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
+              </div>
+              <div>
+                <h3 class="kachel-title">Vortrag Hardware Komponente</h3>
+                <p class="kachel-subtitle">Auftrag, Anforderungen &amp; Themenpools</p>
+              </div>
+            </div>
+            <div class="toggle-arrow">▼</div>
+          </div>
+
+          <div class="kachel-body">
+            <div style="display: flex; flex-direction: column; gap: 14px; margin-top: 14px;">
+
+              <!-- Header Bar with Quick Specs -->
+              <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; padding: 12px; background: var(--card); border: 1px solid var(--line); border-radius: 10px;">
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                  <span class="badge" style="background: var(--blue-soft); color: var(--blue);">⏱️ Solo: mind. 5 Min</span>
+                  <span class="badge" style="background: var(--blue-soft); color: var(--blue);">⏱️ 2er-Team: mind. 8 Min</span>
+                  <span class="badge" style="background: #eefaf2; color: #107c41; border-color: #bde7cf;">📁 Abgabe: PPTX oder HTML</span>
+                </div>
+              </div>
+
+                                                        <!-- Content Checklist -->
+              <div style="background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 14px;">
+                <h4 style="font-size: calc(14px * var(--font-scale)); font-weight: 700; margin: 0 0 8px 0; color: var(--text);">
+                  🎤 Inhaltliche Fragen (Checkliste):
+                </h4>
+                <ul style="margin: 0; padding-left: 18px; font-size: calc(13px * var(--font-scale)); color: var(--text); line-height: 1.5;">
+                  <li><strong>Funktion &amp; Aufgabe:</strong> Welche Funktion hat eure Hardware-Komponente?</li>
+                  <li><strong>Fachbegriffe:</strong> Welche wichtigen Begriffe &amp; Kennzahlen muss man kennen?</li>
+                  <li><strong>Einsatzbereich:</strong> Wo und wofür wird die Komponente im Computer eingesetzt?</li>
+                  <li><strong>Bedeutung für den PC:</strong> Warum ist die Komponente für das Funktionieren des PCs wichtig?</li>
+                  <li><strong>Funktionsweise:</strong> Wie arbeitet die Komponente im Hintergrund?</li>
+                  <li><strong>Verständliche Präsentation:</strong> Erklärt euer Thema so anschaulich, dass die ganze Klasse es versteht.</li>
+                </ul>
+              </div>
+
+              <!-- Solo Topics -->
+              <div style="background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 14px;">
+                <h4 style="font-size: calc(14px * var(--font-scale)); font-weight: 700; margin: 0 0 8px 0; color: var(--text);">
+                  👤 Mögliche Solo-Themen (Einzelarbeit):
+                </h4>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px; font-size: calc(12px * var(--font-scale));">
+                  <div style="padding: 8px; background: var(--card-soft); border: 1px solid var(--line); border-radius: 8px;">
+                    <strong>🧠 CPU / Prozessor</strong><br><span style="color: var(--muted);">Zentrale Recheneinheit &amp; Taktfrequenz</span>
+                  </div>
+                  <div style="padding: 8px; background: var(--card-soft); border: 1px solid var(--line); border-radius: 8px;">
+                    <strong>🎨 Grafikkarte (GPU)</strong><br><span style="color: var(--muted);">Grafikberechnung &amp; Bildausgabe</span>
+                  </div>
+                  <div style="padding: 8px; background: var(--card-soft); border: 1px solid var(--line); border-radius: 8px;">
+                    <strong>🔌 Mainboard</strong><br><span style="color: var(--muted);">Hauptplatine &amp; Verbindungszentrale</span>
+                  </div>
+                  <div style="padding: 8px; background: var(--card-soft); border: 1px solid var(--line); border-radius: 8px;">
+                    <strong>⚡ RAM (Arbeitsspeicher)</strong><br><span style="color: var(--muted);">Flüchtiger Schnellspeicher</span>
+                  </div>
+                  <div style="padding: 8px; background: var(--card-soft); border: 1px solid var(--line); border-radius: 8px;">
+                    <strong>🚀 SSD / HDD Speicher</strong><br><span style="color: var(--muted);">Dauerhafter Massenspeicher</span>
+                  </div>
+                  <div style="padding: 8px; background: var(--card-soft); border: 1px solid var(--line); border-radius: 8px;">
+                    <strong>🔋 Netzteil (PSU)</strong><br><span style="color: var(--muted);">Stromversorgung &amp; Transformation</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 2-Person Team Topics -->
+              <div style="background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 14px;">
+                <h4 style="font-size: calc(14px * var(--font-scale)); font-weight: 700; margin: 0 0 8px 0; color: var(--text);">
+                  👥 Mögliche 2er-Team-Themen:
+                </h4>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px; font-size: calc(12px * var(--font-scale));">
+                  <div style="padding: 8px; background: var(--card-soft); border: 1px solid var(--line); border-radius: 8px;">
+                    <strong>🎮 GPU + Monitor-Anschlüsse</strong><br><span style="color: var(--muted);">HDMI, DisplayPort, DVI, VGA</span>
+                  </div>
+                  <div style="padding: 8px; background: var(--card-soft); border: 1px solid var(--line); border-radius: 8px;">
+                    <strong>🔌 Mainboard + Anschlüsse</strong><br><span style="color: var(--muted);">Sockel, PCIe, SATA, M.2, Strom</span>
+                  </div>
+                  <div style="padding: 8px; background: var(--card-soft); border: 1px solid var(--line); border-radius: 8px;">
+                    <strong>📏 RAM + SSD/HDD</strong><br><span style="color: var(--muted);">Arbeitsspeicher vs. Massenspeicher</span>
+                  </div>
+                  <div style="padding: 8px; background: var(--card-soft); border: 1px solid var(--line); border-radius: 8px;">
+                    <strong>⚡ Netzteil + Stromversorgung</strong><br><span style="color: var(--muted);">Watt, Effizienz, Kabel management</span>
+                  </div>
+                  <div style="padding: 8px; background: var(--card-soft); border: 1px solid var(--line); border-radius: 8px;">
+                    <strong>🌬️ Gehäuse + Airflow/Kühlung</strong><br><span style="color: var(--muted);">Lüfter, Luftstrom, Staubfilter</span>
+                  </div>
+                  <div style="padding: 8px; background: var(--card-soft); border: 1px solid var(--line); border-radius: 8px;">
+                    <strong>❄️ CPU, CPU-Kühlung + Paste</strong><br><span style="color: var(--muted);">Prozessor, Luft- &amp; Wasserkühlung, Wärmeleitpaste</span>
+                  </div>
+                  <div style="padding: 8px; background: var(--card-soft); border: 1px solid var(--line); border-radius: 8px;">
+                    <strong>💻 Laptop vs. Desktop-PC</strong><br><span style="color: var(--muted);">Unterschiede, Leistung, Akku</span>
+                  </div>
+                  <div style="padding: 8px; background: var(--card-soft); border: 1px solid var(--line); border-radius: 8px;">
+                    <strong>📱 Smartphone vs. PC-Hardware</strong><br><span style="color: var(--muted);">SoC, Kamera vs. CPU/GPU/RAM</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Evaluation Rubric / Bewertungsraster -->
+              <div style="background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 14px;">
+                <h4 style="font-size: calc(14px * var(--font-scale)); font-weight: 700; margin: 0 0 10px 0; color: var(--text); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px;">
+                  <span>📊 Bewertungskriterien</span>
+                  <span class="badge" style="background: var(--blue-soft); color: var(--blue);">Max. 12 P (+1 P Bonus) = Note 6.0</span>
+                </h4>
+                
+                <div style="overflow-x: auto;">
+                  <table style="width: 100%; border-collapse: collapse; font-size: calc(12.5px * var(--font-scale)); text-align: left;">
+                    <thead>
+                      <tr style="background: var(--card-soft); border-bottom: 2px solid var(--line);">
+                        <th style="padding: 8px 12px; font-weight: 700; color: var(--text);">Kriterium</th>
+                        <th style="padding: 8px 12px; font-weight: 700; color: var(--blue); text-align: right;">Punkte</th>
+                      </tr>
+                    </thead>
+                    <tbody style="color: var(--text);">
+                      <tr style="border-bottom: 1px solid var(--line);">
+                        <td style="padding: 7px 12px;"><strong>Zeitvorgabe</strong> (Einhaltung 5–8 Min.)</td>
+                        <td style="padding: 7px 12px; text-align: right; font-weight: 700;">1 P</td>
+                      </tr>
+                      <tr style="border-bottom: 1px solid var(--line);">
+                        <td style="padding: 7px 12px;"><strong>Folien/Inhalt</strong> (Vollständigkeit &amp; Richtigkeit)</td>
+                        <td style="padding: 7px 12px; text-align: right; font-weight: 700; color: var(--blue);">6 P</td>
+                      </tr>
+                      <tr style="border-bottom: 1px solid var(--line);">
+                        <td style="padding: 7px 12px;"><strong>Design/Lesbarkeit</strong> (Struktur &amp; Layout)</td>
+                        <td style="padding: 7px 12px; text-align: right; font-weight: 700;">1 P</td>
+                      </tr>
+                      <tr style="border-bottom: 1px solid var(--line);">
+                        <td style="padding: 7px 12px;"><strong>Freies Sprechen</strong> (Standardsprache oder Englisch)</td>
+                        <td style="padding: 7px 12px; text-align: right; font-weight: 700;">1 P</td>
+                      </tr>
+                      <tr style="border-bottom: 1px solid var(--line);">
+                        <td style="padding: 7px 12px;"><strong>Einbezug Audienz</strong> (Klasse aktivieren/einbeziehen)</td>
+                        <td style="padding: 7px 12px; text-align: right; font-weight: 700;">1 P</td>
+                      </tr>
+                      <tr style="border-bottom: 1px solid var(--line);">
+                        <td style="padding: 7px 12px;"><strong>Fragen</strong> (Beantwortung von Fachfragen)</td>
+                        <td style="padding: 7px 12px; text-align: right; font-weight: 700;">2 P</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <!-- Bonus Point -->
+                <div style="margin-top: 10px; padding: 10px 12px; background: #eefaf2; border: 1px solid #bde7cf; border-radius: 8px; font-size: calc(12px * var(--font-scale)); color: #107c41;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; font-weight: 700; margin-bottom: 4px;">
+                    <span>🌟 Bonuspunkt (Highlight)</span>
+                    <span>+1 P</span>
+                  </div>
+                  <ul style="margin: 0; padding-left: 16px; line-height: 1.4;">
+                    <li>Team sticht heraus</li>
+                    <li>Besonders kreativ</li>
+                    <li><em>"Das wird mir im Kopf bleiben, weil ..."</em></li>
+                  </ul>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- Tile 3: Fleissnote -->
+        <div class="kachel" id="fleissnoteKachel">
+          <div class="kachel-header" onclick="toggleKachel(this)">
+            <div class="kachel-title-wrap">
+              <div class="kachel-icon" style="color: #d59b00; background: rgba(249, 198, 66, 0.15);">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+              </div>
+              <div>
+                <h3 class="kachel-title">Fleissnote</h3>
+                <p class="kachel-subtitle">A1–A12 bearbeiten &amp; abgeben</p>
+              </div>
+            </div>
+            <div class="toggle-arrow">▼</div>
+          </div>
+
+          <div class="kachel-body">
+            <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 14px;">
+              
+              <div style="background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 14px;">
+                <div style="display: flex; flex-direction: column; gap: 8px; font-size: calc(13px * var(--font-scale));">
+                  <div style="padding: 10px 12px; background: var(--card-soft); border: 1px solid var(--line); border-radius: 8px;">
+                    <strong style="color: var(--blue);">A1.PDF</strong>
+                    <span style="color: var(--text); margin-left: 6px;">3 Modi abgeschlossen</span>
+                  </div>
+
+                  <div style="padding: 10px 12px; background: var(--card-soft); border: 1px solid var(--line); border-radius: 8px;">
+                    <strong style="color: var(--blue);">A2.PDF</strong>
+                    <span style="color: var(--text); margin-left: 6px;">Arbeitsblatt zu 100% ausgefüllt</span>
+                  </div>
+
+                  <div style="padding: 10px 12px; background: var(--card-soft); border: 1px solid var(--line); border-radius: 8px;">
+                    <strong style="color: var(--blue);">A3.PDF</strong>
+                    <span style="color: var(--text); margin-left: 6px;">Funktionen aller 14 Komponenten ausgefüllt</span>
+                  </div>
+
+                  <div style="padding: 10px 12px; background: var(--card-soft); border: 1px solid var(--line); border-radius: 8px;">
+                    <strong style="color: var(--blue);">A4.PDF</strong>
+                    <span style="color: var(--text); margin-left: 6px;">16/16 Anschlüsse richtig beantwortet</span>
+                  </div>
+
+                  <div style="padding: 10px 12px; background: var(--card-soft); border: 1px solid var(--line); border-radius: 8px;">
+                    <strong style="color: var(--blue);">A5.PDF</strong>
+                    <span style="color: var(--text); margin-left: 6px;">Verwendung aller 16 Anschlüsse erklärt</span>
+                  </div>
+
+                  <div style="padding: 10px 12px; background: var(--card-soft); border: 1px solid var(--line); border-radius: 8px;">
+                    <strong style="color: var(--blue);">A6.DOCX</strong>
+                    <span style="color: var(--text); margin-left: 6px;">Mainboard-Anschlüsse vollständig bearbeitet</span>
+                  </div>
+
+                  <div style="padding: 10px 12px; background: var(--card-soft); border: 1px solid var(--line); border-radius: 8px;">
+                    <strong style="color: var(--blue);">A7.PNG / PDF</strong>
+                    <span style="color: var(--text); margin-left: 6px;">7/7 Troubleshooter-Fälle, jeweils mindestens Bronze</span>
+                  </div>
+
+                  <div style="padding: 10px 12px; background: var(--card-soft); border: 1px solid var(--line); border-radius: 8px;">
+                    <strong style="color: var(--blue);">A8.PDF</strong>
+                    <span style="color: var(--text); margin-left: 6px;">Mindestens 12/15 EVA-Zuordnungen richtig</span>
+                  </div>
+
+                  <div style="padding: 10px 12px; background: var(--card-soft); border: 1px solid var(--line); border-radius: 8px;">
+                    <strong style="color: var(--blue);">A9.PDF</strong>
+                    <span style="color: var(--text); margin-left: 6px;">Mindestens 8/12 Alltagsszenarien richtig</span>
+                  </div>
+
+                  <div style="padding: 10px 12px; background: var(--card-soft); border: 1px dashed var(--line); border-radius: 8px; opacity: .7; display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;">
+                    <strong style="color: var(--muted);">A10</strong>
+                    <span class="badge" style="background: var(--card); color: var(--muted); border-color: var(--line);">Noch nicht verfügbar</span>
+                  </div>
+
+                  <div style="padding: 10px 12px; background: var(--card-soft); border: 1px dashed var(--line); border-radius: 8px; opacity: .7; display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;">
+                    <strong style="color: var(--muted);">A11</strong>
+                    <span class="badge" style="background: var(--card); color: var(--muted); border-color: var(--line);">Noch nicht verfügbar</span>
+                  </div>
+
+                  <div style="padding: 10px 12px; background: var(--card-soft); border: 1px dashed var(--line); border-radius: 8px; opacity: .7; display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;">
+                    <strong style="color: var(--muted);">A12</strong>
+                    <span class="badge" style="background: var(--card); color: var(--muted); border-color: var(--line);">Noch nicht verfügbar</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Abgabe Box -->
+              <div style="background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 14px;">
+                <h4 style="font-size: calc(14px * var(--font-scale)); font-weight: 700; margin: 0 0 10px 0; color: var(--text); display: flex; align-items: center; gap: 6px;">
+                  <span>📤 Abgabe:</span>
+                </h4>
+                <div style="display: flex; flex-direction: column; gap: 8px; font-size: calc(13px * var(--font-scale));">
+                  <div style="display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: var(--card-soft); border: 1px solid var(--line); border-radius: 8px;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
+                    <span>Lade die generierten <strong>PDFs in deinen OneDrive-Ordner hoch</strong> und teile ihn mit deiner Informatiklehrperson</span>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: var(--card-soft); border: 1px solid var(--line); border-radius: 8px;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                    <span>oder sende die PDF-Dateien per <strong>E-Mail-Anhang</strong></span>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section aria-label="Klasse B25" id="col-b25">
+        <div class="column-header">
+          <span class="class-badge">B25</span>
+          <h2 class="column-title">Klasse B25</h2>
+        </div>
+
+        <!-- Tile 1: Tastenkombinationen -->
+        <div class="kachel open" id="tkKachel">
+          <div class="kachel-header" onclick="toggleKachel(this)">
+            <div class="kachel-title-wrap">
+              <div class="kachel-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 8h.01"/><path d="M10 8h.01"/><path d="M14 8h.01"/><path d="M18 8h.01"/><path d="M8 12h.01"/><path d="M12 12h.01"/><path d="M16 12h.01"/><path d="M7 16h10"/></svg>
+              </div>
+              <div>
+                <h3 class="kachel-title">Tastenkombinationen</h3>
+              </div>
+            </div>
+            <div class="toggle-arrow">▼</div>
+          </div>
+
+          <div class="kachel-body">
+            <div class="unterkacheln">
+              <div class="unterkachel">
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px;">
+                  <div>
+                    <h4 class="unterkachel-title" id="title-TK-Overview" style="margin-bottom: 2px;">
+                      Kurs-Übersicht
+                    </h4>
+                  </div>
+                  <a href="tk2/index.html" target="_blank" rel="noopener" class="btn-link" title="In neuem Tab öffnen" aria-label="In neuem Tab öffnen"></a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tile 2: Berufsorientierung -->
+        <div class="kachel" id="boKachel">
+          <div class="kachel-header" onclick="toggleKachel(this)">
+            <div class="kachel-title-wrap">
+              <div class="kachel-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+              </div>
+              <div>
+                <h3 class="kachel-title">Berufsorientierung</h3>
+                <p class="kachel-subtitle">Bewerbungsdossier</p>
+              </div>
+            </div>
+            <div class="toggle-arrow">▼</div>
+          </div>
+
+          <div class="kachel-body">
+            <div class="unterkacheln">
+              
+              <!-- Unterkachel: Ordnerstruktur BO -->
+              <div class="unterkachel">
+                <div class="unterkachel-head">
+                  <h4 class="unterkachel-title">
+                    <span>📁</span> Ordnerstruktur BO
+                  </h4>
+                  <a href="https://ib-onedrive.vercel.app" target="_blank" rel="noopener" class="btn-link" title="In neuem Tab öffnen" aria-label="In neuem Tab öffnen"></a>
+                </div>
+
+                <div class="path">
+                  <span>OneDrive</span> › <strong>Berufsorientierung</strong>
+                </div>
+
+                <div class="panel">
+                  <div class="row header">
+                    <div></div>
+                    <div>Name</div>
+                    <div class="count">Inhalt</div>
+                  </div>
+                  <div class="row">
+                    <div class="folder"></div>
+                    <div class="name">Bestätigungen &amp; Nachweise</div>
+                    <div class="count"></div>
+                  </div>
+                  <div class="row">
+                    <div class="folder"></div>
+                    <div class="name">Bewerbungen komplett</div>
+                    <div class="count"></div>
+                  </div>
+                  <div class="row">
+                    <div class="folder"></div>
+                    <div class="name">Lebenslauf</div>
+                    <div class="count"></div>
+                  </div>
+                  <div class="row">
+                    <div class="folder"></div>
+                    <div class="name">Motivationsschreiben</div>
+                    <div class="count"></div>
+                  </div>
+                  <div class="row">
+                    <div class="folder"></div>
+                    <div class="name">Resultate Check S2 &amp; S3</div>
+                    <div class="count"></div>
+                  </div>
+                  <div class="row">
+                    <div class="folder"></div>
+                    <div class="name">Rückmeldungen Betriebe</div>
+                    <div class="count"></div>
+                  </div>
+                  <div class="row">
+                    <div class="folder"></div>
+                    <div class="name">Titelblätter</div>
+                    <div class="count"></div>
+                  </div>
+                  <div class="row">
+                    <div class="folder"></div>
+                    <div class="name">Zeugnisse</div>
+                    <div class="count"></div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- Tile 2: Accounts (Eigenständige Kachel) -->
+        <div class="kachel" id="accountsKachel">
+          <div class="kachel-header" onclick="toggleKachel(this)">
+            <div class="kachel-title-wrap">
+              <div class="kachel-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              </div>
+              <div>
+                <h3 class="kachel-title">Accounts</h3>
+                <p class="kachel-subtitle">Microsoft und Google Account</p>
+              </div>
+            </div>
+            <div class="toggle-arrow">▼</div>
+          </div>
+
+          <div class="kachel-body">
+            <div class="accounts-graphic">
+              <!-- Microsoft Account (1st) -->
+              <div class="account-card microsoft">
+                <div class="account-logo">
+                  <svg width="34" height="34" viewBox="0 0 22 22">
+                    <rect x="0" y="0" width="10.2" height="10.2" fill="#F25022"/>
+                    <rect x="11.8" y="0" width="10.2" height="10.2" fill="#7FBA00"/>
+                    <rect x="0" y="11.8" width="10.2" height="10.2" fill="#00A4EF"/>
+                    <rect x="11.8" y="11.8" width="10.2" height="10.2" fill="#FFB900"/>
+                  </svg>
+                </div>
+                <h5 class="account-title">Microsoft Account</h5>
+                <p class="account-desc">vorname.nachname@sus.gsu-so.ch</p>
+                <div class="account-badges">
+                  <a href="https://portal.office.com" target="_blank" rel="noopener" class="badge-link">
+                    Office 365 ↗
+                  </a>
+                  <a href="https://gsusoch-my.sharepoint.com" target="_blank" rel="noopener" class="badge-link">
+                    OneDrive ↗
+                  </a>
+                  <a href="https://outlook.office.com/" target="_blank" rel="noopener" class="badge-link">
+                    Outlook ↗
+                  </a>
+                </div>
+              </div>
+
+              <!-- Google Account (2nd) -->
+              <div class="account-card google">
+                <div class="account-logo">
+                  <svg width="34" height="34" viewBox="0 0 24 24">
+                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                    <path fill="#FBBC05" d="M5.84 14.1c-.22-.66-.35-1.36-.35-2.1s.13-1.44.35-2.1V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.62z"/>
+                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+                  </svg>
+                </div>
+                <h5 class="account-title">Google Account</h5>
+                <p class="account-desc">vorname.nachname@gsu-schule.ch</p>
+                <div class="account-badges">
+                  <a href="https://gemini.google.com" target="_blank" rel="noopener" class="badge-link">
+                    Gemini ↗
+                  </a>
+                  <a href="https://drive.google.com" target="_blank" rel="noopener" class="badge-link">
+                    Drive ↗
+                  </a>
+                  <a href="https://mail.google.com" target="_blank" rel="noopener" class="badge-link">
+                    Gmail ↗
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+    </div>
+
+    <footer class="site-footer">
+      <div class="footer-container">
+        <div class="copyright">&copy; 2026 GSU</div>
+        <div style="display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:wrap;">
+          <a href="https://bo2026.vercel.app" target="_blank" rel="noopener" class="footer-link">
+            <span>BO 2026</span>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+          </a>
+          <a href="https://WAH2026.vercel.app" target="_blank" rel="noopener" class="footer-link">
+            <span>WAH 2026</span>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+          </a>
+        </div>
+      </div>
+    </footer>
+  </main>
+
+  <script>
+    const gearBtn = document.getElementById('gearBtn');
+    const settingsPanel = document.getElementById('settingsPanel');
+    const themeToggle = document.getElementById('themeToggle');
+    const fontSizeRange = document.getElementById('fontSizeRange');
+    const fontSizeValue = document.getElementById('fontSizeValue');
+
+    function saveKachelStates() {
+      const states = {};
+      document.querySelectorAll('.kachel[id]').forEach(k => {
+        states[k.id] = k.classList.contains('open');
+      });
+      localStorage.setItem('ib-kachel-states-v1', JSON.stringify(states));
+    }
+
+    function restoreKachelStates() {
+      try {
+        const stored = localStorage.getItem('ib-kachel-states-v1');
+        if (!stored) return;
+        const states = JSON.parse(stored);
+        document.querySelectorAll('.kachel[id]').forEach(k => {
+          if (k.id in states) {
+            k.classList.toggle('open', !!states[k.id]);
+          }
+        });
+      } catch (e) {}
+    }
+
+    function toggleKachel(headerEl) {
+      const kachel = headerEl.parentElement;
+      kachel.classList.toggle('open');
+      saveKachelStates();
+    }
+
+    function setFontSize(percent) {
+      const value = Math.min(250, Math.max(80, Number(percent) || 100));
+      document.documentElement.style.setProperty('--font-scale', value / 100);
+      fontSizeRange.value = value;
+      fontSizeValue.value = `${value}%`;
+      fontSizeValue.textContent = `${value}%`;
+      localStorage.setItem('ib-font-size', value);
+    }
+
+    gearBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      settingsPanel.classList.toggle('open');
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!settingsPanel.contains(e.target) && !gearBtn.contains(e.target)) {
+        settingsPanel.classList.remove('open');
+      }
+    });
+
+    fontSizeRange.addEventListener('input', () => setFontSize(fontSizeRange.value));
+
+    // Initialize
+    setFontSize(localStorage.getItem('ib-font-size') || 100);
+    restoreKachelStates();
+  </script>
+
+
+    
+
+
+    <!-- Global Unified Theme & Font Size Storage & Sync -->
+    <script>
+      (function() {
+        const THEME_KEY = 'ib-theme';
+        const FONT_KEY = 'ib-font-size';
+
+        // 1. Theme Management
+        function applyTheme(theme) {
+          const isDark = (theme === 'dark');
+          if (isDark) {
+            document.documentElement.classList.add('dark');
+            document.body.setAttribute('data-theme', 'dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+            document.body.setAttribute('data-theme', 'light');
+          }
+          const themeToggle = document.getElementById('themeToggle');
+          if (themeToggle) themeToggle.checked = isDark;
+          const themeIcon = document.getElementById('themeIcon');
+          if (themeIcon) themeIcon.className = isDark ? 'fa-solid fa-sun text-amber-400 text-sm' : 'fa-solid fa-moon text-sm';
+        }
+
+        function saveTheme(theme) {
+          localStorage.setItem(THEME_KEY, theme);
+          applyTheme(theme);
+        }
+
+        function initTheme() {
+          const saved = localStorage.getItem(THEME_KEY);
+          if (saved) {
+            applyTheme(saved);
+          } else {
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            applyTheme(prefersDark ? 'dark' : 'light');
+          }
+        }
+
+        // 2. Font Size Management
+        function applyFontSize(sizeVal) {
+          const val = Number(sizeVal) || 100;
+          const scale = val / 100;
+          document.documentElement.style.setProperty('--font-scale', scale);
+          document.documentElement.style.fontSize = val + '%';
+          const slider = document.getElementById('fontSizeRange');
+          if (slider) slider.value = val;
+          const valDisplay = document.getElementById('fontSizeValue');
+          if (valDisplay) {
+            valDisplay.value = `${val}%`;
+            valDisplay.textContent = `${val}%`;
+          }
+        }
+
+        function saveFontSize(sizeVal) {
+          const val = Number(sizeVal) || 100;
+          localStorage.setItem(FONT_KEY, val);
+          localStorage.setItem('onedrive_font_size', val);
+          applyFontSize(val);
+        }
+
+        function initFontSize() {
+          const saved = localStorage.getItem(FONT_KEY) || localStorage.getItem('onedrive_font_size') || 100;
+          applyFontSize(saved);
+        }
+
+        window.toggleDarkMode = function() {
+          const isCurrentlyDark = document.documentElement.classList.contains('dark') || document.body.getAttribute('data-theme') === 'dark';
+          saveTheme(isCurrentlyDark ? 'light' : 'dark');
+        };
+
+        window.setTheme = function(theme) {
+          saveTheme(theme);
+        };
+
+        window.setFontSize = function(val) {
+          saveFontSize(val);
+        };
+
+        // 3. Class Filter Management
+        const CLASS_FILTER_KEY = 'ib-class-filter';
+
+        function applyClassFilter(val) {
+          const colB24 = document.getElementById('col-b24');
+          const colB25 = document.getElementById('col-b25');
+          const grid = document.querySelector('.columns-grid');
+          const filterBtns = document.querySelectorAll('.filter-btn');
+
+          if (!colB24 || !colB25) return;
+          
+          filterBtns.forEach(btn => {
+            if (btn.dataset.val === val) {
+              btn.classList.add('active');
+            } else {
+              btn.classList.remove('active');
+            }
+          });
+
+          if (val === 'b24') {
+            colB24.classList.remove('hidden-col');
+            colB25.classList.add('hidden-col');
+            if (grid) grid.classList.add('single-col');
+          } else if (val === 'b25') {
+            colB24.classList.add('hidden-col');
+            colB25.classList.remove('hidden-col');
+            if (grid) grid.classList.add('single-col');
+          } else {
+            colB24.classList.remove('hidden-col');
+            colB25.classList.remove('hidden-col');
+            if (grid) grid.classList.remove('single-col');
+          }
+        }
+
+        function saveClassFilter(val) {
+          localStorage.setItem(CLASS_FILTER_KEY, val);
+          applyClassFilter(val);
+        }
+
+        function initClassFilter() {
+          const saved = localStorage.getItem(CLASS_FILTER_KEY) || 'all';
+          applyClassFilter(saved);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+          initTheme();
+          initFontSize();
+          
+          const themeToggle = document.getElementById('themeToggle');
+          if (themeToggle) {
+            themeToggle.addEventListener('change', function() {
+              saveTheme(themeToggle.checked ? 'dark' : 'light');
+            });
+          }
+
+          // --- Class Filter Logic ---
+          const filterBtns = document.querySelectorAll('.filter-btn');
+          filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+              saveClassFilter(btn.dataset.val);
+            });
+          });
+          
+          initClassFilter();
+          // ------------------------
+
+
+          const fontSlider = document.getElementById('fontSizeRange');
+          if (fontSlider) {
+            fontSlider.addEventListener('input', function() {
+              saveFontSize(fontSlider.value);
+            });
+          }
+
+          const resetFontBtn = document.getElementById('resetFontSizeBtn');
+          if (resetFontBtn) {
+            resetFontBtn.addEventListener('click', function() {
+              saveFontSize(100);
+            });
+          }
+        });
+
+        window.addEventListener('storage', function(e) {
+          if (e.key === THEME_KEY) {
+            if (e.newValue) applyTheme(e.newValue);
+          }
+          if (e.key === FONT_KEY || e.key === 'onedrive_font_size') {
+            if (e.newValue) applyFontSize(e.newValue);
+          }
+          if (e.key === 'ib-class-filter') {
+            if (e.newValue) applyClassFilter(e.newValue);
+          }
+        });
+      })();
+    </script>
+
+    <script>
+
+      function initPremiumTaskCards() {
+        document.querySelectorAll('#hwKachel .task-card').forEach(function(card) {
+          const link = card.querySelector('.btn-link');
+          const title = card.querySelector('.unterkachel-title');
+          if (!link || !title) return;
+          card.tabIndex = 0;
+          card.setAttribute('role', 'link');
+          card.setAttribute('aria-label', title.textContent.trim() + ' öffnen');
+          card.addEventListener('click', function(event) {
+            if (event.target.closest('.btn-link')) return;
+            link.click();
+          });
+          card.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault();
+              link.click();
+            }
+          });
+        });
+      }
+
+      function initSilentLaunchCards() {
+        document.querySelectorAll('#col-b25 .unterkachel').forEach(function(card) {
+          const link = card.querySelector('.btn-link');
+          const title = card.querySelector('.unterkachel-title');
+          if (!link || !title) return;
+          card.classList.add('silent-card-link');
+          card.tabIndex = 0;
+          card.setAttribute('role', 'link');
+          card.setAttribute('aria-label', title.textContent.trim() + ' öffnen');
+          card.addEventListener('click', function(event) {
+            if (event.target.closest('a')) return;
+            link.click();
+          });
+          card.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault();
+              link.click();
+            }
+          });
+        });
+      }
+
+      function checkCompletionStatus() {
+        const checkSvgHTML = '<span class="task-check" aria-hidden="true">✓</span>';
+
+        if (!document.getElementById('done-btn-style')) {
+           const style = document.createElement('style');
+           style.id = 'done-btn-style';
+           style.innerHTML = '.btn-link.btn-done { background: #10b981 !important; box-shadow: 0 2px 6px rgba(16, 185, 129, 0.25) !important; } .btn-link.btn-done:hover { background: #059669 !important; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35) !important; }';
+           document.head.appendChild(style);
+        }
+
+        function markDone(id) {
+          const titleEl = document.getElementById(id);
+          if (titleEl) {
+            const kachel = titleEl.closest('.unterkachel');
+            if (kachel) {
+              const btn = kachel.querySelector('.btn-link');
+              if (btn && !btn.classList.contains('btn-done')) {
+                btn.classList.add('btn-done');
+                btn.innerHTML = '<span class="btn-status-text">Erledigt</span>' + checkSvgHTML;
+                btn.title = 'Erfolgreich abgeschlossen! (Erneut öffnen)';
+                kachel.classList.add('task-done');
+                kachel.setAttribute('data-status', 'done');
+              }
+            }
+          }
+        }
+
+        try {
+          const a1Data = localStorage.getItem('memCompletedModes');
+          if (a1Data) {
+            const parsed = JSON.parse(a1Data);
+            if (Array.isArray(parsed) && parsed.length >= 3) markDone('title-A1');
+          }
+
+          const a2Data = localStorage.getItem('onedrive_a2_eva_worksheet_8sek');
+          if (a2Data) {
+            const parsed = JSON.parse(a2Data);
+            if (parsed && parsed.percent === 100) markDone('title-A2');
+          }
+
+          const a3Data = localStorage.getItem('onedrive_hardware_worksheet_8sek');
+          if (a3Data) {
+            const parsed = JSON.parse(a3Data);
+            if (parsed && parsed.percent === 100) markDone('title-A3');
+          }
+
+          const a4Passed = localStorage.getItem('a4_passed') === 'true';
+          const a4Data = localStorage.getItem('onedrive_a4_worksheet_8sek');
+          if (a4Passed || (a4Data && JSON.parse(a4Data).percent === 100)) markDone('title-A4');
+
+          const a5Data = localStorage.getItem('onedrive_a5_worksheet_8sek');
+          if (a5Data) {
+            const parsed = JSON.parse(a5Data);
+            if (parsed && parsed.percent === 100) markDone('title-A5');
+          }
+
+          const a6Data = localStorage.getItem('hw_autosave_A6.html');
+          if (a6Data) {
+            const parsed = JSON.parse(a6Data);
+            if (parsed && (parsed.manualDoneA6 === true || parsed.manualDoneA5 === true)) markDone('title-A6');
+          }
+
+          const a7Data = localStorage.getItem('hw_autosave_A7.html');
+          if (a7Data) {
+            const parsed = JSON.parse(a7Data);
+            if (parsed && parsed.manualDoneA7 === true) markDone('title-A7');
+          }
+
+          const a8Data = localStorage.getItem('onedrive_a8_eva_repetition_8sek');
+          if (a8Data) {
+            const parsed = JSON.parse(a8Data);
+            if (parsed && Number(parsed.bestFullScore) >= 12) markDone('title-A8');
+          }
+
+          const a9Data = localStorage.getItem('onedrive_a9_eva_scenarios_8sek');
+          if (a9Data) {
+            const parsed = JSON.parse(a9Data);
+            if (parsed && Number(parsed.bestScore) >= 8) markDone('title-A9');
+          }
+
+          let tkCourseDone = false;
+          const tkQuestData = localStorage.getItem('tk_quest_scores_v1');
+          const tkA4Data = localStorage.getItem('tk_a4_progress_v1');
+          const tkA5Data = localStorage.getItem('tk_a5_progress_v1');
+
+          if (tkQuestData && tkA4Data && tkA5Data) {
+            const q = JSON.parse(tkQuestData);
+            const a4Sets = JSON.parse(tkA4Data);
+            const a5Sets = JSON.parse(tkA5Data);
+            function attempts(entry) {
+              if (!entry) return 0;
+              if (typeof entry.attempts === 'number') return entry.attempts;
+              return typeof entry.first === 'number' ? 1 : 0;
+            }
+            const tkA1Done = (q.q3 || 0) >= 70;
+            const tkA2Done = (q.q6 || 0) >= 70;
+            const tkA3Done = q.q7 === 100;
+            const tkA4Done = ['A','B'].every(function (key) {
+              return attempts(a4Sets[key]) >= 2;
+            });
+            const tkA5Done = ['A','B','C','D'].every(function (key) {
+              return a5Sets[key] && typeof a5Sets[key].first === 'number';
+            });
+            tkCourseDone = tkA1Done && tkA2Done && tkA3Done && tkA4Done && tkA5Done;
+          }
+
+          if (tkCourseDone) {
+            markDone('title-TK-Overview');
+          }
+
+        } catch (e) {
+          console.error("Fehler beim Überprüfen des Fortschritts:", e);
+        }
+      }
+
+      document.addEventListener('DOMContentLoaded', function() {
+        initPremiumTaskCards();
+        initSilentLaunchCards();
+        checkCompletionStatus();
+      });
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) checkCompletionStatus();
+      });
+      window.addEventListener('focus', checkCompletionStatus);
+    </script>
+</body>
+</html>

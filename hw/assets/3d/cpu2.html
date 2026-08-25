@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Velocity Network CPU - 3D Product Inspector</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Three.js and OrbitControls -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #0d0f12;
+      color: #e2e8f0;
+      overflow: hidden;
+      user-select: none;
+    }
+
+    .font-mono-code {
+      font-family: 'Fira Code', monospace;
+    }
+
+    /* Glassmorphism styling */
+    .glass-panel {
+      background: rgba(18, 22, 28, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .glass-btn {
+      background: rgba(30, 41, 59, 0.6);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .glass-btn:hover {
+      background: rgba(212, 175, 55, 0.25);
+      border-color: rgba(212, 175, 55, 0.6);
+      color: #fff;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2);
+    }
+
+    .glass-btn.active {
+      background: rgba(212, 175, 55, 0.35);
+      border-color: #d4af37;
+      color: #ffd700;
+      box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(0,0,0,0.2);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(212, 175, 55, 0.4);
+      border-radius: 3px;
+    }
+
+    canvas {
+      outline: none;
+    }
+  </style>
+</head>
+<body class="w-screen h-screen relative flex flex-col justify-between p-0 m-0">
+
+  <header class="absolute top-4 left-4 right-4 z-10 flex flex-wrap justify-between items-center gap-3 pointer-events-none">
+    <div class="glass-panel px-5 py-3 rounded-xl pointer-events-auto flex items-center gap-4 shadow-2xl">
+      <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-yellow-500 to-amber-700 flex items-center justify-center shadow-lg shadow-amber-500/20">
+        <svg class="w-6 h-6 text-black font-bold" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 2L2 22h20L12 2zm0 4.5l6.5 13h-13L12 6.5z"/>
+        </svg>
+      </div>
+      <div>
+        <h1 class="text-lg font-bold tracking-wider text-white flex items-center gap-2">
+          VELOCITY NETWORK <span class="text-xs px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 font-mono-code font-normal">VA-C7 240 G</span>
+        </h1>
+        <p class="text-xs text-slate-400 font-mono-code">LGA1700 / AM5 DESKTOP PROCESSOR</p>
+      </div>
+    </div>
+
+    <!-- Right status badge -->
+    <div class="glass-panel px-4 py-2 rounded-xl pointer-events-auto flex items-center gap-3 text-xs font-mono-code">
+      <span class="inline-flex items-center gap-1.5 text-emerald-400">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        3D MODEL ACTIVE
+      </span>
+      <span class="text-slate-600">|</span>
+      <span class="text-slate-300" id="camera-angle-readout">VIEW: TOP-DOWN</span>
+    </div>
+  </header>
+
+  <!-- Canvas Container -->
+  <div id="canvas-container" class="w-full h-full absolute inset-0 z-0 cursor-grab active:cursor-grabbing"></div>
+
+  <footer class="absolute bottom-5 left-1/2 -translate-x-1/2 z-10 w-full max-w-2xl px-4 pointer-events-none">
+    <div class="glass-panel p-3 rounded-2xl pointer-events-auto shadow-2xl flex flex-col sm:flex-row items-center justify-between gap-3">
+
+      <!-- View Preset Buttons -->
+      <div class="flex items-center gap-2 w-full sm:w-auto justify-center">
+        <button id="btn-view-front" class="glass-btn active px-3 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5" title="View IHS Top Surface">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/></svg>
+          Front (IHS)
+        </button>
+        <button id="btn-view-back" class="glass-btn px-3 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5" title="View LGA Pins & Capacitors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          Back (LGA Pins)
+        </button>
+        <button id="btn-view-iso" class="glass-btn px-3 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5" title="3D Isometric Perspective">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+          Isometric
+        </button>
+      </div>
+
+      <div class="h-4 w-px bg-slate-700 hidden sm:block"></div>
+
+      <!-- Action Toggles -->
+      <div class="flex items-center gap-2 w-full sm:w-auto justify-center">
+        <button id="btn-rotate" class="glass-btn px-3 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+          Auto-Rotate
+        </button>
+        <button id="btn-explode" class="glass-btn px-3 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5" title="Lifts Heat Spreader to inspect die">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h8M8 12h8m-8 5h8"/></svg>
+          Explode View
+        </button>
+        <button id="btn-info" class="glass-btn px-3 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          Specs
+        </button>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- Interactive Inspector Tooltip -->
+  <div id="hover-tooltip" class="fixed pointer-events-none z-20 hidden glass-panel px-3 py-1.5 rounded-lg text-xs font-mono-code text-amber-300 shadow-xl border border-amber-500/30">
+    <span id="tooltip-text">IHS Heat Spreader</span>
+  </div>
+
+  <!-- Specs Details Drawer / Overlay -->
+  <div id="specs-modal" class="fixed inset-0 z-30 bg-black/60 backdrop-blur-md flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
+    <div class="glass-panel p-6 rounded-2xl max-w-lg w-full border border-amber-500/30 shadow-2xl relative">
+      <button id="btn-close-specs" class="absolute top-4 right-4 text-slate-400 hover:text-white transition">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-8 h-8 rounded bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold">V</div>
+        <h2 class="text-lg font-bold text-white">VELOCITY NETWORK CPU SPECS</h2>
+      </div>
+
+      <div class="space-y-3 font-mono-code text-xs text-slate-300">
+        <div class="flex justify-between py-1.5 border-b border-slate-800">
+          <span class="text-slate-400">PROCESSOR MODEL</span>
+          <span class="text-amber-400 font-bold">CORE VA-C7 240 G</span>
+        </div>
+        <div class="flex justify-between py-1.5 border-b border-slate-800">
+          <span class="text-slate-400">TECHNOLOGY</span>
+          <span>PREMIUM HEAT DISSIPATION TECH</span>
+        </div>
+        <div class="flex justify-between py-1.5 border-b border-slate-800">
+          <span class="text-slate-400">SOCKET COMPATIBILITY</span>
+          <span>LGA1700 / AM5</span>
+        </div>
+        <div class="flex justify-between py-1.5 border-b border-slate-800">
+          <span class="text-slate-400">ASSEMBLY LOCATION</span>
+          <span>MALAY</span>
+        </div>
+        <div class="flex justify-between py-1.5 border-b border-slate-800">
+          <span class="text-slate-400">BARCODE SERIAL (SN)</span>
+          <span>S%: VA-C7-00100</span>
+        </div>
+        <div class="flex justify-between py-1.5">
+          <span class="text-slate-400">PIN INTERFACE</span>
+          <span>LGA Contact Grid Array</span>
+        </div>
+      </div>
+
+      <div class="mt-6 pt-4 border-t border-slate-800/80 flex justify-end">
+        <button id="btn-close-specs-2" class="px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-black font-semibold text-xs transition">
+          Close Inspector
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript Three.js Application Logic -->
+  <script>
+    let scene, camera, renderer, controls;
+    let cpuGroup, ihsMesh, pcbMesh, lgaMesh, dieGroup, smdGroup;
+    let isAutoRotating = false;
+    let isExploded = false;
+    let raycaster, mouse;
+    let hoverTooltip, tooltipText;
+    let targetCameraPos = null;
+    let targetLookAt = new THREE.Vector3(0, 0, 0);
+
+    /**
+     * Creates the technical workspace grid ground plane texture.
+     */
+    function createWorkspaceGridTexture() {
+      const canvas = document.createElement('canvas');
+      canvas.width = 2048;
+      canvas.height = 2048;
+      const ctx = canvas.getContext('2d');
+
+      // Dark gray matte background
+      ctx.fillStyle = '#14171a';
+      ctx.fillRect(0, 0, 2048, 2048);
+
+      // Fine grid lines
+      ctx.strokeStyle = '#232a32';
+      ctx.lineWidth = 2;
+      const step = 64;
+      for (let x = 0; x <= 2048; x += step) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0); ctx.lineTo(x, 2048);
+        ctx.stroke();
+      }
+      for (let y = 0; y <= 2048; y += step) {
+        ctx.beginPath();
+        ctx.moveTo(0, y); ctx.lineTo(2048, y);
+        ctx.stroke();
+      }
+
+      // Technical coordinate crosshairs and labels (140, 120, MS, ST) matching reference image
+      ctx.strokeStyle = '#384452';
+      ctx.lineWidth = 3;
+      ctx.fillStyle = '#4a5768';
+      ctx.font = 'bold 26px "Fira Code", monospace';
+      
+      const majorStep = 256;
+      for (let x = majorStep; x < 2048; x += majorStep) {
+        for (let y = majorStep; y < 2048; y += majorStep) {
+          ctx.beginPath();
+          ctx.moveTo(x - 25, y); ctx.lineTo(x + 25, y);
+          ctx.moveTo(x, y - 25); ctx.lineTo(x, y + 25);
+          ctx.stroke();
+
+          // Coordinate numbering like 120, 140
+          const coordLabel = `${Math.floor(x / 10)}`;
+          ctx.fillText(coordLabel, x + 12, y - 12);
+
+          const symbol = ((x + y) / majorStep) % 2 === 0 ? 'MS' : 'ST';
+          ctx.fillText(symbol, x + 12, y + 32);
+        }
+      }
+
+      const texture = new THREE.CanvasTexture(canvas);
+      texture.wrapS = THREE.RepeatWrapping;
+      texture.wrapT = THREE.RepeatWrapping;
+      return texture;
+    }
+
+    /**
+     * STREAMING_CHUNK:Creating IHS texture to match reference image...
+     */
+    function createIHSTexture() {
+      const canvas = document.createElement('canvas');
+      canvas.width = 2048;
+      canvas.height = 2048;
+      const ctx = canvas.getContext('2d');
+
+      // Rich Brushed Gold Metallic Gradient Base
+      const grad = ctx.createLinearGradient(0, 0, 2048, 2048);
+      grad.addColorStop(0.0, '#dfb738');
+      grad.addColorStop(0.25, '#f8e8a6');
+      grad.addColorStop(0.5, '#d8b233');
+      grad.addColorStop(0.75, '#f3e197');
+      grad.addColorStop(1.0, '#9e7d10');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 2048, 2048);
+
+      // Fine Brushed Grain Streaks
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.08)';
+      for (let i = 0; i < 7000; i++) {
+        const y = Math.random() * 2048;
+        const h = 1 + Math.random() * 2;
+        ctx.fillRect(0, y, 2048, h);
+      }
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.06)';
+      for (let i = 0; i < 7000; i++) {
+        const y = Math.random() * 2048;
+        const h = 1 + Math.random() * 2;
+        ctx.fillRect(0, y, 2048, h);
+      }
+
+      // Perimeter Vignette Shading for 3D realism
+      const edgeGrad = ctx.createRadialGradient(1024, 1024, 700, 1024, 1024, 1024);
+      edgeGrad.addColorStop(0, 'rgba(0,0,0,0)');
+      edgeGrad.addColorStop(0.85, 'rgba(0,0,0,0.08)');
+      edgeGrad.addColorStop(1, 'rgba(0,0,0,0.42)');
+      ctx.fillStyle = edgeGrad;
+      ctx.fillRect(0, 0, 2048, 2048);
+
+      // Laser Etched Markings (Dark charcoal tone matching photo)
+      const laserColor = '#241f16';
+      ctx.fillStyle = laserColor;
+
+      // Stylized 'V' Logo at top center (matching reference image)
+      const cx = 1024, cy = 340;
+      ctx.beginPath();
+      ctx.moveTo(cx - 170, cy - 110);
+      ctx.lineTo(cx - 90, cy - 110);
+      ctx.lineTo(cx, cy + 70);
+      ctx.lineTo(cx + 90, cy - 110);
+      ctx.lineTo(cx + 170, cy - 110);
+      ctx.lineTo(cx + 38, cy + 160);
+      ctx.lineTo(cx - 38, cy + 160);
+      ctx.closePath();
+      ctx.fill();
+
+      // Inner Metallic Cutout of V Logo
+      ctx.fillStyle = '#dfb738';
+      ctx.beginPath();
+      ctx.moveTo(cx - 90, cy - 90);
+      ctx.lineTo(cx - 45, cy - 90);
+      ctx.lineTo(cx, cy - 5);
+      ctx.lineTo(cx + 45, cy - 90);
+      ctx.lineTo(cx + 90, cy - 90);
+      ctx.lineTo(cx, cy + 80);
+      ctx.closePath();
+      ctx.fill();
+
+      // "VELOCITY" Brand Header
+      ctx.fillStyle = laserColor;
+      ctx.font = '900 88px "Inter", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('VELOCITY', 1024, 630);
+
+      // Core model & specs text exactly matching reference image
+      ctx.font = 'bold 54px "Fira Code", monospace';
+      ctx.fillText('CORE VA-C7 240 G', 1024, 730);
+
+      ctx.font = 'bold 36px "Fira Code", monospace';
+      ctx.fillText('PREMIUM HEAT DISSIPATION TECHNOLOGY', 1024, 820);
+      ctx.fillText('SOCKET: LGA1700 / AM5', 1024, 900);
+      ctx.fillText('MALAY', 1024, 980);
+
+      // White thermal label sticker at the bottom with barcode and "S%: VA-C7-00100"
+      const stX = 320, stY = 1140, stW = 1408, stH = 340;
+      
+      // Sticker Drop Shadow & White Base
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.25)';
+      ctx.fillRect(stX + 6, stY + 6, stW, stH);
+
+      ctx.fillStyle = '#f8fafc';
+      ctx.beginPath();
+      if (ctx.roundRect) ctx.roundRect(stX, stY, stW, stH, 12);
+      else ctx.rect(stX, stY, stW, stH);
+      ctx.fill();
+
+      ctx.strokeStyle = '#94a3b8';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+
+      // Barcode lines
+      ctx.fillStyle = '#0f172a';
+      let bx = stX + 80;
+      const barY = stY + 45, barH = 170;
+      while (bx < stX + stW - 80) {
+        const bw = Math.floor(Math.random() * 10) + 3;
+        ctx.fillRect(bx, barY, bw, barH);
+        bx += bw + Math.floor(Math.random() * 8) + 4;
+      }
+
+      // Barcode text exactly matching "S%: VA-C7-00100"
+      ctx.font = 'bold 44px "Fira Code", monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText('S%: VA-C7-00100', stX + stW / 2, stY + 280);
+
+      const texture = new THREE.CanvasTexture(canvas);
+      texture.anisotropy = 16;
+      return texture;
+    }
+
+    /**
+     * Creates Normal Map for microscopic brushed metal glints.
+     */
+    function createIHSNormalMap() {
+      const canvas = document.createElement('canvas');
+      canvas.width = 1024;
+      canvas.height = 1024;
+      const ctx = canvas.getContext('2d');
+
+      ctx.fillStyle = '#8080ff';
+      ctx.fillRect(0, 0, 1024, 1024);
+
+      for (let y = 0; y < 1024; y += 2) {
+        const val = Math.floor(120 + Math.random() * 16);
+        ctx.fillStyle = `rgb(128, ${val}, 255)`;
+        ctx.fillRect(0, y, 1024, 1);
+      }
+
+      const texture = new THREE.CanvasTexture(canvas);
+      texture.anisotropy = 16;
+      return texture;
+    }
+
+    /**
+     * STREAMING_CHUNK:Creating LGA pin pad texture...
+     */
+    function createLGAPadTexture() {
+      const canvas = document.createElement('canvas');
+      canvas.width = 2048;
+      canvas.height = 2048;
+      const ctx = canvas.getContext('2d');
+
+      // Base Substrate Back
+      ctx.fillStyle = '#1c2419';
+      ctx.fillRect(0, 0, 2048, 2048);
+
+      // Central Recessed Area Boundary
+      const centerMinX = 680, centerMaxX = 1368;
+      const centerMinY = 680, centerMaxY = 1368;
+
+      ctx.fillStyle = '#0f1410';
+      ctx.fillRect(centerMinX, centerMinY, centerMaxX - centerMinX, centerMaxY - centerMinY);
+
+      // Etched text inside recessed center floor
+      ctx.fillStyle = '#85712c';
+      ctx.font = 'bold 46px "Inter", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('INTERFACE', 1024, centerMinY + 90);
+
+      // Etched Central 'V' logo
+      ctx.fillStyle = '#5c4e1e';
+      ctx.beginPath();
+      ctx.moveTo(960, 960);
+      ctx.lineTo(1024, 1080);
+      ctx.lineTo(1088, 960);
+      ctx.lineTo(1054, 960);
+      ctx.lineTo(1024, 1020);
+      ctx.lineTo(994, 960);
+      ctx.fill();
+
+      // Gold Pins Array Generation
+      const cols = 52, rows = 52;
+      const padW = 28, padH = 28;
+      const margin = 80;
+
+      ctx.fillStyle = '#ffd700';
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const x = margin + c * (padW + 8);
+          const y = margin + r * (padH + 8);
+
+          if (x > centerMinX - padW && x < centerMaxX && y > centerMinY - padH && y < centerMaxY) {
+            continue;
+          }
+          if (x < 220 && y < 220) continue;
+
+          ctx.beginPath();
+          ctx.arc(x + padW / 2, y + padH / 2, padW / 2.3, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      // Pin 1 Indicator Triangle
+      ctx.fillStyle = '#ffdf00';
+      ctx.beginPath();
+      ctx.moveTo(100, 100);
+      ctx.lineTo(200, 100);
+      ctx.lineTo(100, 200);
+      ctx.closePath();
+      ctx.fill();
+
+      const texture = new THREE.CanvasTexture(canvas);
+      texture.anisotropy = 16;
+      return texture;
+    }
+
+    function createLGANormalMap() {
+      const canvas = document.createElement('canvas');
+      canvas.width = 1024;
+      canvas.height = 1024;
+      const ctx = canvas.getContext('2d');
+
+      ctx.fillStyle = '#8080ff';
+      ctx.fillRect(0, 0, 1024, 1024);
+
+      const cols = 52, rows = 52;
+      const step = 1024 / 52;
+
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const x = c * step + step / 2;
+          const y = r * step + step / 2;
+
+          const grad = ctx.createRadialGradient(x, y, 0, x, y, step / 2.5);
+          grad.addColorStop(0, '#a0a0ff');
+          grad.addColorStop(0.8, '#8080ff');
+          grad.addColorStop(1, '#6060ff');
+
+          ctx.fillStyle = grad;
+          ctx.beginPath();
+          ctx.arc(x, y, step / 2.5, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      return new THREE.CanvasTexture(canvas);
+    }
+
+    /**
+     * STREAMING_CHUNK:Initializing 3D scene and renderer...
+     */
+    function init() {
+      const container = document.getElementById('canvas-container');
+
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color('#0d0f12');
+      scene.fog = new THREE.FogExp2('#0d0f12', 0.015);
+
+      camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
+      camera.position.set(0, 11, 0.01);
+      camera.lookAt(0, 0, 0);
+
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: "high-performance" });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.1;
+      container.appendChild(renderer.domElement);
+
+      controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.05;
+      controls.maxDistance = 22;
+      controls.minDistance = 3.5;
+      controls.target.set(0, 0, 0);
+
+      // Environment lighting reflections
+      const pmremGenerator = new THREE.PMREMGenerator(renderer);
+      pmremGenerator.compileEquirectangularShader();
+      
+      const envScene = new THREE.Scene();
+      envScene.background = new THREE.Color(0x0a0d12);
+
+      const lightGeo = new THREE.PlaneGeometry(12, 12);
+      const topLight = new THREE.Mesh(lightGeo, new THREE.MeshBasicMaterial({ color: 0xffffff }));
+      topLight.position.set(0, 10, 0);
+      topLight.rotation.x = Math.PI / 2;
+      envScene.add(topLight);
+
+      const warmLight = new THREE.Mesh(lightGeo, new THREE.MeshBasicMaterial({ color: 0xffe8d6 }));
+      warmLight.position.set(10, 6, 10);
+      warmLight.lookAt(0, 0, 0);
+      envScene.add(warmLight);
+
+      const coolLight = new THREE.Mesh(lightGeo, new THREE.MeshBasicMaterial({ color: 0xdbeafe }));
+      coolLight.position.set(-10, 6, -10);
+      coolLight.lookAt(0, 0, 0);
+      envScene.add(coolLight);
+
+      scene.environment = pmremGenerator.fromScene(envScene).texture;
+
+      // Lights
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+      scene.add(ambientLight);
+
+      const keyLight = new THREE.DirectionalLight(0xfff5ea, 2.0);
+      keyLight.position.set(6, 12, 8);
+      keyLight.castShadow = true;
+      keyLight.shadow.mapSize.width = 2048;
+      keyLight.shadow.mapSize.height = 2048;
+      keyLight.shadow.camera.near = 0.5;
+      keyLight.shadow.camera.far = 25;
+      keyLight.shadow.camera.left = -6;
+      keyLight.shadow.camera.right = 6;
+      keyLight.shadow.camera.top = 6;
+      keyLight.shadow.camera.bottom = -6;
+      keyLight.shadow.bias = -0.0005;
+      scene.add(keyLight);
+
+      const fillLight = new THREE.DirectionalLight(0x90b0ff, 1.1);
+      fillLight.position.set(-8, 8, -6);
+      scene.add(fillLight);
+
+      const rimLight = new THREE.DirectionalLight(0xffd700, 1.6);
+      rimLight.position.set(0, -10, -5);
+      scene.add(rimLight);
+
+      buildWorkspaceGround();
+      buildCPUModel();
+
+      raycaster = new THREE.Raycaster();
+      mouse = new THREE.Vector2();
+      hoverTooltip = document.getElementById('hover-tooltip');
+      tooltipText = document.getElementById('tooltip-text');
+
+      window.addEventListener('resize', onWindowResize);
+      renderer.domElement.addEventListener('pointermove', onPointerMove);
+
+      setupUIEvents();
+    }
+
+    /**
+     * STREAMING_CHUNK:Building technical workspace background...
+     */
+    function buildWorkspaceGround() {
+      const floorGeo = new THREE.PlaneGeometry(30, 30);
+      const floorTex = createWorkspaceGridTexture();
+
+      const floorMat = new THREE.MeshStandardMaterial({
+        map: floorTex,
+        roughness: 0.85,
+        metalness: 0.1,
+      });
+
+      const floorMesh = new THREE.Mesh(floorGeo, floorMat);
+      floorMesh.rotation.x = -Math.PI / 2;
+      floorMesh.position.y = -1.5;
+      floorMesh.receiveShadow = true;
+      scene.add(floorMesh);
+    }
+
+    /**
+     * STREAMING_CHUNK:Constructing CPU model matching reference photo...
+     */
+    function buildCPUModel() {
+      cpuGroup = new THREE.Group();
+      scene.add(cpuGroup);
+
+      // Green PCB Substrate
+      const pcbWidth = 4.8;
+      const pcbHeight = 0.22;
+      const pcbDepth = 4.8;
+
+      const pcbGeo = new THREE.BoxGeometry(pcbWidth, pcbHeight, pcbDepth);
+      const pcbMat = new THREE.MeshStandardMaterial({
+        color: 0x1e331b,
+        roughness: 0.3,
+        metalness: 0.3,
+      });
+
+      pcbMesh = new THREE.Mesh(pcbGeo, pcbMat);
+      pcbMesh.castShadow = true;
+      pcbMesh.receiveShadow = true;
+      pcbMesh.userData = { name: "Substrate (High-Density Fiber PCB)" };
+      cpuGroup.add(pcbMesh);
+
+      // Front SMD Capacitors matching photo
+      const frontCapGeo = new THREE.BoxGeometry(0.08, 0.04, 0.12);
+      const frontCapMat = new THREE.MeshStandardMaterial({ color: 0xc4b482, roughness: 0.4 });
+      
+      const fcPositions = [
+        [-2.0, -2.0], [-1.8, -2.1], [2.0, -2.0], [1.8, -2.1],
+        [-2.0, 2.0], [-1.8, 2.1], [2.0, 2.0], [1.8, 2.1]
+      ];
+
+      fcPositions.forEach(pos => {
+        const cap = new THREE.Mesh(frontCapGeo, frontCapMat);
+        cap.position.set(pos[0], pcbHeight / 2 + 0.02, pos[1]);
+        cap.castShadow = true;
+        cap.userData = { name: "Front Substrate Decoupling Capacitor" };
+        cpuGroup.add(cap);
+      });
+
+      // Pin 1 Alignment Triangle
+      const pin1Geo = new THREE.ConeGeometry(0.16, 0.02, 3);
+      const pin1Mat = new THREE.MeshStandardMaterial({ color: 0xffd700, metalness: 0.95, roughness: 0.15 });
+      const pin1Mesh = new THREE.Mesh(pin1Geo, pin1Mat);
+      pin1Mesh.position.set(-2.15, 0.12, -2.15);
+      pin1Mesh.rotation.y = Math.PI / 4;
+      cpuGroup.add(pin1Mesh);
+
+      // Silicon Dies (Visible in Exploded view)
+      dieGroup = new THREE.Group();
+      dieGroup.position.y = 0.12;
+
+      const interposerGeo = new THREE.BoxGeometry(3.2, 0.04, 3.2);
+      const interposerMat = new THREE.MeshStandardMaterial({ color: 0x111827, metalness: 0.85, roughness: 0.2 });
+      const interposerMesh = new THREE.Mesh(interposerGeo, interposerMat);
+      dieGroup.add(interposerMesh);
+
+      const dieGeo = new THREE.BoxGeometry(0.8, 0.05, 0.8);
+      const dieMat = new THREE.MeshStandardMaterial({ color: 0x2d3748, metalness: 0.95, roughness: 0.1 });
+
+      const diePositions = [
+        [-0.9, -0.9], [0.9, -0.9], [-0.9, 0.9], [0.9, 0.9],
+        [-0.9, 0], [0.9, 0], [0, -0.9], [0, 0.9]
+      ];
+
+      diePositions.forEach(pos => {
+        const die = new THREE.Mesh(dieGeo, dieMat);
+        die.position.set(pos[0], 0.04, pos[1]);
+        dieGroup.add(die);
+      });
+
+      const ioDieGeo = new THREE.BoxGeometry(1.1, 0.06, 1.1);
+      const ioDieMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.9, roughness: 0.15 });
+      const ioDie = new THREE.Mesh(ioDieGeo, ioDieMat);
+      ioDie.position.set(0, 0.045, 0);
+      dieGroup.add(ioDie);
+
+      cpuGroup.add(dieGroup);
+
+      // Multi-Tier Integrated Heat Spreader (IHS) matching reference photo geometry
+      ihsMesh = new THREE.Group();
+
+      const sealantGeo = new THREE.BoxGeometry(4.02, 0.03, 4.02);
+      const sealantMat = new THREE.MeshStandardMaterial({ color: 0x121212, roughness: 0.85, metalness: 0.1 });
+      const sealantMesh = new THREE.Mesh(sealantGeo, sealantMat);
+      sealantMesh.position.y = 0.015;
+      ihsMesh.add(sealantMesh);
+
+      const goldMatSide = new THREE.MeshStandardMaterial({ color: 0xd4af37, metalness: 0.92, roughness: 0.2 });
+
+      // Lower retention flange base with side notches matching photo
+      const flangeGeo = new THREE.BoxGeometry(3.95, 0.10, 3.95);
+      const flangeMesh = new THREE.Mesh(flangeGeo, goldMatSide);
+      flangeMesh.position.y = 0.08;
+      flangeMesh.castShadow = true;
+      flangeMesh.receiveShadow = true;
+      ihsMesh.add(flangeMesh);
+
+      const notchGeo = new THREE.BoxGeometry(0.3, 0.12, 0.3);
+      const notchMat = new THREE.MeshStandardMaterial({ color: 0x1e331b, roughness: 0.5 });
+      const notchLeft = new THREE.Mesh(notchGeo, notchMat);
+      notchLeft.position.set(-1.9, 0.08, 0);
+      ihsMesh.add(notchLeft);
+
+      const notchRight = new THREE.Mesh(notchGeo, notchMat);
+      notchRight.position.set(1.9, 0.08, 0);
+      ihsMesh.add(notchRight);
+
+      const collarGeo = new THREE.BoxGeometry(3.68, 0.08, 3.68);
+      const collarMesh = new THREE.Mesh(collarGeo, goldMatSide);
+      collarMesh.position.y = 0.17;
+      ihsMesh.add(collarMesh);
+
+      // Top Cap with exact graphic layout
+      const capGeo = new THREE.BoxGeometry(3.5, 0.18, 3.5);
+      const ihsTex = createIHSTexture();
+      const ihsNorm = createIHSNormalMap();
+
+      const goldMatTop = new THREE.MeshStandardMaterial({
+        map: ihsTex,
+        normalMap: ihsNorm,
+        normalScale: new THREE.Vector2(0.4, 0.4),
+        metalness: 0.88,
+        roughness: 0.22,
+      });
+
+      const capMaterials = [goldMatSide, goldMatSide, goldMatTop, goldMatSide, goldMatSide, goldMatSide];
+      const capMesh = new THREE.Mesh(capGeo, capMaterials);
+      capMesh.position.y = 0.26;
+      capMesh.castShadow = true;
+      capMesh.receiveShadow = true;
+      ihsMesh.add(capMesh);
+
+      ihsMesh.position.y = pcbHeight / 2;
+      ihsMesh.userData = { name: "Integrated Heat Spreader (CORE VA-C7 240 G)" };
+      cpuGroup.add(ihsMesh);
+
+      // Back LGA Gold Contact Array
+      const lgaGeo = new THREE.PlaneGeometry(pcbWidth, pcbDepth);
+      const lgaTex = createLGAPadTexture();
+      const lgaNorm = createLGANormalMap();
+
+      const lgaMat = new THREE.MeshStandardMaterial({
+        map: lgaTex,
+        normalMap: lgaNorm,
+        normalScale: new THREE.Vector2(0.6, 0.6),
+        metalness: 0.85,
+        roughness: 0.25,
+        side: THREE.DoubleSide
+      });
+
+      lgaMesh = new THREE.Mesh(lgaGeo, lgaMat);
+      lgaMesh.rotation.x = Math.PI / 2;
+      lgaMesh.position.y = -pcbHeight / 2 - 0.005;
+      lgaMesh.receiveShadow = true;
+      lgaMesh.userData = { name: "3,647-Pin Gold Contact Array (LGA Interface)" };
+      cpuGroup.add(lgaMesh);
+
+      // Recessed Central SMD Capacitors on Back
+      smdGroup = new THREE.Group();
+      smdGroup.position.y = -pcbHeight / 2 - 0.02;
+
+      const capGeoRec = new THREE.BoxGeometry(0.08, 0.05, 0.14);
+      const capMatBody = new THREE.MeshStandardMaterial({ color: 0xb09e6f, roughness: 0.4 });
+      const capMatEnd = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, metalness: 0.9, roughness: 0.1 });
+      const recCapMaterials = [capMatEnd, capMatEnd, capMatBody, capMatBody, capMatBody, capMatBody];
+
+      for (let x = -0.7; x <= 0.7; x += 0.22) {
+        for (let z = -0.7; z <= 0.7; z += 0.22) {
+          if (Math.abs(x) < 0.15 && Math.abs(z) < 0.15) continue;
+          const cap = new THREE.Mesh(capGeoRec, recCapMaterials);
+          cap.position.set(x + (Math.random() * 0.02 - 0.01), 0, z + (Math.random() * 0.02 - 0.01));
+          cap.castShadow = true;
+          cap.userData = { name: "Decoupling SMD Ceramic Capacitor" };
+          smdGroup.add(cap);
+        }
+      }
+
+      cpuGroup.add(smdGroup);
+    }
+
+    /**
+     * STREAMING_CHUNK:Setting up camera controls and user event handlers...
+     */
+    function smoothCameraTo(pos, lookAt) {
+      targetCameraPos = pos;
+      targetLookAt = lookAt;
+    }
+
+    function onPointerMove(event) {
+      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+      hoverTooltip.style.left = `${event.clientX + 15}px`;
+      hoverTooltip.style.top = `${event.clientY + 15}px`;
+
+      raycaster.setFromCamera(mouse, camera);
+      const intersects = raycaster.intersectObjects(cpuGroup.children, true);
+
+      if (intersects.length > 0) {
+        let hitObj = intersects[0].object;
+        while (hitObj && !hitObj.userData.name && hitObj.parent) {
+          hitObj = hitObj.parent;
+        }
+
+        if (hitObj && hitObj.userData && hitObj.userData.name) {
+          tooltipText.innerText = hitObj.userData.name;
+          hoverTooltip.classList.remove('hidden');
+          return;
+        }
+      }
+      hoverTooltip.classList.add('hidden');
+    }
+
+    function onWindowResize() {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+
+    function setupUIEvents() {
+      const btnFront = document.getElementById('btn-view-front');
+      const btnBack = document.getElementById('btn-view-back');
+      const btnIso = document.getElementById('btn-view-iso');
+      const btnRotate = document.getElementById('btn-rotate');
+      const btnExplode = document.getElementById('btn-explode');
+      const btnInfo = document.getElementById('btn-info');
+      const btnCloseSpecs = document.getElementById('btn-close-specs');
+      const btnCloseSpecs2 = document.getElementById('btn-close-specs-2');
+      const specsModal = document.getElementById('specs-modal');
+      const cameraReadout = document.getElementById('camera-angle-readout');
+
+      function setActiveViewBtn(activeBtn) {
+        [btnFront, btnBack, btnIso].forEach(btn => btn.classList.remove('active'));
+        if (activeBtn) activeBtn.classList.add('active');
+      }
+
+      btnFront.addEventListener('click', () => {
+        smoothCameraTo(new THREE.Vector3(0, 11, 0.01), new THREE.Vector3(0, 0, 0));
+        setActiveViewBtn(btnFront);
+        if (cameraReadout) cameraReadout.innerText = 'VIEW: TOP-DOWN (IHS)';
+      });
+
+      btnBack.addEventListener('click', () => {
+        smoothCameraTo(new THREE.Vector3(0, -11, 0.01), new THREE.Vector3(0, 0, 0));
+        setActiveViewBtn(btnBack);
+        if (cameraReadout) cameraReadout.innerText = 'VIEW: BOTTOM-UP (LGA)';
+      });
+
+      btnIso.addEventListener('click', () => {
+        smoothCameraTo(new THREE.Vector3(5, 6, 6), new THREE.Vector3(0, 0, 0));
+        setActiveViewBtn(btnIso);
+        if (cameraReadout) cameraReadout.innerText = 'VIEW: ISOMETRIC';
+      });
+
+      btnRotate.addEventListener('click', () => {
+        isAutoRotating = !isAutoRotating;
+        btnRotate.classList.toggle('active', isAutoRotating);
+      });
+
+      btnExplode.addEventListener('click', () => {
+        isExploded = !isExploded;
+        btnExplode.classList.toggle('active', isExploded);
+      });
+
+      function openSpecs() {
+        specsModal.classList.remove('hidden');
+        requestAnimationFrame(() => specsModal.classList.remove('opacity-0'));
+      }
+
+      function closeSpecs() {
+        specsModal.classList.add('opacity-0');
+        setTimeout(() => specsModal.classList.add('hidden'), 300);
+      }
+
+      btnInfo.addEventListener('click', openSpecs);
+      btnCloseSpecs.addEventListener('click', closeSpecs);
+      btnCloseSpecs2.addEventListener('click', closeSpecs);
+    }
+
+    /**
+     * STREAMING_CHUNK:Starting render and animation loop...
+     */
+    function animate() {
+      requestAnimationFrame(animate);
+
+      if (targetCameraPos) {
+        camera.position.lerp(targetCameraPos, 0.08);
+        controls.target.lerp(targetLookAt, 0.08);
+        if (camera.position.distanceTo(targetCameraPos) < 0.02) {
+          targetCameraPos = null;
+        }
+      }
+
+      if (ihsMesh) {
+        const targetIhsY = isExploded ? 1.4 : (0.22 / 2 + 0.32 / 2);
+        ihsMesh.position.y = THREE.MathUtils.lerp(ihsMesh.position.y, targetIhsY, 0.1);
+      }
+      if (dieGroup) {
+        const targetDieY = isExploded ? 0.6 : 0.12;
+        dieGroup.position.y = THREE.MathUtils.lerp(dieGroup.position.y, targetDieY, 0.1);
+      }
+
+      if (isAutoRotating && cpuGroup) {
+        cpuGroup.rotation.y += 0.008;
+      }
+
+      controls.update();
+      renderer.render(scene, camera);
+    }
+
+    window.onload = function() {
+      init();
+      animate();
+    };
+  </script>
+</body>
+</html>

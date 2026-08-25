@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informatik B25 - Tastenkombinationen</title>
+    <link rel="stylesheet" href="vendor/fonts.css">
+    <link rel="stylesheet" href="vendor/fontawesome/fontawesome.min.css">
+    <link rel="stylesheet" href="shared.css">
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .top-bar {
+            padding: 1rem 2rem;
+        }
+
+        .xp-pill {
+            padding: 8px 20px;
+        }
+
+        .btn-home {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-home:hover {
+            background: rgba(255, 255, 255, 0.18);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .btn-home:active {
+            transform: translateY(2px) scale(0.97) !important;
+        }
+
+        .container {
+            max-width: 1050px;
+            margin: 1.5rem auto;
+            padding: 0 1.5rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .hero-card {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.9) 100%);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 1.8rem 2rem;
+            text-align: center;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            align-items: stretch;
+        }
+
+        @media (max-width: 640px) {
+            .modules-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .module-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 1.2rem;
+            height: 100%;
+            min-height: 240px;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .module-card-content {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .module-card-desc {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.45;
+            min-height: 2.8em;
+            margin-top: 0.4rem;
+        }
+
+        .module-card > *:not(.card-canvas) {
+            position: relative;
+            z-index: 2;
+        }
+
+        .card-canvas {
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .module-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+        }
+
+        .module-card.m1 { border-top: 4px solid var(--accent-blue); }
+        .module-card.m2 { border-top: 4px solid var(--accent-amber); }
+        .module-card.m3 { border-top: 4px solid var(--accent-red); }
+        .module-card.m4 { border-top: 4px solid var(--accent-green); }
+
+        .btn-module {
+            display: block;
+            text-align: center;
+            padding: 14px 18px;
+            border-radius: 14px;
+            font-weight: 800;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            font-size: 0.95rem;
+        }
+
+        .btn-m1 { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); color: white; }
+        .btn-m2 { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #0f172a; }
+        .btn-m3 { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; }
+        .btn-m4 { background: linear-gradient(135deg, #10b981 0%, #047857 100%); color: white; border: none; cursor: pointer; width: 100%; }
+
+        .btn-module:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+
+        .btn-module:active, button:active, a.btn-module:active {
+            transform: translateY(3px) scale(0.97) !important;
+            box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+            transition: transform 0.05s ease, box-shadow 0.05s ease !important;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            align-self: flex-start;
+        }
+
+        .badge-blue { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
+        .badge-amber { background: rgba(245, 158, 11, 0.2); color: #fde047; }
+        .badge-red { background: rgba(239, 68, 68, 0.2); color: #fca5a5; }
+        .badge-green { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+
+        .done-pill {
+            display: none;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            background: rgba(16, 185, 129, 0.2);
+            color: #34d399;
+            margin-left: 8px;
+        }
+
+        .module-card.done {
+            box-shadow: 0 0 0 2px var(--accent-green) inset, 0 15px 35px rgba(16, 185, 129, 0.25);
+        }
+    </style>
+</head>
+<body>
+
+    <header class="top-bar">
+        <div style="font-weight: 800; font-size: 1.2rem; font-family: 'Space Grotesk', sans-serif;">
+            Informatik B25 • Tastenkombinationen
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <a href="presentation.html" class="btn-home">
+                📖 Theorie & Präsentation
+            </a>
+            <div class="xp-pill">
+                ⚡ XP: <span class="global-xp-val">0</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+
+        <div class="hero-card">
+            <h1 style="font-family: 'Space Grotesk', sans-serif; font-size: clamp(2rem, 5vw, 2.8rem); margin-bottom: 0.8rem;">
+                Tastenkombinationen 🚀
+            </h1>
+            <p style="color: var(--text-muted); font-size: 1.15rem; max-width: 650px; margin: 0 auto 1.5rem auto;">
+                Lerne die wichtigsten Tastatur-Kürzel unter Windows & auf der Schweizer Tastatur kennen. Meistere alle Quests und erstelle deine Ergebnisübersicht!
+            </p>
+            <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
+                <a href="A1.html" class="btn-module btn-m1" style="min-width: 200px;">Jetzt Kurs starten ➔</a>
+            </div>
+        </div>
+
+        <div class="modules-grid">
+            <!-- MODULE 1 -->
+            <div class="module-card m1">
+                <div class="module-card-content">
+                    <div style="display: flex; align-items: center; flex-wrap: wrap;">
+                        <span class="badge badge-blue">Arbeitsblatt A1</span>
+                        <span class="done-pill" id="done-m1">✅ Erledigt</span>
+                    </div>
+                    <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.4rem; margin: 0.8rem 0 0.2rem 0;">
+                        Allgemeine Befehle
+                    </h2>
+                    <p class="module-card-desc">
+                        Kopieren, Einfügen, Rückgängig, Speichern, Ende und Suchen & Ersetzen.
+                    </p>
+                </div>
+                <div>
+                    <div style="font-size: 0.85rem; color: var(--accent-blue); font-weight: 700; margin-bottom: 0.8rem;">
+                        ⚡ Quests 1–3
+                    </div>
+                    <a href="A1.html" class="btn-module btn-m1">A1 Starten ➔</a>
+                </div>
+            </div>
+
+            <!-- MODULE 2 -->
+            <div class="module-card m2">
+                <div class="module-card-content">
+                    <div style="display: flex; align-items: center; flex-wrap: wrap;">
+                        <span class="badge badge-amber">Arbeitsblatt A2</span>
+                        <span class="done-pill" id="done-m2">✅ Erledigt</span>
+                    </div>
+                    <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.4rem; margin: 0.8rem 0 0.2rem 0;">
+                        Sonderzeichen
+                    </h2>
+                    <p class="module-card-desc">
+                        Schweizer Tastaturbelegung für @, #, €, |, \, [, ], {, } und °.
+                    </p>
+                </div>
+                <div>
+                    <div style="font-size: 0.85rem; color: var(--accent-amber); font-weight: 700; margin-bottom: 0.8rem;">
+                        ⚡ Quests 4–6 (ab A1 ≥ 70%)
+                    </div>
+                    <a href="A2.html" class="btn-module btn-m2">A2 Starten ➔</a>
+                </div>
+            </div>
+
+            <!-- MODULE 3 -->
+            <div class="module-card m3">
+                <div class="module-card-content">
+                    <div style="display: flex; align-items: center; flex-wrap: wrap;">
+                        <span class="badge badge-red">Arbeitsblatt A3</span>
+                        <span class="done-pill" id="done-m3">✅ Erledigt</span>
+                    </div>
+                    <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.4rem; margin: 0.8rem 0 0.2rem 0;">
+                        Mission: Maus weglegen
+                    </h2>
+                    <p class="module-card-desc">
+                        Die Boss-Challenge! 10 Aufträge in MS Word ohne Mausklicks.
+                    </p>
+                </div>
+                <div>
+                    <div style="font-size: 0.85rem; color: var(--accent-red); font-weight: 700; margin-bottom: 0.8rem;">
+                        👑 Boss-Challenge (ab A2 ≥ 70%)
+                    </div>
+                    <a href="A3.html" class="btn-module btn-m3">A3 Starten ➔</a>
+                </div>
+            </div>
+
+            <!-- MODULE 4: LEISTUNGSNACHWEIS PDF -->
+            <div class="module-card m4">
+                <div class="module-card-content">
+                    <span class="badge badge-green">PDF Export</span>
+                    <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.4rem; margin: 0.8rem 0 0.2rem 0;">
+                        Leistungsnachweis
+                    </h2>
+                    <p class="module-card-desc">
+                        Ergebnis-Zusammenfassung als PDF für die Lehrperson herunterladen.
+                    </p>
+                </div>
+                <div>
+                    <div style="font-size: 0.85rem; color: var(--accent-green); font-weight: 700; margin-bottom: 0.8rem;">
+                        📄 PDF für Lehrperson
+                    </div>
+                    <button onclick="downloadCertificatePDF()" class="btn-module btn-m4">
+                        <i class="fa-solid fa-file-pdf"></i> PDF Herunterladen
+                    </button>
+                    <label id="pdfSharedWrap" style="display: none; align-items: center; gap: 8px; margin-top: 0.9rem; font-size: 0.88rem; color: var(--text-muted); cursor: pointer;">
+                        <input type="checkbox" id="pdfSharedCheckbox" style="width: 18px; height: 18px; accent-color: var(--accent-green); cursor: pointer;">
+                        PDF mit Lehrperson geteilt
+                    </label>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Global XP Engine -->
+    <script src="xp.js"></script>
+    <script>
+        const PDF_DOWNLOADED_KEY = 'tk_pdf_downloaded_v1';
+        const PDF_SHARED_KEY = 'tk_pdf_shared_v1';
+
+        // Mark modules as "Erledigt" based on saved quest scores
+        function checkModuleCompletion() {
+            const scores = getQuestScores();
+            const pdfShared = localStorage.getItem(PDF_SHARED_KEY) === 'true';
+            const done = {
+                m1: (scores.q3 || 0) >= 70,                  // A1 done: Quest 3 passed (also unlocks A2)
+                m2: (scores.q6 || 0) >= 70,                  // A2 done: Quest 6 passed (also unlocks A3)
+                m3: scores.q7 === 100 && pdfShared           // A3 done: Boss-Timer gestoppt UND PDF mit Lehrperson geteilt
+            };
+            Object.keys(done).forEach(id => {
+                const pill = document.getElementById('done-' + id);
+                const card = document.querySelector('.module-card.' + id);
+                if (pill) pill.style.display = done[id] ? 'inline-flex' : 'none';
+                if (card) card.classList.toggle('done', done[id]);
+            });
+        }
+
+        // "PDF mit Lehrperson geteilt"-Checkbox: erscheint erst nach dem ersten PDF-Download
+        function updatePdfSharedUI() {
+            const wrap = document.getElementById('pdfSharedWrap');
+            const checkbox = document.getElementById('pdfSharedCheckbox');
+            if (!wrap || !checkbox) return;
+            const downloaded = localStorage.getItem(PDF_DOWNLOADED_KEY) === 'true';
+            wrap.style.display = downloaded ? 'flex' : 'none';
+            checkbox.checked = localStorage.getItem(PDF_SHARED_KEY) === 'true';
+        }
+
+        document.getElementById('pdfSharedCheckbox').addEventListener('change', function () {
+            localStorage.setItem(PDF_SHARED_KEY, this.checked ? 'true' : 'false');
+            checkModuleCompletion();
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            checkModuleCompletion();
+            updatePdfSharedUI();
+        });
+        window.addEventListener('focus', () => {
+            checkModuleCompletion();
+            updatePdfSharedUI();
+        });
+    </script>
+    <script>
+        // Hover Particle Animation drifting Left
+        document.querySelectorAll('.module-card').forEach(card => {
+            const canvas = document.createElement('canvas');
+            canvas.className = 'card-canvas';
+            card.appendChild(canvas);
+            const ctx = canvas.getContext('2d');
+
+            let particles = [];
+            let isHovered = false;
+            let animId = null;
+
+            function resize() {
+                const rect = card.getBoundingClientRect();
+                canvas.width = rect.width;
+                canvas.height = rect.height;
+            }
+            resize();
+            window.addEventListener('resize', resize);
+
+            // Determine particle color based on module class
+            let pColor = '59, 130, 246'; // M1 Blue
+            if (card.classList.contains('m2')) pColor = '245, 158, 11'; // M2 Amber
+            if (card.classList.contains('m3')) pColor = '239, 68, 68';  // M3 Red
+            if (card.classList.contains('m4')) pColor = '16, 185, 129';  // M4 Green
+
+            function spawnParticle() {
+                particles.push({
+                    x: canvas.width + Math.random() * 20,
+                    y: Math.random() * canvas.height,
+                    vx: -(1.2 + Math.random() * 2.2), // Move Left!
+                    vy: (Math.random() - 0.5) * 0.6,
+                    radius: 2 + Math.random() * 3,
+                    alpha: 0.7 + Math.random() * 0.3
+                });
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                if (isHovered && Math.random() < 0.5) {
+                    spawnParticle();
+                }
+
+                for (let i = particles.length - 1; i >= 0; i--) {
+                    let p = particles[i];
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.alpha -= 0.012;
+
+                    if (p.alpha <= 0 || p.x < -10) {
+                        particles.splice(i, 1);
+                        continue;
+                    }
+
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(${pColor}, ${p.alpha})`;
+                    ctx.shadowColor = `rgba(${pColor}, ${p.alpha})`;
+                    ctx.shadowBlur = 10;
+                    ctx.fill();
+                    ctx.restore();
+                }
+
+                if (isHovered || particles.length > 0) {
+                    animId = requestAnimationFrame(animate);
+                } else {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    animId = null;
+                }
+            }
+
+            card.addEventListener('mouseenter', () => {
+                isHovered = true;
+                if (!animId) animate();
+            });
+
+            card.addEventListener('mouseleave', () => {
+                isHovered = false;
+            });
+        });
+    </script>
+</body>
+</html>

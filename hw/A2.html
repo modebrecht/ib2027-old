@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="de" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A2: Das EVA-Prinzip • Arbeitsblatt</title>
+    <script src="assets/js/tailwind.min.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        bgDark: '#050914',
+                        surface: '#0f172a',
+                        evaE: '#FF6B00',
+                        evaV: '#00F0FF',
+                        evaA: '#00FF66',
+                        slate: {
+                            50: '#fafafa', 100: '#f5f5f5', 200: '#e5e5e5', 300: '#d4d4d4',
+                            400: '#b4bdca', 500: '#a3a3a3', 600: '#616161', 700: '#404040',
+                            800: '#303846', 900: '#1a1f26', 950: '#111418'
+                        },
+                        onedrive: {
+                            50: '#eff6ff', 100: '#dbeafe', 400: '#66a1ff', 500: '#0078d4',
+                            600: '#106ebe', 700: '#005a9e', 800: '#004578',
+                            900: '#00335c', 950: '#001f3f'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Segoe UI', 'Inter', 'system-ui', '-apple-system', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="assets/css/fontawesome.min.css">
+<link rel="stylesheet" href="assets/css/worksheet-common.css">
+    <style>
+        @import url('assets/fonts/inter.css');
+        * { transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(156, 163, 175, 0.5); border-radius: 4px; }
+        
+        .eva-grid-bg {
+            background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        @keyframes ytPulse {
+            0%, 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.45); }
+            50% { transform: scale(1.12); box-shadow: 0 0 0 12px rgba(239, 68, 68, 0); }
+        }
+
+        .yt-pulse {
+            transform-origin: center;
+            animation: ytPulse 1.8s ease-in-out infinite;
+        }
+
+        @keyframes btnScalePulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 15px rgba(0, 240, 255, 0.1); }
+            50% { transform: scale(1.08); box-shadow: 0 0 35px rgba(0, 240, 255, 0.4); }
+        }
+        .btn-scale-pulse {
+            animation: btnScalePulse 2s ease-in-out infinite;
+        }
+
+
+                /* Crispy Visual Animations (Premium) */
+        @keyframes eva-pop {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 transparent; filter: grayscale(100%) opacity(0.6); }
+            40% { transform: scale(1.05); box-shadow: 0 0 40px 8px var(--glow-color); filter: grayscale(0%) opacity(1); }
+            100% { transform: scale(1); box-shadow: 0 0 15px 2px var(--glow-color); filter: grayscale(0%) opacity(1); }
+        }
+        
+        @keyframes packet-travel-1 {
+            0% { left: 16%; opacity: 0; transform: translateY(-50%) scale(0.2);  box-shadow: 0 0 0 rgba(245,158,11,0); }
+            15% { opacity: 1; transform: translateY(-50%) scale(1.3); box-shadow: -12px 0 20px rgba(245,158,11,0.8), 0 0 35px rgba(245,158,11,1); }
+            85% { left: 50%; opacity: 1; transform: translateY(-50%) scale(1.3); box-shadow: -12px 0 20px rgba(245,158,11,0.8), 0 0 35px rgba(245,158,11,1); }
+            100% { left: 50%; opacity: 0; transform: translateY(-50%) scale(0.2); box-shadow: 0 0 0 rgba(245,158,11,0); }
+        }
+        
+        @keyframes packet-travel-2 {
+            0% { left: 50%; opacity: 0; transform: translateY(-50%) scale(0.2);  box-shadow: 0 0 0 rgba(0,120,212,0); }
+            15% { opacity: 1; transform: translateY(-50%) scale(1.3); box-shadow: -12px 0 20px rgba(0,120,212,0.8), 0 0 35px rgba(0,120,212,1); }
+            85% { left: 83%; opacity: 1; transform: translateY(-50%) scale(1.3); box-shadow: -12px 0 20px rgba(0,120,212,0.8), 0 0 35px rgba(0,120,212,1); }
+            100% { left: 83%; opacity: 0; transform: translateY(-50%) scale(0.2); box-shadow: 0 0 0 rgba(0,120,212,0); }
+        }
+        
+        @keyframes gear-spin {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.2); color: #60a5fa; }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+        
+        @keyframes keyboard-press {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            20% { transform: scale(0.85) rotate(-5deg); color: #f59e0b; }
+            40% { transform: scale(0.95) rotate(5deg); color: #f59e0b; }
+            60% { transform: scale(0.85) rotate(-3deg); color: #f59e0b; }
+            80% { transform: scale(0.95) rotate(3deg); color: #f59e0b; }
+        }
+        
+        @keyframes pc-compute {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 0 transparent); }
+            20%, 60% { transform: scale(1.2); color: #60a5fa; filter: drop-shadow(0 0 8px #60a5fa); }
+            40%, 80% { transform: scale(1.1); color: #3b82f6; filter: drop-shadow(0 0 12px #3b82f6); }
+        }
+        
+        @keyframes type-text {
+            0% { opacity: 0; transform: scale(0); }
+            60% { opacity: 1; transform: scale(1.4); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        
+        @keyframes line-glow {
+            0% { background-position: 100% 0; }
+            100% { background-position: -100% 0; }
+        }
+
+        .eva-animated { filter: grayscale(100%) opacity(0.6); transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .concrete-icon { transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        
+        /* Glassmorphism Premium Icons */
+        .glass-icon {
+            background: linear-gradient(135deg, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.3) 100%);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.5);
+            box-shadow: 
+                0 8px 32px 0 rgba(0, 0, 0, 0.1),
+                inset 0 2px 3px rgba(255,255,255,0.8),
+                inset 0 -2px 3px rgba(0,0,0,0.05);
+        }
+        .dark .glass-icon {
+            background: linear-gradient(135deg, rgba(30,41,59,0.8) 0%, rgba(15,23,42,0.6) 100%);
+            border: 1px solid rgba(255,255,255,0.15);
+            box-shadow: 
+                0 8px 32px 0 rgba(0, 0, 0, 0.6),
+                inset 0 1px 1px rgba(255,255,255,0.1),
+                inset 0 -1px 1px rgba(0,0,0,0.4);
+        }
+        /* Connecting Line Glow Effect */
+        .connecting-line { background: linear-gradient(90deg, #e2e8f0 40%, #94a3b8 50%, #e2e8f0 60%); background-size: 200% 100%; transition: background-color 0.5s; }
+        .dark .connecting-line { background: linear-gradient(90deg, #334155 40%, #64748b 50%, #334155 60%); background-size: 200% 100%; }
+        .is-animating .connecting-line { animation: line-glow 2s linear infinite; }
+        
+        /* Triggered States */
+        /* Slower and Premium Animations */
+        @keyframes typing-reveal {
+            0% { opacity: 1; clip-path: inset(0 100% 0 0); border-right: 3px solid currentColor; }
+            95% { opacity: 1; clip-path: inset(0 0 0 0); border-right: 3px solid currentColor; }
+            100% { opacity: 1; clip-path: inset(0 0 0 0); border-right: transparent; }
+        }
+        @keyframes typing-reveal-stay {
+            0% { opacity: 1; clip-path: inset(0 100% 0 0); border-right: 3px solid currentColor; }
+            95% { opacity: 1; clip-path: inset(0 0 0 0); border-right: 3px solid currentColor; }
+            100% { opacity: 1; clip-path: inset(0 0 0 0); border-right: transparent; }
+        }
+        
+        @keyframes header-pop {
+            0% { opacity: 0; transform: translateY(20px); filter: blur(5px); }
+            100% { opacity: 1; transform: translateY(0); filter: blur(0); }
+        }
+
+        @keyframes packet-travel-1 {
+            0% { left: 16%; opacity: 0; transform: translateY(-50%) scale(0.2); background-color: #f59e0b; box-shadow: 0 0 0 rgba(245,158,11,0); }
+            10% { opacity: 1; transform: translateY(-50%) scale(1.4); box-shadow: -15px 0 25px rgba(245,158,11,0.8), 0 0 45px rgba(245,158,11,1); }
+            90% { left: 50%; opacity: 1; transform: translateY(-50%) scale(1.4); box-shadow: -15px 0 25px rgba(245,158,11,0.8), 0 0 45px rgba(245,158,11,1); }
+            100% { left: 50%; opacity: 0; transform: translateY(-50%) scale(0.2); box-shadow: 0 0 0 rgba(245,158,11,0); }
+        }
+        
+        @keyframes packet-travel-2 {
+            0% { left: 50%; opacity: 0; transform: translateY(-50%) scale(0.2); background-color: #0078d4; box-shadow: 0 0 0 rgba(0,120,212,0); }
+            10% { opacity: 1; transform: translateY(-50%) scale(1.4); box-shadow: -15px 0 25px rgba(0,120,212,0.8), 0 0 45px rgba(0,120,212,1); }
+            90% { left: 83%; opacity: 1; transform: translateY(-50%) scale(1.4); box-shadow: -15px 0 25px rgba(0,120,212,0.8), 0 0 45px rgba(0,120,212,1); }
+            100% { left: 83%; opacity: 0; transform: translateY(-50%) scale(0.2); box-shadow: 0 0 0 rgba(0,120,212,0); }
+        }
+        
+        /* Replace Triggered States for Slow Motion */
+        .is-animating .eva-station-1 .station-header { animation: header-pop 1.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; animation-delay: 0.2s; }
+        .is-animating .concrete-icon-1 { color: #f59e0b; border-color: rgba(245,158,11,0.5); box-shadow: 0 0 60px rgba(245,158,11,0.5), inset 0 2px 4px rgba(255,255,255,0.4); transform: translateY(-12px); animation-delay: 0.2s; }
+        .is-animating .concrete-icon-1 i { animation: keyboard-press 2.5s ease-in-out forwards; animation-delay: 1.5s; }
+        .is-animating .dynamic-text-1 p { animation: typing-reveal 3s steps(24, end) forwards; animation-delay: 2s; opacity: 1; clip-path: inset(0 100% 0 0); }
+        
+        .is-animating .data-packet-1 { animation: packet-travel-1 3s cubic-bezier(0.65, 0, 0.35, 1) forwards; animation-delay: 5.5s; display: flex !important; }
+        
+        .is-animating .eva-station-2 .station-header { animation: header-pop 1.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; animation-delay: 8.5s; }
+        .is-animating .concrete-icon-2 { color: #0078d4; border-color: rgba(0,120,212,0.5); box-shadow: 0 0 60px rgba(0,120,212,0.5), inset 0 2px 4px rgba(255,255,255,0.4); transform: translateY(-12px); animation-delay: 8.5s; }
+        .is-animating .concrete-icon-2 i { animation: pc-compute 3.5s ease-in-out forwards; animation-delay: 9.5s; }
+        .is-animating .dynamic-text-2 p { animation: typing-reveal 3s steps(35, end) forwards; animation-delay: 10s; opacity: 1; clip-path: inset(0 100% 0 0); }
+        
+        .is-animating .data-packet-2 { animation: packet-travel-2 3s cubic-bezier(0.65, 0, 0.35, 1) forwards; animation-delay: 13.5s; display: flex !important; }
+        
+        .is-animating .eva-station-3 .station-header { animation: header-pop 1.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; animation-delay: 16.5s; }
+        .is-animating .concrete-icon-3 { color: #10b981; border-color: rgba(16,185,129,0.5); box-shadow: 0 0 60px rgba(16,185,129,0.5), inset 0 2px 4px rgba(255,255,255,0.4); transform: translateY(-12px); animation-delay: 16.5s; }
+        .is-animating .monitor-text { animation: type-text 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; animation-delay: 20s; }
+        .is-animating .dynamic-text-3 p { animation: typing-reveal-stay 3s steps(30, end) forwards; animation-delay: 17.5s; opacity: 1; clip-path: inset(0 100% 0 0); }
+        
+        /* Finished states */
+        .is-finished .station-header { opacity: 1; transform: translateY(0); filter: blur(0); }
+        .is-finished .dynamic-text-3 p { opacity: 1; clip-path: inset(0 0 0 0); border-right: transparent; }
+        .is-finished .dynamic-text-3 p { opacity: 1; clip-path: inset(0 0 0 0); border-right: transparent; }
+        /* Finished state */
+        .is-finished .eva-station-1 .abstract-block { filter: grayscale(0%) opacity(1); box-shadow: 0 0 15px 2px rgba(245, 158, 11, 0.5); }
+        .is-finished .concrete-icon-1 { color: #f59e0b; border-color: rgba(245,158,11,0.5); box-shadow: 0 0 35px rgba(245,158,11,0.4), inset 0 2px 3px rgba(255,255,255,0.4);  }
+        .dark .is-finished .concrete-icon-1 {  }
+        .is-finished .eva-station-2 .abstract-block { filter: grayscale(0%) opacity(1); box-shadow: 0 0 15px 2px rgba(0, 120, 212, 0.5); }
+        .is-finished .concrete-icon-2 { color: #0078d4; border-color: rgba(0,120,212,0.5); box-shadow: 0 0 35px rgba(0,120,212,0.4), inset 0 2px 3px rgba(255,255,255,0.4);  }
+        .dark .is-finished .concrete-icon-2 {  }
+        .is-finished .eva-station-3 .abstract-block { filter: grayscale(0%) opacity(1); box-shadow: 0 0 15px 2px rgba(16, 185, 129, 0.5); }
+        .is-finished .concrete-icon-3 { color: #10b981; border-color: rgba(16,185,129,0.5); box-shadow: 0 0 35px rgba(16,185,129,0.4), inset 0 2px 3px rgba(255,255,255,0.4);  } .is-finished .monitor-text { opacity: 1; }
+        .dark .is-finished .concrete-icon-3 {  } .is-finished .monitor-text { opacity: 1; }
+        .yt-pulse.replay {
+            animation: ytPulse 1.8s ease-in-out 1;
+            animation-fill-mode: both;
+        }
+
+
+
+        /* --- Leuchtende Rahmen für die Titel (Pill Shapes) --- */
+        .title-frame { transition: all 0.4s ease; box-shadow: 0 0 15px rgba(0,0,0,0.5); }
+        .title-frame.active-e { box-shadow: 0 0 30px rgba(255,107,0,0.5), inset 0 0 15px rgba(255,107,0,0.2); transform: scale(1.05); border-color: rgba(255,107,0,0.8); }
+        .title-frame.active-v { box-shadow: 0 0 30px rgba(0,240,255,0.5), inset 0 0 15px rgba(0,240,255,0.2); transform: scale(1.05); border-color: rgba(0,240,255,0.8); }
+        .title-frame.active-a { box-shadow: 0 0 30px rgba(0,255,102,0.5), inset 0 0 15px rgba(0,255,102,0.2); transform: scale(1.05); border-color: rgba(0,255,102,0.8); }
+
+        /* --- Premium Glass Cards (Theorie) --- */
+        .glass-card { background: linear-gradient(145deg, rgba(15, 23, 42, 0.7) 0%, rgba(5, 9, 20, 0.8) 100%); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); border-top: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.05); transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease; }
+        .glass-card.active-e { border-color: rgba(255, 107, 0, 0.4); box-shadow: 0 0 40px rgba(255, 107, 0, 0.15), inset 0 0 20px rgba(255, 107, 0, 0.05); transform: translateY(-5px); }
+        .glass-card.active-v { border-color: rgba(0, 240, 255, 0.4); box-shadow: 0 0 40px rgba(0, 240, 255, 0.15), inset 0 0 20px rgba(0, 240, 255, 0.05); transform: translateY(-5px); }
+        .glass-card.active-a { border-color: rgba(0, 255, 102, 0.4); box-shadow: 0 0 40px rgba(0, 255, 102, 0.15), inset 0 0 20px rgba(0, 255, 102, 0.05); transform: translateY(-5px); }
+        .hardware-node { background: #0f172a; border: 2px solid #1e293b; box-shadow: 0 10px 25px rgba(0,0,0,0.5); transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .node-glow-e { border-color: #FF6B00; box-shadow: 0 0 30px rgba(255, 107, 0, 0.6), inset 0 0 15px rgba(255, 107, 0, 0.3); transform: scale(1.15); color: #FF6B00; }
+        .node-glow-v { border-color: #00F0FF; box-shadow: 0 0 30px rgba(0, 240, 255, 0.6), inset 0 0 15px rgba(0, 240, 255, 0.3); transform: scale(1.15); color: #00F0FF; }
+        .node-glow-a { border-color: #00FF66; box-shadow: 0 0 30px rgba(0, 255, 102, 0.6), inset 0 0 15px rgba(0, 255, 102, 0.3); transform: scale(1.15); color: #00FF66; }
+        .math-popup { background: linear-gradient(180deg, rgba(15, 23, 42, 0.95) 0%, rgba(5, 9, 20, 0.98) 100%); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.05); border-top: 2px solid; box-shadow: 0 20px 40px rgba(0,0,0,0.9); transform: translateY(20px) scale(0.95); opacity: 0; transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+        .math-popup.show { transform: translateY(0) scale(1); opacity: 1; }
+        .math-popup-e { border-top-color: #FF6B00; box-shadow: 0 15px 40px rgba(255, 107, 0, 0.15); }
+        .math-popup-v { border-top-color: #00F0FF; box-shadow: 0 15px 40px rgba(0, 240, 255, 0.15); }
+        .math-popup-a { border-top-color: #00FF66; box-shadow: 0 15px 40px rgba(0, 255, 102, 0.15); }
+        .neon-text-e { text-shadow: 0 0 10px rgba(255, 107, 0, 0.8), 0 0 25px rgba(255, 107, 0, 0.4); color: #fff; }
+        .neon-text-v { text-shadow: 0 0 10px rgba(0, 240, 255, 0.8), 0 0 25px rgba(0, 240, 255, 0.4); color: #fff; }
+        .neon-text-a { text-shadow: 0 0 10px rgba(0, 255, 102, 0.8), 0 0 25px rgba(0, 255, 102, 0.4); color: #fff; }
+        #data-particle { background: #fff; box-shadow: 0 0 20px #fff, 0 0 40px #fff; transition: left 1.5s cubic-bezier(0.4, 0, 0.2, 1), top 1.5s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s, opacity 0.3s; will-change: left, top, transform; z-index: 30; }
+        #data-particle.processing { animation: processParticle 0.5s ease-in-out infinite alternate; }
+        @keyframes processParticle { 0% { transform: scale(1) translate(-50%, -50%); box-shadow: 0 0 20px #00F0FF, 0 0 40px #00F0FF; background: #00F0FF; } 100% { transform: scale(1.5) translate(-33%, -33%); box-shadow: 0 0 40px #00F0FF, 0 0 80px #00F0FF; background: #fff; } }
+        @keyframes cpuWork { 0% { transform: scale(1.15) translate(1px, 1px); } 20% { transform: scale(1.15) translate(-2px, 0px); } 40% { transform: scale(1.15) translate(2px, -1px); } 60% { transform: scale(1.15) translate(-1px, 2px); } 80% { transform: scale(1.15) translate(1px, -2px); } 100% { transform: scale(1.15) translate(-1px, 1px); } }
+        .cpu-working { animation: cpuWork 0.1s infinite; filter: drop-shadow(0 0 20px #00F0FF); }
+        .cursor::after { content: '|'; animation: blink 1s step-end infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        @media print {
+            .no-print { display: none !important; }
+            html, body { height: auto !important; min-height: auto !important; margin: 0 !important; padding: 0 !important; }
+            body { background: white !important; color: black !important; font-size: 11pt; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .print-card { border: 1px solid #cbd5e1 !important; box-shadow: none !important; break-inside: avoid; page-break-inside: avoid; }
+            input, textarea, select { border: 1px solid #94a3b8 !important; background: #fff !important; color: #000 !important; }
+            #play-btn-hd { display: none !important; }
+            .monitor-text { opacity: 1 !important; }
+            .math-popup { opacity: 1 !important; transform: none !important; }
+            #pipeline-progress { width: 100% !important; }
+            #pipeline-progress-mobile { height: 100% !important; }
+            #secPraxis { padding: 16px !important; }
+            #secPraxis .p-4 { padding: 12px !important; }
+            #secPraxis .space-y-3 > * + * { margin-top: 8px !important; }
+        }
+    
+        .premium-progress{position:relative;overflow:hidden;background:linear-gradient(90deg,#0078d4 0%,#7c3aed 38%,#10b981 68%,#0078d4 100%);background-size:240% 100%;box-shadow:0 0 12px rgba(0,120,212,.34);animation:premiumProgressFlow 3.4s linear infinite}
+        .premium-progress::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 20%,rgba(255,255,255,.72) 48%,transparent 76%);transform:translateX(-130%);animation:premiumProgressShine 2.3s ease-in-out infinite}
+        @keyframes premiumProgressFlow{to{background-position:240% 0}}
+        @keyframes premiumProgressShine{0%,35%{transform:translateX(-130%)}75%,100%{transform:translateX(130%)}}
+        @media(prefers-reduced-motion:reduce){.premium-progress,.premium-progress::after{animation:none!important}}
+</style>
+</head>
+<body class="bg-slate-100 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-full flex flex-col font-sans antialiased">
+
+    <!-- Header -->
+    <header class="sticky top-0 z-40 worksheet-header no-print">
+        <div class="max-w-[1920px] w-full mx-auto px-4 sm:px-8 py-2.5 flex items-center justify-between gap-4">
+            <div class="flex items-center gap-3 min-w-0">
+                <div class="w-9 h-9 rounded-lg bg-onedrive-500 text-white flex items-center justify-center font-black shadow-md shadow-onedrive-500/20 shrink-0">
+                    <span class="text-[13px] tracking-wider">EVA</span>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div>
+                        <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Fortschritt</span>
+                        <span id="headerPercentText" class="text-sm font-extrabold text-onedrive-600 dark:text-onedrive-400">0% erledigt</span>
+                    </div>
+                    <div class="relative w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center font-bold text-[10px] sm:text-xs text-slate-700 dark:text-slate-200 shrink-0 ml-1">
+                        <svg class="absolute inset-0 w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+                            <circle cx="18" cy="18" r="16" fill="none" class="stroke-slate-200 dark:stroke-slate-800" stroke-width="4"></circle>
+                            <circle id="headerSvgCircle" cx="18" cy="18" r="16" fill="none" class="stroke-emerald-500 transition-all duration-500 ease-out" stroke-width="4" stroke-dasharray="100.53" stroke-dashoffset="100.53" stroke-linecap="round"></circle>
+                        </svg>
+                        <span id="headerPercentNumber" class="relative z-10">0%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2 shrink-0">
+                <button onclick="toggleDarkMode()" title="Dunkelmodus umschalten" class="p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
+                    <i id="themeIcon" class="fa-solid fa-moon text-sm"></i>
+                </button>
+                <button id="hdrPdfBtn" onclick="handlePrint()" class="p-2 rounded-lg bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-500 transition border border-slate-200 dark:border-slate-700 opacity-60 cursor-not-allowed" title="Erst bei 100% Ausfüllung möglich">
+                    <i id="printIcon" class="fa-solid fa-file-pdf text-sm"></i>
+                </button>
+                <button onclick="confirmReset()" title="Zurücksetzen" class="p-2 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/50 rounded-lg border border-rose-200 dark:border-rose-900/50">
+                    <i class="fa-solid fa-rotate-right text-sm"></i>
+                </button>
+            </div>
+        </div>
+        <div class="w-full bg-slate-200 dark:bg-slate-800 h-1">
+            <div id="progressBar" class="premium-progress h-1 transition-all duration-500" style="width: 0%"></div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto w-full px-4 sm:px-6 py-6 print:py-2 space-y-6 print:space-y-4 flex-grow">
+
+        <!-- Title & Metadata -->
+        <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 print-card">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-100 dark:border-slate-800">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-xl bg-[#050914] flex items-center justify-center text-[17px] font-black tracking-widest border border-slate-800 shadow-sm pl-1">
+                        <span class="text-evaE">E</span><span class="text-evaV">V</span><span class="text-evaA">A</span>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900 dark:text-slate-100">A2: Das EVA-Prinzip</h2>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Informatische Bildung • IT-Hardware • A2</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Student Metadata -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-500 dark:text-slate-400 mb-1">
+                        <i class="fa-solid fa-user mr-1 text-onedrive-500"></i> Vorname
+                    </label>
+                    <input type="text" id="studentName" readonly tabindex="-1" style="pointer-events: none;" class="w-full px-3.5 py-2 text-sm bg-slate-100 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl font-medium text-slate-500 dark:text-slate-400 opacity-90 cursor-not-allowed">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-500 dark:text-slate-400 mb-1">
+                        <i class="fa-solid fa-users mr-1 text-onedrive-500"></i> Klasse
+                    </label>
+                    <input type="text" id="studentClass" readonly tabindex="-1" style="pointer-events: none;" class="w-full px-3.5 py-2 text-sm bg-slate-100 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl font-medium text-slate-500 dark:text-slate-400 opacity-90 cursor-not-allowed" value="B24">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-500 dark:text-slate-400 mb-1">
+                        <i class="fa-solid fa-calendar mr-1 text-onedrive-500"></i> Datum
+                    </label>
+                    <input type="text" id="studentDate" readonly tabindex="-1" style="pointer-events: none;" class="w-full px-3.5 py-2 text-sm bg-slate-100 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl font-medium text-slate-500 dark:text-slate-400 opacity-90 cursor-not-allowed">
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 1: Overview & Diagram (Ultra HD) -->
+        <section class="no-print bg-[#050914] eva-grid-bg text-white rounded-2xl shadow-sm border border-slate-800 p-6 print-card space-y-6 relative overflow-hidden">
+            <!-- Statische Hintergrund-Glows -->
+            <div class="absolute top-[-10%] left-[-10%] w-[600px] h-[600px] bg-evaE/5 rounded-full blur-[150px] pointer-events-none z-0"></div>
+            <div class="absolute top-[30%] right-[-10%] w-[700px] h-[700px] bg-evaV/5 rounded-full blur-[150px] pointer-events-none z-0"></div>
+            <div class="absolute bottom-[-10%] left-[20%] w-[600px] h-[600px] bg-evaA/5 rounded-full blur-[150px] pointer-events-none z-0"></div>
+
+            <header class="text-center mb-16 print:mb-6 px-4 z-10 relative">
+                <h1 class="text-5xl md:text-7xl font-black mb-4 tracking-tighter text-white drop-shadow-2xl">
+                    Das <span class="text-evaE drop-shadow-[0_0_15px_rgba(255,107,0,0.5)]">E</span>-<span class="text-evaV drop-shadow-[0_0_15px_rgba(0,240,255,0.5)]">V</span>-<span class="text-evaA drop-shadow-[0_0_15px_rgba(0,255,102,0.5)]">A</span> Prinzip
+                </h1>
+                <p class="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto font-medium">
+                    Theorie, Hardware und Aufgabe perfekt in Reihe.
+                </p>
+            </header>
+
+            <main id="anim-container" class="w-full relative z-10">
+                <div id="pipeline-track" class="absolute bg-slate-800 rounded-full z-0 hidden md:block" style="height: 4px;"></div>
+                <div id="pipeline-progress" class="absolute bg-gradient-to-r from-evaE via-evaV to-evaA rounded-full z-0 hidden md:block transition-all duration-[1500ms]" style="height: 4px; width: 0;"></div>
+                <div id="pipeline-track-mobile" class="absolute bg-slate-800 rounded-full z-0 md:hidden" style="width: 4px;"></div>
+                <div id="pipeline-progress-mobile" class="absolute bg-gradient-to-b from-evaE via-evaV to-evaA rounded-full z-0 md:hidden transition-all duration-[1500ms]" style="width: 4px; height: 0;"></div>
+                
+                <div id="data-particle" class="absolute w-4 h-4 md:w-5 md:h-5 rounded-full -translate-x-1/2 -translate-y-1/2 opacity-0 pointer-events-none"></div>
+
+                <div class="flex flex-col md:flex-row justify-between w-full gap-10 md:gap-8 print:gap-2 relative z-10">
+                    <!-- EINGABE -->
+                    <div class="flex-1 flex flex-col">
+                        <div class="h-20 flex items-center justify-center">
+                            <div id="card-e" class="title-frame border-2 border-evaE/60 bg-evaE/10 text-evaE font-black text-xl md:text-2xl uppercase tracking-widest px-8 print:px-2 py-3 rounded-xl flex items-center justify-center">
+                                EINGABE
+                            </div>
+                        </div>
+                        <div class="h-10 md:h-12 w-full"></div>
+                        <div class="flex justify-center relative z-20">
+                            <div id="node-e" class="hardware-node w-20 h-20 md:w-28 md:h-28 rounded-full flex items-center justify-center text-slate-500 bg-surface">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="md:w-12 md:h-12"><rect width="20" height="16" x="2" y="4" rx="2" ry="2"/><path d="M6 8h.001M10 8h.001M14 8h.001M18 8h.001M8 12h.001M12 12h.001M16 12h.001M7 16h10"/></svg>
+                            </div>
+                        </div>
+                        <div class="h-10 md:h-12 w-full"></div>
+                        <div class="w-full">
+                            <div id="math-e" class="math-popup math-popup-e rounded-2xl p-6 print:p-3 text-center w-full">
+                                <div id="typewriter-e" class="font-mono text-xl md:text-2xl font-bold neon-text-e min-h-[64px] flex items-center justify-center text-center leading-relaxed">
+                                    Benutzer tippt ...<br>5 + 3
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- VERARBEITUNG -->
+                    <div class="flex-1 flex flex-col">
+                        <div class="h-20 flex items-center justify-center">
+                            <div id="card-v" class="title-frame border-2 border-evaV/60 bg-evaV/10 text-evaV font-black text-xl md:text-2xl uppercase tracking-widest px-8 print:px-2 py-3 rounded-xl flex items-center justify-center">
+                                VERARBEITUNG
+                            </div>
+                        </div>
+                        <div class="h-10 md:h-12 w-full"></div>
+                        <div class="flex justify-center relative z-20">
+                            <div id="node-v" class="hardware-node w-20 h-20 md:w-28 md:h-28 rounded-full flex items-center justify-center text-slate-500 bg-surface">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="md:w-12 md:h-12"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
+                            </div>
+                        </div>
+                        <div class="h-10 md:h-12 w-full"></div>
+                        <div class="w-full">
+                            <div id="math-v" class="math-popup math-popup-v rounded-2xl p-6 print:p-3 text-center w-full">
+                                <div id="typewriter-v" class="font-mono text-xl md:text-2xl font-bold neon-text-v min-h-[64px] flex justify-center items-center text-center leading-relaxed">
+                                    Prozessor berechnet<br>5 + 3 = 8
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- AUSGABE -->
+                    <div class="flex-1 flex flex-col">
+                        <div class="h-20 flex items-center justify-center">
+                            <div id="card-a" class="title-frame border-2 border-evaA/60 bg-evaA/10 text-evaA font-black text-xl md:text-2xl uppercase tracking-widest px-8 print:px-2 py-3 rounded-xl flex items-center justify-center">
+                                AUSGABE
+                            </div>
+                        </div>
+                        <div class="h-10 md:h-12 w-full"></div>
+                        <div class="flex justify-center relative z-20">
+                            <div id="node-a" class="hardware-node w-20 h-20 md:w-28 md:h-28 rounded-full flex items-center justify-center text-slate-500 bg-surface relative">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="md:w-12 md:h-12"><rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/>
+                                    <text class="monitor-text opacity-0 transition-opacity duration-500" x="12" y="10.5" font-size="10" font-family="monospace" font-weight="900" text-anchor="middle" dominant-baseline="middle" stroke="none" fill="currentColor">8</text>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="h-10 md:h-12 w-full"></div>
+                        <div class="w-full">
+                            <div id="math-a" class="math-popup math-popup-a rounded-2xl p-6 print:p-3 text-center w-full">
+                                <div id="typewriter-a" class="font-mono text-xl md:text-2xl font-black neon-text-a min-h-[64px] flex items-center justify-center text-center leading-relaxed">
+                                    Monitor zeigt Ergebnis: 8
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <div class="flex justify-center mt-2 mb-10 z-20 relative">
+                <button id="play-btn-hd" onclick="startHDAnimation()" class="btn-scale-pulse group relative inline-flex items-center justify-center gap-3 px-10 py-4 font-bold text-white bg-slate-800 border border-slate-700 rounded-full overflow-hidden transition-all duration-300 hover:bg-slate-700 hover:border-evaV/50 focus:outline-none focus:ring-4 focus:ring-evaV/40 active:scale-95">
+                    <div class="absolute inset-0 bg-gradient-to-r from-evaE/20 via-evaV/20 to-evaA/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="relative z-10 group-hover:text-evaV transition-colors duration-300">
+                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                    </svg>
+                    <span id="btn-text-hd" class="relative z-10 text-base tracking-wide group-hover:text-white transition-colors duration-300">System starten</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- Section 2: Video & Notes -->
+        <section id="secVideo" class="no-print hidden bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 print-card space-y-4">
+            <div>
+                <h3 class="text-lg font-bold text-slate-900 dark:text-slate-100">Video: Das EVA-Prinzip einfach erklärt</h3>
+            </div>
+
+            <div class="space-y-2">
+                <div class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/40 p-6 text-center">
+                    <a id="ytButton" onclick="revealPraxis()" href="https://www.youtube.com/watch?v=p-kMnyitkHo" target="_blank" rel="noopener" class="yt-pulse group inline-flex items-center justify-center w-28 h-28 rounded-2xl bg-red-600 text-white shadow-lg border-4 border-red-400 hover:bg-red-500 transition-colors">
+                        <i class="fa-brands fa-youtube text-6xl"></i>
+                    </a>
+                    <div class="mt-3">
+                        <a onclick="revealPraxis()" href="https://www.youtube.com/watch?v=p-kMnyitkHo" target="_blank" rel="noopener" class="text-sm font-semibold text-red-600 dark:text-red-400 hover:underline">
+                            YouTube öffnen
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Section 3: Theory & Everyday Examples -->
+        <section id="secPraxis" class="hidden bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 print-card space-y-6">
+            <div class="no-print">
+                <h3 class="text-base font-semibold text-slate-800 dark:text-slate-200 mt-2">
+                    Wo begegnet dir das EVA-Prinzip im Alltag? Fülle die folgende Tabelle aus.
+                </h3>
+            </div>
+
+            <!-- 6 Everyday Example Cards -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 print:grid-cols-2 print:gap-2 gap-4">
+
+                <div class="p-4 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700 space-y-3">
+                    <h4 class="font-bold text-sm text-onedrive-600 dark:text-onedrive-400 flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-full bg-onedrive-500 text-white flex items-center justify-center text-xs">1</span>
+                        Beispiel 1: Kaffeemaschine
+                    </h4>
+                    
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-400 mb-1">System / Gerät:</label>
+                            <input type="text" id="ex1_name" oninput="updateProgress()" value="Kaffeemaschine" placeholder="Gerät / System eingeben..." readonly class="cursor-not-allowed opacity-90 w-full p-2.5 text-xs bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-onedrive-500 dark:text-slate-100">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-orange-600 dark:text-orange-500 mb-1">Eingabe (E):</label>
+                            <input type="text" id="ex1_in" oninput="updateProgress()" value="Wasser & Kaffee hineingeben, Taste drücken" placeholder="Eingabe beschreiben..." readonly class="cursor-not-allowed opacity-90 w-full p-2.5 text-xs bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-onedrive-500 dark:text-slate-100">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-cyan-600 dark:text-cyan-400 mb-1">Verarbeitung (V):</label>
+                            <input type="text" id="ex1_proc" oninput="updateProgress()" value="Die Maschine erhitzt das Wasser und brüht den Kaffee" placeholder="Verarbeitung beschreiben..." readonly class="cursor-not-allowed opacity-90 w-full p-2.5 text-xs bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-onedrive-500 dark:text-slate-100">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-emerald-600 dark:text-emerald-400 mb-1">Ausgabe (A):</label>
+                            <input type="text" id="ex1_out" oninput="updateProgress()" value="Frischer Kaffee wird ausgegeben" placeholder="Ausgabe beschreiben..." readonly class="cursor-not-allowed opacity-90 w-full p-2.5 text-xs bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-onedrive-500 dark:text-slate-100">
+                        </div>
+                    </div>
+                </div>
+                <div class="p-4 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700 space-y-3">
+                    <h4 class="font-bold text-sm text-onedrive-600 dark:text-onedrive-400 flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-full bg-onedrive-500 text-white flex items-center justify-center text-xs">2</span>
+                        Beispiel 2 aus dem Alltag
+                    </h4>
+                    
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-400 mb-1">System / Gerät:</label>
+                            <input type="text" id="ex2_name" oninput="updateProgress()" value="Taschenrechner" placeholder="Gerät / System eingeben..." readonly class="cursor-not-allowed opacity-90 w-full p-2.5 text-xs bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-onedrive-500 dark:text-slate-100">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-orange-600 dark:text-orange-500 mb-1">Eingabe (E):</label>
+                            <input type="text" id="ex2_in" oninput="updateProgress()" value="Benutzer gibt Zahlen und Operator ein" placeholder="Eingabe beschreiben..." readonly class="cursor-not-allowed opacity-90 w-full p-2.5 text-xs bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-onedrive-500 dark:text-slate-100">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-cyan-600 dark:text-cyan-400 mb-1">Verarbeitung (V):</label>
+                            <input type="text" id="ex2_proc" oninput="updateProgress()" value="Der Taschenrechner berechnet das Ergebnis" placeholder="Verarbeitung beschreiben..." readonly class="cursor-not-allowed opacity-90 w-full p-2.5 text-xs bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-onedrive-500 dark:text-slate-100">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-emerald-600 dark:text-emerald-400 mb-1">Ausgabe (A):</label>
+                            <input type="text" id="ex2_out" oninput="updateProgress()" value="Das Ergebnis wird auf dem Display angezeigt" placeholder="Ausgabe beschreiben..." readonly class="cursor-not-allowed opacity-90 w-full p-2.5 text-xs bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-onedrive-500 dark:text-slate-100">
+                        </div>
+                    </div>
+                </div>
+                <div class="p-4 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700 space-y-3">
+                    <h4 class="font-bold text-sm text-onedrive-600 dark:text-onedrive-400 flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-full bg-onedrive-500 text-white flex items-center justify-center text-xs">3</span>
+                        Beispiel 3 aus dem Alltag
+                    </h4>
+                    
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-400 mb-1">System / Gerät:</label>
+                            <input type="text" id="ex3_name" oninput="updateProgress()" placeholder="Gerät / System eingeben..." class="w-full p-2.5 text-xs bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-onedrive-500 dark:text-slate-100">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-orange-600 dark:text-orange-500 mb-1">Eingabe (E):</label>
+                            <input type="text" id="ex3_in" oninput="updateProgress()" placeholder="Eingabe beschreiben..." class="w-full p-2.5 text-xs bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-onedrive-500 dark:text-slate-100">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-cyan-600 dark:text-cyan-400 mb-1">Verarbeitung (V):</label>
+                            <input type="text" id="ex3_proc" oninput="updateProgress()" placeholder="Verarbeitung beschreiben..." class="w-full p-2.5 text-xs bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-onedrive-500 dark:text-slate-100">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-emerald-600 dark:text-emerald-400 mb-1">Ausgabe (A):</label>
+                            <input type="text" id="ex3_out" oninput="updateProgress()" placeholder="Ausgabe beschreiben..." class="w-full p-2.5 text-xs bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-onedrive-500 dark:text-slate-100">
+                        </div>
+                    </div>
+                </div>
+                <div class="p-4 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700 space-y-3">
+                    <h4 class="font-bold text-sm text-onedrive-600 dark:text-onedrive-400 flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-full bg-onedrive-500 text-white flex items-center justify-center text-xs">4</span>
+                        Beispiel 4 aus dem Alltag
+                    </h4>
+                    
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-400 mb-1">System / Gerät:</label>
+                            <input type="text" id="ex4_name" oninput="updateProgress()" placeholder="Gerät / System eingeben..." class="w-full p-2.5 text-xs bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-onedrive-500 dark:text-slate-100">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-orange-600 dark:text-orange-500 mb-1">Eingabe (E):</label>
+                            <input type="text" id="ex4_in" oninput="updateProgress()" placeholder="Eingabe beschreiben..." class="w-full p-2.5 text-xs bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-onedrive-500 dark:text-slate-100">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-cyan-600 dark:text-cyan-400 mb-1">Verarbeitung (V):</label>
+                            <input type="text" id="ex4_proc" oninput="updateProgress()" placeholder="Verarbeitung beschreiben..." class="w-full p-2.5 text-xs bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-onedrive-500 dark:text-slate-100">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-emerald-600 dark:text-emerald-400 mb-1">Ausgabe (A):</label>
+                            <input type="text" id="ex4_out" oninput="updateProgress()" placeholder="Ausgabe beschreiben..." class="w-full p-2.5 text-xs bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-onedrive-500 dark:text-slate-100">
+                        </div>
+                    </div>
+                </div>
+                <div class="p-4 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700 space-y-3">
+                    <h4 class="font-bold text-sm text-onedrive-600 dark:text-onedrive-400 flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-full bg-onedrive-500 text-white flex items-center justify-center text-xs">5</span>
+                        Beispiel 5 aus dem Alltag
+                    </h4>
+                    
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-400 mb-1">System / Gerät:</label>
+                            <input type="text" id="ex5_name" oninput="updateProgress()" placeholder="Gerät / System eingeben..." class="w-full p-2.5 text-xs bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-onedrive-500 dark:text-slate-100">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-orange-600 dark:text-orange-500 mb-1">Eingabe (E):</label>
+                            <input type="text" id="ex5_in" oninput="updateProgress()" placeholder="Eingabe beschreiben..." class="w-full p-2.5 text-xs bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-onedrive-500 dark:text-slate-100">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-cyan-600 dark:text-cyan-400 mb-1">Verarbeitung (V):</label>
+                            <input type="text" id="ex5_proc" oninput="updateProgress()" placeholder="Verarbeitung beschreiben..." class="w-full p-2.5 text-xs bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-onedrive-500 dark:text-slate-100">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-emerald-600 dark:text-emerald-400 mb-1">Ausgabe (A):</label>
+                            <input type="text" id="ex5_out" oninput="updateProgress()" placeholder="Ausgabe beschreiben..." class="w-full p-2.5 text-xs bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-onedrive-500 dark:text-slate-100">
+                        </div>
+                    </div>
+                </div>
+                <div class="p-4 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700 space-y-3">
+                    <h4 class="font-bold text-sm text-onedrive-600 dark:text-onedrive-400 flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-full bg-onedrive-500 text-white flex items-center justify-center text-xs">6</span>
+                        Beispiel 6 aus dem Alltag
+                    </h4>
+                    
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-400 mb-1">System / Gerät:</label>
+                            <input type="text" id="ex6_name" oninput="updateProgress()" placeholder="Gerät / System eingeben..." class="w-full p-2.5 text-xs bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-onedrive-500 dark:text-slate-100">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-orange-600 dark:text-orange-500 mb-1">Eingabe (E):</label>
+                            <input type="text" id="ex6_in" oninput="updateProgress()" placeholder="Eingabe beschreiben..." class="w-full p-2.5 text-xs bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-onedrive-500 dark:text-slate-100">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-cyan-600 dark:text-cyan-400 mb-1">Verarbeitung (V):</label>
+                            <input type="text" id="ex6_proc" oninput="updateProgress()" placeholder="Verarbeitung beschreiben..." class="w-full p-2.5 text-xs bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-onedrive-500 dark:text-slate-100">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-emerald-600 dark:text-emerald-400 mb-1">Ausgabe (A):</label>
+                            <input type="text" id="ex6_out" oninput="updateProgress()" placeholder="Ausgabe beschreiben..." class="w-full p-2.5 text-xs bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-onedrive-500 dark:text-slate-100">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initTheme();
+            loadProgressFromStorage();
+            applyDefaultClassAndDate();
+
+            // Sync global Vorname
+            var globalVorname = localStorage.getItem('studentVorname') || localStorage.getItem('student_vorname');
+            var nameEl = document.getElementById('studentName');
+            if (nameEl) {
+                if (!nameEl.value && globalVorname) {
+                    nameEl.value = globalVorname;
+                } else if (nameEl.value && nameEl.value.trim()) {
+                    localStorage.setItem('studentVorname', nameEl.value.trim());
+                    localStorage.setItem('student_vorname', nameEl.value.trim());
+                }
+            }
+
+            setupUniversalAutoSave();
+            updateProgress();
+        });
+
+        function updateProgress() {
+            const inputsToTrack = ['studentName', 'studentClass', 'studentDate'];
+            for (let i = 1; i <= 6; i++) {
+                inputsToTrack.push(`ex${i}_name`, `ex${i}_in`, `ex${i}_proc`, `ex${i}_out`);
+            }
+
+            let filled = 0;
+            inputsToTrack.forEach(id => {
+                const el = document.getElementById(id);
+                if (el && el.value.trim().length > 0) filled++;
+            });
+
+            const total = inputsToTrack.length;
+            const percent = Math.min(100, Math.round((filled / total) * 100));
+
+            document.getElementById('headerPercentText').innerText = `${percent}% erledigt`;
+            
+            var hdrSvgCircle = document.getElementById('headerSvgCircle');
+            if (hdrSvgCircle) {
+                var offset = 100.53 - (100.53 * percent / 100);
+                hdrSvgCircle.style.strokeDashoffset = offset;
+            }
+            var hdrPercentNum = document.getElementById('headerPercentNumber');
+            if (hdrPercentNum) {
+                hdrPercentNum.innerText = `${percent}%`;
+            }
+            
+            document.getElementById('progressBar').style.width = `${percent}%`;
+
+
+            const hdrBtn = document.getElementById('hdrPdfBtn');
+            const printIcon = document.getElementById('printIcon');
+            if (hdrBtn) {
+                if (percent === 100) {
+                    hdrBtn.className = 'p-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white transition shadow-sm cursor-pointer';
+                    hdrBtn.title = "Arbeitsblatt als PDF herunterladen";
+                    if (printIcon) printIcon.className = "fa-solid fa-file-pdf text-sm";
+                } else {
+                    hdrBtn.className = 'p-2 rounded-lg bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-500 transition border border-slate-200 dark:border-slate-700 opacity-60 cursor-not-allowed';
+                    hdrBtn.title = "Erst bei 100% Ausfüllung möglich";
+                    if (printIcon) printIcon.className = "fa-solid fa-lock text-sm";
+                }
+            }
+
+            saveProgressToStorage(false, percent);
+        }
+
+        function handlePrint() {
+            const percentText = document.getElementById('headerPercentText').innerText;
+            if (!percentText.includes('100%')) {
+                showToast('Fülle bitte zuerst alle Felder aus (100%), um das PDF herunterzuladen.');
+                return;
+            }
+
+            const sections = [];
+            for (let i = 1; i <= 6; i++) {
+                const name = (document.getElementById(`ex${i}_name`) || {}).value || '';
+                sections.push({
+                    heading: `Beispiel ${i}: ${name || '(kein Gerät angegeben)'}`,
+                    fields: [
+                        { label: 'Eingabe (E)', value: (document.getElementById(`ex${i}_in`) || {}).value || '' },
+                        { label: 'Verarbeitung (V)', value: (document.getElementById(`ex${i}_proc`) || {}).value || '' },
+                        { label: 'Ausgabe (A)', value: (document.getElementById(`ex${i}_out`) || {}).value || '' }
+                    ]
+                });
+            }
+
+            downloadTextWorksheetPDF({
+                title: 'Das EVA-Prinzip im Alltag',
+                filenamePrefix: 'A2_EVA_Prinzip',
+                sections: sections
+            });
+        }
+
+        function saveProgressToStorage(notify = true, percent) {
+            const data = { form: {} };
+            document.querySelectorAll('input[type="text"], input[type="date"], textarea').forEach(el => {
+                if (el.id) data.form[el.id] = el.value;
+            });
+            if (typeof percent === 'number') data.percent = percent;
+            localStorage.setItem('onedrive_a2_eva_worksheet_8sek', JSON.stringify(data));
+            if (notify) showToast('Fortschritt erfolgreich gespeichert!');
+        }
+
+        function loadProgressFromStorage() {
+            const saved = localStorage.getItem('onedrive_a2_eva_worksheet_8sek');
+            if (!saved) return;
+            try {
+                const data = JSON.parse(saved);
+                if (data.form) {
+                    Object.keys(data.form).forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) {
+                            if (id === 'studentClass' && (!data.form[id] || !data.form[id].trim())) el.value = 'B24';
+                            else if (id === 'studentDate' && !data.form[id]) el.value = new Date().toISOString().split('T')[0];
+                            else if (data.form[id]) el.value = data.form[id];
+                        }
+                    });
+                }
+            } catch (e) {
+                console.error("Fehler beim Laden des Speicherstands", e);
+            }
+            
+            // Wenn ein Speicherstand gefunden wurde, blenden wir die Arbeitsbereiche direkt ein
+            const secVideo = document.getElementById('secVideo');
+            const secPraxis = document.getElementById('secPraxis');
+            if (secVideo) secVideo.classList.remove('hidden');
+            if (secPraxis) secPraxis.classList.remove('hidden');
+        }
+
+        function confirmReset() {
+            showConfirmModal('Möchtest du wirklich alle Eingaben auf diesem Arbeitsblatt zurücksetzen?', () => {
+                localStorage.removeItem('onedrive_a2_eva_worksheet_8sek');
+                localStorage.removeItem('hw_autosave_' + location.pathname.split('/').pop());
+                document.querySelectorAll('input[type="text"], input[type="date"], textarea').forEach(i => i.value = '');
+                var classEl = document.getElementById('studentClass');
+                if (classEl) classEl.value = 'B24';
+                applyDefaultClassAndDate();
+                var nameEl = document.getElementById('studentName');
+                var globalVorname = localStorage.getItem('studentVorname') || localStorage.getItem('student_vorname');
+                if (nameEl && globalVorname) nameEl.value = globalVorname;
+                updateProgress();
+                showToast('Arbeitsblatt wurde zurückgesetzt.');
+            });
+        }
+
+        function showToast(message) {
+            let toast = document.getElementById('customToast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'customToast';
+                toast.className = 'fixed bottom-5 right-5 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-2xl z-50 transition-all duration-300 transform translate-y-10 opacity-0 flex items-center gap-2.5 text-xs font-semibold border border-slate-700 max-w-md';
+                document.body.appendChild(toast);
+            }
+            toast.innerHTML = `<i class="fa-solid fa-circle-info text-onedrive-400 text-base shrink-0"></i> <span>${message}</span>`;
+            toast.classList.remove('translate-y-10', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-10', 'opacity-0');
+            }, 3500);
+        }
+
+        function showConfirmModal(message, onConfirm) {
+            let modal = document.getElementById('customModal');
+            if (!modal) {
+                modal = document.createElement('div');
+                modal.id = 'customModal';
+                modal.className = 'fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4';
+                document.body.appendChild(modal);
+            }
+            modal.innerHTML = `
+                <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 max-w-sm w-full p-6 space-y-4">
+                    <div class="flex items-center gap-3 text-rose-600 dark:text-rose-400 font-bold text-base">
+                        <i class="fa-solid fa-triangle-exclamation text-xl"></i>
+                        <span>Aktion bestätigen</span>
+                    </div>
+                    <p class="text-xs text-slate-600 dark:text-slate-300">${message}</p>
+                    <div class="flex justify-end gap-2 pt-2">
+                        <button id="modalCancelBtn" class="px-3.5 py-1.5 text-xs font-semibold rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200">
+                            Abbrechen
+                        </button>
+                        <button id="modalConfirmBtn" class="px-3.5 py-1.5 text-xs font-semibold rounded-xl bg-rose-600 hover:bg-rose-700 text-white">
+                            Zurücksetzen
+                        </button>
+                    </div>
+                </div>
+            `;
+            modal.style.display = 'flex';
+            document.getElementById('modalCancelBtn').onclick = () => { modal.style.display = 'none'; };
+            document.getElementById('modalConfirmBtn').onclick = () => { modal.style.display = 'none'; onConfirm(); };
+        }
+
+
+    </script>
+
+    <script>
+        const isMobile = () => window.innerWidth < 768;
+        
+        let container, cardE, cardV, cardA, nodeE, nodeV, nodeA, mathE, mathV, mathA;
+        let typewriterE, typewriterV, typewriterA;
+        let particle, trackDesktop, progressDesktop, trackMobile, progressMobile;
+        let playBtnHD, btnTextHD;
+        
+        let isAnimatingHD = false;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            container = document.getElementById('anim-container');
+            cardE = document.getElementById('card-e');
+            cardV = document.getElementById('card-v');
+            cardA = document.getElementById('card-a');
+            nodeE = document.getElementById('node-e');
+            nodeV = document.getElementById('node-v');
+            nodeA = document.getElementById('node-a');
+            mathE = document.getElementById('math-e');
+            mathV = document.getElementById('math-v');
+            mathA = document.getElementById('math-a');
+            typewriterE = document.getElementById('typewriter-e');
+            typewriterV = document.getElementById('typewriter-v');
+            typewriterA = document.getElementById('typewriter-a');
+            particle = document.getElementById('data-particle');
+            trackDesktop = document.getElementById('pipeline-track');
+            progressDesktop = document.getElementById('pipeline-progress');
+            trackMobile = document.getElementById('pipeline-track-mobile');
+            progressMobile = document.getElementById('pipeline-progress-mobile');
+            playBtnHD = document.getElementById('play-btn-hd');
+            btnTextHD = document.getElementById('btn-text-hd');
+            
+            updatePipelines();
+        });
+
+        function getCenterRel(el) {
+            const rect = el.getBoundingClientRect();
+            const contRect = container.getBoundingClientRect();
+            return {
+                x: rect.left - contRect.left + rect.width / 2,
+                y: rect.top - contRect.top + rect.height / 2
+            };
+        }
+
+        function updatePipelines() {
+            if(!container) return;
+            const cE = getCenterRel(nodeE);
+            const cV = getCenterRel(nodeV);
+            const cA = getCenterRel(nodeA);
+
+            if (!isMobile()) {
+                trackDesktop.style.top = (cE.y - 2) + 'px';
+                trackDesktop.style.left = cE.x + 'px';
+                trackDesktop.style.width = (cA.x - cE.x) + 'px';
+                
+                progressDesktop.style.top = (cE.y - 2) + 'px';
+                progressDesktop.style.left = cE.x + 'px';
+            } else {
+                trackMobile.style.left = (cE.x - 2) + 'px';
+                trackMobile.style.top = cE.y + 'px';
+                trackMobile.style.height = (cA.y - cE.y) + 'px';
+                
+                progressMobile.style.left = (cE.x - 2) + 'px';
+                progressMobile.style.top = cE.y + 'px';
+            }
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        async function typeWriter(element, text, speed = 60) {
+            let currentHTML = "";
+            for (let i = 0; i < text.length; i++) {
+                if (text.charAt(i) === '\n') {
+                    currentHTML += '<br>';
+                } else {
+                    currentHTML += text.charAt(i);
+                }
+                element.innerHTML = currentHTML + '<span class="cursor"></span>';
+                await sleep(speed);
+            }
+            await sleep(500);
+            element.innerHTML = currentHTML; 
+        }
+
+        function resetState() {
+            [cardE, cardV, cardA].forEach(el => el.classList.remove('active-e', 'active-v', 'active-a'));
+            [nodeE, nodeV, nodeA].forEach(el => el.classList.remove('node-glow-e', 'node-glow-v', 'node-glow-a', 'cpu-working'));
+            [mathE, mathV, mathA].forEach(el => el.classList.remove('show'));
+            
+            typewriterE.innerHTML = '';
+            typewriterV.innerHTML = '';
+            typewriterA.innerHTML = '';
+
+            particle.classList.remove('processing');
+            particle.style.transition = "none";
+            particle.style.opacity = "0";
+            particle.style.transform = "scale(1) translate(-50%, -50%)";
+            
+            const monitorText = document.querySelector('.monitor-text');
+            if (monitorText) monitorText.classList.add('opacity-0');
+            
+            progressDesktop.style.transition = "none";
+            progressDesktop.style.width = "0";
+            progressMobile.style.transition = "none";
+            progressMobile.style.height = "0";
+
+            void particle.offsetWidth;
+            void progressDesktop.offsetWidth;
+            void progressMobile.offsetWidth;
+
+            particle.style.transition = "left 1.5s cubic-bezier(0.4, 0, 0.2, 1), top 1.5s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s, opacity 0.3s";
+            progressDesktop.style.transition = "all 1500ms ease-in-out";
+            progressMobile.style.transition = "all 1500ms ease-in-out";
+        }
+
+        async function startHDAnimation() {
+            if (isAnimatingHD) return;
+            isAnimatingHD = true;
+            
+            playBtnHD.disabled = true;
+            playBtnHD.classList.remove('btn-scale-pulse');
+            playBtnHD.classList.add('opacity-50', 'cursor-wait');
+            btnTextHD.innerText = "System läuft...";
+
+            resetState();
+            updatePipelines(); 
+            await sleep(400);
+
+            const cE = getCenterRel(nodeE);
+            const cV = getCenterRel(nodeV);
+            const cA = getCenterRel(nodeA);
+
+            // PHASE 1: EINGABE
+            cardE.classList.add('active-e');
+            nodeE.classList.add('node-glow-e');
+            mathE.classList.add('show');
+            
+            particle.style.left = cE.x + 'px';
+            particle.style.top = cE.y + 'px';
+            particle.style.opacity = "0";
+
+            await typeWriter(typewriterE, "Benutzer tippt ...\n5 + 3", 70);
+            await sleep(300);
+
+            particle.style.opacity = "1";
+            await sleep(800);
+            
+            particle.style.left = cV.x + 'px';
+            particle.style.top = cV.y + 'px';
+            
+            if (!isMobile()) progressDesktop.style.width = (cV.x - cE.x) + 'px';
+            else progressMobile.style.height = (cV.y - cE.y) + 'px';
+
+            await sleep(1500); 
+
+            cardE.classList.remove('active-e');
+            nodeE.classList.remove('node-glow-e');
+
+            // PHASE 2: VERARBEITUNG
+            cardV.classList.add('active-v');
+            nodeV.classList.add('node-glow-v', 'cpu-working'); 
+            mathV.classList.add('show');
+            
+            particle.classList.add('processing');
+            
+            await typeWriter(typewriterV, "Prozessor berechnet\n5 + 3 = 8", 60);
+            await sleep(1000); 
+
+            particle.classList.remove('processing');
+            nodeV.classList.remove('cpu-working'); 
+
+            await sleep(400); 
+
+            particle.style.left = cA.x + 'px';
+            particle.style.top = cA.y + 'px';
+
+            if (!isMobile()) progressDesktop.style.width = (cA.x - cE.x) + 'px';
+            else progressMobile.style.height = (cA.y - cE.y) + 'px';
+
+            cardV.classList.remove('active-v');
+            nodeV.classList.remove('node-glow-v');
+
+            await sleep(1500); 
+
+            // PHASE 3: AUSGABE
+            cardA.classList.add('active-a');
+            nodeA.classList.add('node-glow-a');
+            mathA.classList.add('show');
+            
+            particle.style.opacity = "0";
+            particle.style.transform = "scale(0) translate(-50%, -50%)";
+            await sleep(500);
+            await typeWriter(typewriterA, "Monitor zeigt Ergebnis: 8", 70);
+            
+            document.getElementById('play-btn-hd').style.pointerEvents = 'auto';
+            const monitorText = document.querySelector('.monitor-text');
+            if (monitorText) monitorText.classList.remove('opacity-0');
+            
+            await sleep(2000); 
+
+            cardA.classList.remove('active-a');
+            nodeA.classList.remove('node-glow-a');
+            
+            isAnimatingHD = false;
+            playBtnHD.disabled = false;
+            playBtnHD.classList.remove('opacity-50', 'cursor-wait');
+            btnTextHD.innerText = "Neu starten";
+            
+            // Reveal Video Section
+            const secVideo = document.getElementById('secVideo');
+            if (secVideo && secVideo.classList.contains('hidden')) {
+                secVideo.classList.remove('hidden');
+                secVideo.classList.add('animate-fade-in-up');
+                secVideo.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                
+                // Workaround for some browsers pausing animations on hidden elements
+                const ytBtn = document.getElementById('ytButton');
+                if (ytBtn) {
+                    ytBtn.style.animation = 'none';
+                    void ytBtn.offsetWidth; // trigger reflow
+                    ytBtn.style.animation = '';
+                }
+            }
+        }
+
+        window.addEventListener('resize', () => {
+            updatePipelines();
+            if (!isAnimatingHD) resetState();
+        });
+    </script>
+
+    <script>
+        function revealPraxis() {
+            const ytBtn = document.getElementById('ytButton');
+            if (ytBtn) ytBtn.classList.remove('yt-pulse');
+            
+            const secPraxis = document.getElementById('secPraxis');
+            if (secPraxis.classList.contains('hidden')) {
+                secPraxis.classList.remove('hidden');
+                secPraxis.classList.add('animate-fade-in-up');
+                setTimeout(() => {
+                    secPraxis.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 400);
+            }
+        }
+    </script>
+
+    <script src="assets/js/worksheet-common.js"></script>
+    <script src="assets/js/pdf-engine.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+

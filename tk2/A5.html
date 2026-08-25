@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A5: Windows & Arbeitsalltag – animierte Theorie</title>
+  <link rel="stylesheet" href="../tk/vendor/fonts.css">
+  <link rel="stylesheet" href="../tk/shared.css">
+  <style>
+    body{font-family:'Outfit',sans-serif;background:radial-gradient(circle at 10% 0,rgba(59,130,246,.10),transparent 30rem),var(--bg-dark);color:var(--text-main);min-height:100vh;overflow-x:hidden}
+    .back-link:hover{color:#60a5fa}.badge-a5{--badge-accent:#3b82f6;--badge-accent-rgb:59,130,246;--badge-text:#93c5fd}
+    .course-intro{border-color:rgba(59,130,246,.35)}.course-intro h1,.lesson-title,.sheet-title,.stage-label{font-family:'Space Grotesk',sans-serif}.course-intro h1{font-size:clamp(1.5rem,4vw,2rem);margin-bottom:.5rem}.course-intro p,.lesson-intro,.sheet-desc{color:var(--text-muted);line-height:1.55}
+    .flow-strip{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.flow-strip span{padding:6px 9px;border-radius:999px;background:rgba(148,163,184,.07);border:1px solid rgba(148,163,184,.13);font-size:.76rem;font-weight:800;color:#cbd5e1}.flow-strip b{color:#93c5fd}
+    .stage{margin-top:18px}.stage-label{display:flex;align-items:center;gap:9px;margin:0 0 9px;font-size:.82rem;font-weight:900;text-transform:uppercase;letter-spacing:.06em;color:var(--stage-accent)}.stage-label span{width:28px;height:28px;border-radius:9px;display:grid;place-items:center;background:rgba(var(--stage-rgb),.1);border:1px solid rgba(var(--stage-rgb),.24)}
+    .lesson-card{border-color:rgba(var(--stage-rgb),.32)}.lesson-title{font-size:1.35rem;margin-bottom:.35rem}.lesson-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:1rem}.lesson-group-title{grid-column:1/-1;display:flex;align-items:center;gap:9px;margin:8px 0 -2px;color:var(--stage-accent);font-family:'Space Grotesk',sans-serif;font-size:.86rem;font-weight:900;text-transform:uppercase;letter-spacing:.055em}.lesson-group-title:first-child{margin-top:0}.lesson-group-title:after{content:'';height:1px;flex:1;background:rgba(var(--stage-rgb),.2)}.lesson-anim-card{overflow:hidden;border-radius:18px;background:linear-gradient(145deg,rgba(15,23,42,.96),rgba(7,16,31,.99));border:1px solid rgba(148,163,184,.16);box-shadow:0 16px 38px rgba(0,0,0,.16);transition:.2s}.lesson-anim-card.is-visible{border-color:rgba(var(--stage-rgb),.32);box-shadow:0 18px 44px rgba(0,0,0,.2)}.lesson-anim-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;padding:14px 15px 11px;border-bottom:1px solid rgba(148,163,184,.12)}.lesson-count{font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;color:#64748b;font-weight:800;margin-bottom:3px}.lesson-anim-head h3{font-family:'Space Grotesk',sans-serif;font-size:1rem;line-height:1.35;margin:0;color:#f8fafc}.lesson-anim-head kbd{flex-shrink:0}.lesson-scene{padding:8px 8px 4px;background:radial-gradient(circle at 80% 15%,rgba(var(--stage-rgb),.04),transparent 46%)}.lesson-scene svg{display:block;width:100%;height:auto}.lesson-anim-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:4px 14px 14px}.lesson-flow{display:flex;align-items:center;gap:5px;flex-wrap:wrap;color:#94a3b8;font-size:.72rem;font-weight:800}.lesson-flow span{padding:4px 6px;border-radius:7px;background:rgba(148,163,184,.07);border:1px solid rgba(148,163,184,.11)}.lesson-flow b{color:var(--stage-accent)}.lesson-replay{border:1px solid rgba(var(--stage-rgb),.24);background:rgba(var(--stage-rgb),.08);color:var(--stage-accent);font-family:inherit;font-size:.76rem;font-weight:800;border-radius:9px;padding:7px 9px;cursor:pointer}
+    kbd{background:#1e293b;border:1px solid rgba(255,255,255,.2);box-shadow:0 3px 0 rgba(0,0,0,.5);color:#fde047;padding:3px 9px;border-radius:6px;font-family:'Space Grotesk',monospace;font-weight:700;white-space:nowrap}
+    .theory-action{display:flex;justify-content:flex-end;margin-top:14px}.quest-card{border-color:rgba(var(--stage-rgb),.24)}.sheet-head{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap;margin-bottom:1rem}.sheet-title{font-size:clamp(1.35rem,4vw,1.75rem);margin-bottom:.25rem}.questions{display:grid;gap:14px;margin-top:1.2rem}.question-card{background:rgba(15,23,42,.62);border:1px solid var(--border-color);border-radius:16px;padding:14px 16px;display:grid;gap:10px}.question-title{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-weight:600}.question-label{background:rgba(var(--stage-rgb),.18);border:1px solid rgba(var(--stage-rgb),.45);color:var(--stage-accent);font-family:'Space Grotesk',sans-serif;font-size:.75rem;font-weight:700;padding:3px 11px;border-radius:999px;white-space:nowrap}.question-text{flex:1 1 250px}.answer-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center}.answer-select{width:100%;padding:11px 14px;border-radius:12px;border:1px solid var(--border-color);background:#0f172a;color:var(--text-main);font-family:'Space Grotesk',monospace;font-size:1rem;font-weight:700;outline:none}.answer-select:focus{border-color:rgba(var(--stage-rgb),.8);box-shadow:0 0 0 3px rgba(var(--stage-rgb),.18)}.answer-select.correct{border-color:var(--accent-green);background:rgba(16,185,129,.12)}.answer-select.wrong{border-color:var(--accent-red);background:rgba(239,68,68,.12)}.answer-row .btn-hint{margin-top:0;white-space:nowrap}.fifty-wrap{display:grid;gap:8px;min-width:0}.fifty-note{color:var(--text-muted);font-size:.86rem;font-weight:700}.fifty-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.fifty-option{min-width:0;padding:11px 12px;border-radius:12px;border:1px solid var(--border-color);background:#0f172a;color:var(--text-main);font-family:'Space Grotesk',monospace;font-size:.95rem;font-weight:700;cursor:pointer}.fifty-option.selected{border-color:var(--stage-accent);background:rgba(var(--stage-rgb),.16);box-shadow:0 0 0 2px rgba(var(--stage-rgb),.12)}.fifty-option.correct{border-color:var(--accent-green);background:rgba(16,185,129,.14)}.fifty-option.wrong{border-color:var(--accent-red);background:rgba(239,68,68,.14)}.q-feedback{display:none;gap:8px;align-items:center;flex-wrap:wrap;font-size:.9rem;font-weight:700}.q-feedback.show{display:flex}.actions{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-top:1.5rem}.score-box{font-family:'Space Grotesk',sans-serif;font-weight:700;color:var(--text-muted)}
+    .repeat-card,.done-card{text-align:center;display:none}.repeat-card{border-color:rgba(245,158,11,.35);background:linear-gradient(145deg,rgba(245,158,11,.055),rgba(15,23,42,.88))}.repeat-card h2{font-family:'Space Grotesk',sans-serif;color:#fde68a;margin-bottom:.35rem}.repeat-card p,.done-card p{color:var(--text-muted);margin-bottom:1rem}.done-card{border-color:rgba(16,185,129,.35)}.done-card h2{font-family:'Space Grotesk',sans-serif;color:#a7f3d0;margin-bottom:.35rem}
+    .summary-rows{display:grid;gap:10px;margin-top:1rem}.summary-row{display:grid;grid-template-columns:48px 1fr auto;gap:10px;align-items:center;background:rgba(15,23,42,.7);border:1px solid var(--border-color);border-radius:14px;padding:10px 12px}.summary-q{font-family:'Space Grotesk',sans-serif;font-weight:800;text-align:center}.summary-vals{font-family:'Space Grotesk',monospace;font-weight:700;white-space:nowrap}
+    @media(max-width:760px){.lesson-grid{grid-template-columns:1fr}}@media(max-width:640px){.answer-row{grid-template-columns:1fr}.answer-row .btn-hint{justify-self:start}.fifty-options{grid-template-columns:1fr}.summary-row{grid-template-columns:44px 1fr}.summary-vals{grid-column:2;white-space:normal}.lesson-anim-head{flex-direction:column}.lesson-anim-head kbd{align-self:flex-start}}
+  </style>
+</head>
+<body>
+<header class="top-bar">
+  <a href="index.html" class="back-link">← Zurück zur Übersicht</a>
+  <div style="display:flex;align-items:center;gap:12px"><div class="xp-pill">⚡ XP: <span class="global-xp-val">0</span></div><span class="tk-badge badge-a5">A5 · animiert</span></div>
+</header>
+
+<div class="container">
+  <div class="card course-intro">
+    <div style="display:flex;justify-content:space-between;gap:14px;align-items:flex-start;flex-wrap:wrap">
+      <div><h1>Windows & Arbeitsalltag</h1><p>Du lernst zehn neue Tastenkombinationen in drei Gruppen. Nach der Theorie folgt direkt Quest 9. Danach bearbeitest du dieselbe Quest ein zweites Mal.</p></div>
+      <button class="tk-btn-secondary" id="showSummaryBtn">📊 Auswertung</button>
+    </div>
+    <div class="flow-strip"><span><b>1</b> Theorie</span><span>→</span><span><b>2</b> Quest 9</span><span>→</span><span><b>3</b> 2. Durchgang</span></div>
+  </div>
+
+  <section class="stage" id="q9Stage" style="--stage-accent:#3b82f6;--stage-rgb:59,130,246">
+    <div class="stage-label"><span>1</span> Theorie zu Quest 9</div>
+    <div class="card lesson-card" id="q9TheoryCard">
+      <h2 class="lesson-title">Windows & Arbeitsalltag</h2>
+      <p class="lesson-intro">Die zehn Kürzel sind in drei Situationen geordnet: Schnellzugriff, Programme &amp; Werkzeuge und Fenster anordnen.</p>
+      <div class="lesson-grid" id="q9TheoryGrid"></div>
+      <div class="theory-action"><button class="tk-btn-primary" id="toQ9QuestBtn">Weiter zur Quest 9 ↓</button></div>
+    </div>
+
+    <div class="stage-label" style="margin-top:18px"><span>2</span> Quest 9</div>
+    <div class="card quest-card" id="q9QuestCard">
+      <div class="sheet-head"><div><h2 class="sheet-title">Quest 9 – Windows & Arbeitsalltag</h2><p class="sheet-desc">Zehn Fragen zu genau den Kürzeln aus der Theorie darüber.</p></div></div>
+      <div class="progress-bar-wrap"><div class="progress-bar-fill" id="q9Progress"></div></div>
+      <div class="questions" id="q9Questions"></div>
+      <div class="actions"><button class="tk-btn-primary" id="q9CheckBtn">✅ Überprüfen</button><div class="score-box" id="q9Score"></div></div>
+    </div>
+  </section>
+
+  <div class="card repeat-card" id="a5SecondPassCard">
+    <h2>Noch ein Durchgang ↻</h2>
+    <p>Im zweiten Durchgang wird die Theorie ausgeblendet. Die Alltagssituation bleibt sichtbar – erinnere dich an das passende Kürzel.</p>
+    <button type="button" class="tk-btn-primary" id="startSecondPassBtn">2. Durchgang starten</button>
+  </div>
+
+  <div class="card done-card" id="a5DoneCard">
+    <h2>A5 abgeschlossen ✓</h2>
+    <p>Quest 9 wurde zweimal bearbeitet. Danach kannst du in A6 alles wiederholen und festigen.</p>
+    <a href="A6.html" class="tk-btn-primary">Weiter zu A6 ➔</a>
+  </div>
+</div>
+
+<div class="tk-modal-overlay" id="overlay"></div>
+<div class="tk-modal-panel" id="summaryPanel" role="dialog" aria-modal="true" aria-labelledby="summaryTitle">
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:12px"><h2 id="summaryTitle" style="font-family:'Space Grotesk',sans-serif">📊 A5 Auswertung</h2><button class="tk-btn-close" id="closeSummary" aria-label="Auswertung schliessen">×</button></div>
+  <p style="color:var(--text-muted);font-size:.92rem">Erster Versuch, zweiter Versuch und Bestwert für Quest 9.</p>
+  <div class="summary-rows" id="summaryRows"></div>
+</div>
+
+<script src="../tk/xp.js"></script>
+<script src="a4Scenes.js"></script>
+<script src="a5-app.js"></script>
+</body>
+</html>

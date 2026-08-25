@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A2: Sonderzeichen mit AltGr – animierte Theorie</title>
+  <link rel="stylesheet" href="../tk/vendor/fonts.css">
+  <link rel="stylesheet" href="../tk/shared.css">
+  <style>
+    body{font-family:'Outfit',sans-serif;background:radial-gradient(circle at 12% 0,rgba(245,158,11,.10),transparent 30rem),var(--bg-dark);color:var(--text-main);min-height:100vh;overflow-x:hidden}
+    .back-link:hover{color:#fbbf24}.tab-btn{min-width:0;padding:10px 7px;text-align:center;border:0;background:none;color:var(--text-muted);font-family:inherit;font-weight:700;font-size:clamp(.78rem,2.5vw,.94rem);border-radius:12px;cursor:pointer;transition:.2s}.tab-btn.active{background:var(--accent-amber);color:#0f172a;box-shadow:0 4px 15px rgba(245,158,11,.4)}
+    .progress-bar-fill{height:100%;width:0;background:linear-gradient(90deg,var(--accent-amber),var(--accent-green));transition:width .3s ease}.carousel-card{background:#090d16;border:2px solid var(--accent-amber);border-radius:24px;padding:clamp(1.5rem,4vw,2.5rem) clamp(.8rem,3vw,2rem);width:100%;max-width:650px;box-shadow:0 0 40px rgba(245,158,11,.24);position:relative;overflow:hidden;transition:.3s}.carousel-card.q5-card{border-color:var(--accent-cyan);box-shadow:0 0 40px rgba(6,182,212,.24)}.carousel-card.q6-card{border-color:var(--accent-purple);box-shadow:0 0 40px rgba(139,92,246,.24)}
+    .big-kbd{background:#1e293b;border:2px solid rgba(245,158,11,.4);box-shadow:0 6px 0 rgba(0,0,0,.6);color:#fde047;flex:1 1 auto;max-width:130px;min-width:60px;height:clamp(55px,12vh,78px);padding:0 6px;border-radius:14px;font-family:'Space Grotesk',monospace;font-size:clamp(1rem,4vw,1.6rem);font-weight:800;white-space:nowrap;display:flex;align-items:center;justify-content:center;transition:.15s}.big-kbd.pressed-success{background:linear-gradient(135deg,#10b981,#047857)!important;border-color:#34d399!important;color:#fff!important;box-shadow:0 0 35px rgba(16,185,129,.95)!important}.action-label{font-size:clamp(1.5rem,4.5vw,2.1rem);font-weight:800;color:#f8fafc;font-family:'Space Grotesk',sans-serif;margin-bottom:.3rem}.shortcut-display{display:flex;justify-content:center;align-items:center;gap:8px;margin:1.5rem 0;flex-wrap:nowrap}.plus-sign{font-size:clamp(1.2rem,3.5vw,1.8rem);font-weight:800;color:var(--text-muted);flex-shrink:0}.symbol-hero-box{background:rgba(245,158,11,.15);border:2px solid var(--accent-amber);color:#fde047;width:95px;height:95px;border-radius:22px;display:flex;align-items:center;justify-content:center;font-size:3.8rem;font-family:'Space Grotesk',monospace;font-weight:800;margin:0 auto 1.2rem;box-shadow:0 0 30px rgba(245,158,11,.30)}.char-target-input{width:100px;height:65px;font-size:2.5rem;text-align:center;background:#0f172a;border:2px solid var(--accent-amber);color:#fde047;border-radius:12px;margin-top:1rem;outline:none;font-family:'Space Grotesk',monospace}.char-target-input:focus{box-shadow:0 0 0 4px rgba(245,158,11,.12),0 0 24px rgba(245,158,11,.18)}
+    .btn-start-course{background:linear-gradient(135deg,#f59e0b,#d97706);color:#0f172a;padding:12px 28px;font-size:1.05rem;font-weight:800;border:0;border-radius:14px;cursor:pointer;transition:.2s;box-shadow:0 10px 25px rgba(245,158,11,.35);margin-top:1rem}.btn-start-course:hover{transform:translateY(-2px);box-shadow:0 15px 30px rgba(245,158,11,.5)}button:active,.btn-start-course:active,.btn-hint:active,.btn-reset-game:active,a.btn-start-course:active{transform:translateY(3px) scale(.97)!important;box-shadow:inset 0 3px 6px rgba(0,0,0,.4)!important;transition:transform .05s ease,box-shadow .05s ease!important}
+
+    .theory-intro{margin-bottom:1.35rem;padding:clamp(18px,3vw,28px);border:1px solid rgba(245,158,11,.27);background:linear-gradient(145deg,rgba(15,23,42,.93),rgba(25,17,7,.94));border-radius:22px;box-shadow:0 18px 50px rgba(0,0,0,.16)}.theory-intro h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(1.55rem,4vw,2.2rem);margin:0 0 .45rem;letter-spacing:-.02em}.theory-intro p{margin:0;color:var(--text-muted);line-height:1.58;max-width:820px}.theory-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}.theory-meta span{padding:6px 9px;border-radius:999px;background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.18);color:#fde68a;font-size:.76rem;font-weight:800}.altgr-note{margin-top:14px;padding:12px 13px;border-radius:13px;background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.16);color:#cbd5e1;font-size:.9rem;line-height:1.5}.altgr-note strong{color:#fde68a}
+    .theory-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:start}.theory-section{grid-column:1/-1;display:flex;align-items:center;gap:12px;margin:10px 0 -2px;padding:4px 2px}.theory-section:first-child{margin-top:0}.theory-section-icon{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;background:rgba(245,158,11,.10);border:1px solid rgba(245,158,11,.2);font-size:1rem}.theory-section h2{margin:0;font-family:'Space Grotesk',sans-serif;font-size:1.05rem;color:#e2e8f0}.theory-section p{margin:2px 0 0;color:#64748b;font-size:.8rem}
+    .anim-card{position:relative;overflow:hidden;border:1px solid rgba(148,163,184,.18);background:linear-gradient(145deg,rgba(15,23,42,.97),rgba(7,16,31,.99));border-radius:20px;box-shadow:0 16px 42px rgba(0,0,0,.18);transition:border-color .22s ease,box-shadow .22s ease}.anim-card.is-visible{border-color:rgba(245,158,11,.32);box-shadow:0 18px 48px rgba(0,0,0,.22)}.anim-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:16px 17px 13px;border-bottom:1px solid rgba(148,163,184,.14)}.anim-number{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:#64748b;font-weight:800;margin-bottom:3px}.anim-title{font-family:'Space Grotesk',sans-serif;font-size:1.12rem;font-weight:800;margin:0;color:#f8fafc}.anim-symbol{font-family:'Space Grotesk',monospace;font-size:2rem;font-weight:900;color:#fde047;line-height:1}.anim-keys{display:flex;align-items:center;gap:4px;flex-wrap:wrap}.anim-keys kbd{background:#182235;border:1px solid rgba(245,158,11,.3);box-shadow:0 3px 0 #020617;color:#fde68a;padding:4px 7px;border-radius:6px;font-family:'Space Grotesk',monospace;font-size:.72rem;font-weight:800}.anim-plus{color:#64748b;font-size:.72rem;font-weight:900}.anim-scene{padding:10px 10px 5px;min-height:205px;display:grid;place-items:center;background:radial-gradient(circle at 78% 20%,rgba(245,158,11,.03),transparent 46%)}.anim-scene svg{width:100%;height:auto;display:block}.anim-foot{padding:2px 16px 16px;display:grid;gap:9px}.anim-flow{display:flex;align-items:center;gap:6px;flex-wrap:wrap;color:#94a3b8;font-size:.74rem;font-weight:800}.anim-flow span{padding:5px 7px;border-radius:8px;background:rgba(148,163,184,.07);border:1px solid rgba(148,163,184,.12)}.anim-flow b{color:#fbbf24}.anim-desc{margin:0;color:#cbd5e1;font-size:.9rem;line-height:1.45}.anim-remember{margin:0;padding:9px 10px;border-radius:10px;background:rgba(16,185,129,.07);border:1px solid rgba(16,185,129,.18);color:#a7f3d0;font-size:.82rem;line-height:1.4}.anim-actions{display:flex;justify-content:flex-end}.replay-btn{border:1px solid rgba(245,158,11,.25);background:rgba(245,158,11,.08);color:#fde68a;font-family:inherit;font-size:.8rem;font-weight:800;border-radius:10px;padding:8px 10px;cursor:pointer;transition:.16s}.replay-btn:hover{background:rgba(245,158,11,.14);border-color:rgba(245,158,11,.42)}.theory-finish{text-align:center;margin-top:1.5rem;padding:18px;border-radius:18px;background:rgba(16,185,129,.045);border:1px solid rgba(16,185,129,.14)}.theory-finish p{color:var(--text-muted);margin:0 0 .5rem}
+    @media(max-width:780px){.theory-grid{grid-template-columns:1fr}.anim-scene{min-height:0}.theory-section{margin-top:14px}}@media(max-width:520px){.anim-head{padding:14px}.anim-foot{padding:2px 14px 14px}.anim-title{font-size:1.04rem}.anim-scene{padding:8px 4px 4px}.theory-section{align-items:flex-start}.theory-section-icon{width:32px;height:32px;flex:0 0 32px}.shortcut-display{gap:5px}.big-kbd{min-width:54px}.symbol-hero-box{width:82px;height:82px;font-size:3.2rem}}
+    @media(prefers-reduced-motion:reduce){.anim-card,.replay-btn,.tab-btn,.btn-start-course{transition:none!important}}
+  </style>
+</head>
+<body>
+  <header class="top-bar">
+    <a href="index.html" class="back-link">← Zurück zur Übersicht</a>
+    <div style="display:flex;align-items:center;gap:12px"><div class="xp-pill">⚡ XP: <span class="global-xp-val">0</span></div><span class="tk-badge" style="--badge-accent:#f59e0b;--badge-accent-rgb:245,158,11;--badge-text:#fde68a">A2 · AltGr</span></div>
+  </header>
+
+  <div class="container">
+    <div class="card lock-screen" id="a2-lock-screen" style="display:none"><div class="lock-icon">🔒</div><h2 style="font-family:'Space Grotesk',sans-serif;color:#fca5a5">A2 ist noch gesperrt</h2><p style="color:var(--text-muted);max-width:550px">Du benötigst mindestens <strong>70 % richtig</strong> in Quest 3 von A1.</p><a href="A1.html" class="btn-start-course" style="text-decoration:none">Zurück zu A1 ➔</a></div>
+
+    <div id="a2-content-wrap">
+      <div class="phase-tabs">
+        <button class="tab-btn active" id="tab-1" onclick="switchPhase(1)">📖 Theorie</button>
+        <button class="tab-btn" id="tab-2" onclick="switchPhase(2)">⚡ Q4: Geführt</button>
+        <button class="tab-btn" id="tab-3" onclick="switchPhase(3)">🎲 Q5: Rätsel</button>
+        <button class="tab-btn" id="tab-4" onclick="switchPhase(4)">🧠 Q6: Memory</button>
+      </div>
+
+      <section id="phase-1" class="card">
+        <div class="theory-intro">
+          <h1>Sonderzeichen mit AltGr</h1>
+          <p>Auf der Schweizer Tastatur erreichst du mit <strong>AltGr</strong> das dritte Zeichen einer Taste. Jede Animation zeigt zuerst den Tastendruck und danach ein Beispiel, <strong>wo das Zeichen wirklich gebraucht wird</strong>.</p>
+          <div class="theory-meta"><span>10 Sonderzeichen</span><span>Schweizer Tastatur</span><span>Tastendruck → Zeichen → Anwendung</span></div>
+          <div class="altgr-note"><strong>Wichtig:</strong> AltGr liegt rechts von der Leertaste. Bei den vier Klammern hilft die Reihenfolge: <strong>ü → [</strong>, <strong>¨ → ]</strong>, <strong>ä → {</strong>, <strong>$ → }</strong>.</div>
+        </div>
+        <div class="theory-grid" id="theoryGrid"></div>
+        <div class="theory-finish"><p>Alle 10 Zeichen gesehen? Jetzt tippst du sie selbst.</p><button class="btn-start-course" onclick="switchPhase(2)">Quest 4 starten ➔</button></div>
+      </section>
+
+      <section id="phase-2" class="card" style="display:none">
+        <div class="trainer-container">
+          <div style="width:100%;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px"><span id="q4-counter-label" style="font-weight:700;color:var(--text-muted)">Zeichen 1 von 10</span><div style="display:flex;align-items:center;gap:12px"><button class="btn-reset-game" onclick="resetQ4()">🔄 Neu starten</button><span id="q4-score-live" style="font-weight:700;color:var(--accent-green)">Richtig: 100 %</span></div></div>
+          <div class="progress-bar-wrap"><div class="progress-bar-fill" id="q4-progress-bar"></div></div>
+          <div class="carousel-card" id="q4-card"><div style="font-size:.8rem;color:var(--accent-amber);text-transform:uppercase;font-weight:700;letter-spacing:1px">⚡ Geführt – Tippe das Zielzeichen</div><div class="symbol-hero-box" id="q4-symbol-box">@</div><div class="action-label" id="q4-title">Klammeraffe</div><div class="action-desc" id="q4-desc"></div><div class="shortcut-display" id="q4-shortcut-display"></div><p style="color:var(--text-muted);font-size:.95rem">Tippe das Sonderzeichen in das Feld:</p><input type="text" class="char-target-input" id="q4-char-input" maxlength="2" autocomplete="off" placeholder="?"><div class="status-msg" id="q4-status-msg" style="color:var(--text-muted);margin-top:1rem"></div></div>
+          <div class="trophy-view" id="q4-trophy-view"><div class="trophy-icon">🏆</div><h2 id="q4-result-title">Quest 4 beendet!</h2><p id="q4-result-desc" style="color:var(--text-muted);max-width:500px"></p><div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center"><button class="btn-start-course" onclick="resetQ4()">🔄 Noch einmal</button><button class="btn-start-course" id="q4-to-q5-btn" style="background:linear-gradient(135deg,#06b6d4,#0891b2);color:#fff" onclick="switchPhase(3)">Weiter zu Quest 5 ➔</button></div></div>
+        </div>
+      </section>
+
+      <section id="phase-3" class="card" style="display:none">
+        <div class="lock-screen" id="q5-lock-screen"><div class="lock-icon">🔒</div><h2 style="color:#fca5a5">Quest 5 ist gesperrt</h2><p style="color:var(--text-muted)">Du benötigst mindestens 80 % richtig in Quest 4.</p><button class="btn-start-course" onclick="switchPhase(2)">Zurück zu Quest 4 ➔</button></div>
+        <div class="trainer-container" id="q5-game-screen" style="display:none">
+          <div style="width:100%;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px"><span id="q5-counter-label" style="font-weight:700;color:var(--text-muted)">Zeichen 1 von 10</span><div style="display:flex;align-items:center;gap:12px"><button class="btn-reset-game" onclick="resetQ5()">🔄 Neu starten</button><span id="q5-score-live" style="font-weight:700;color:var(--accent-cyan)">Richtig: 100 %</span></div></div>
+          <div class="progress-bar-wrap"><div class="progress-bar-fill" id="q5-progress-bar" style="background:linear-gradient(90deg,var(--accent-cyan),var(--accent-green))"></div></div>
+          <div class="carousel-card q5-card" id="q5-card"><div style="font-size:.8rem;color:var(--accent-cyan);text-transform:uppercase;font-weight:700;letter-spacing:1px">🎲 Welche zweite Taste fehlt?</div><div class="symbol-hero-box" id="q5-symbol-box">@</div><div class="action-label" id="q5-title">Klammeraffe</div><div class="action-desc" id="q5-desc"></div><div class="shortcut-display" id="q5-shortcut-display"></div><button class="btn-hint" id="q5-hint-btn" onclick="useQ5Hint()">💡 Tipp (-30 XP)</button><p style="color:var(--text-muted);font-size:.95rem;margin-top:1rem">Tippe danach das Zielzeichen:</p><input type="text" class="char-target-input" id="q5-char-input" maxlength="2" autocomplete="off" placeholder="?"><div class="status-msg" id="q5-status-msg" style="color:var(--text-muted);margin-top:1rem"></div></div>
+          <div class="trophy-view" id="q5-trophy-view"><div class="trophy-icon">🎲🏆</div><h2 id="q5-result-title">Quest 5 beendet!</h2><p id="q5-result-desc" style="color:var(--text-muted);max-width:500px"></p><div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center"><button class="btn-start-course" onclick="resetQ5()">🔄 Noch einmal</button><button class="btn-start-course" id="q5-to-q6-btn" style="background:linear-gradient(135deg,#8b5cf6,#6d28d9);color:#fff" onclick="switchPhase(4)">Weiter zu Quest 6 ➔</button></div></div>
+        </div>
+      </section>
+      <section id="phase-4" class="card" style="display:none">
+        <div class="lock-screen" id="q6-lock-screen"><div class="lock-icon">🔒</div><h2 style="color:#fca5a5">Quest 6 ist gesperrt</h2><p style="color:var(--text-muted)">Du benötigst mindestens 70 % richtig in Quest 5.</p><button class="btn-start-course" onclick="switchPhase(3)">Zurück zu Quest 5 ➔</button></div>
+        <div class="trainer-container" id="q6-game-screen" style="display:none">
+          <div style="width:100%;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px"><span id="q6-counter-label" style="font-weight:700;color:var(--text-muted)">Zeichen 1 von 10</span><div style="display:flex;align-items:center;gap:12px"><button class="btn-reset-game" onclick="resetQ6()">🔄 Neu starten</button><span id="q6-score-live" style="font-weight:700;color:var(--accent-purple)">Richtig: 100 %</span></div></div>
+          <div class="progress-bar-wrap"><div class="progress-bar-fill" id="q6-progress-bar" style="background:linear-gradient(90deg,var(--accent-purple),var(--accent-cyan))"></div></div>
+          <div class="carousel-card q6-card" id="q6-card"><div style="font-size:.8rem;color:var(--accent-purple);text-transform:uppercase;font-weight:700;letter-spacing:1px">🧠 Memory – Aus dem Gedächtnis</div><div class="symbol-hero-box" id="q6-symbol-box">@</div><div class="action-label" id="q6-title">Klammeraffe</div><div class="action-desc" id="q6-desc"></div><div class="shortcut-display" id="q6-shortcut-display"></div><button class="btn-hint" id="q6-hint-btn" onclick="useQ6Hint()">💡 Tipp (-30 XP)</button><p style="color:var(--text-muted);font-size:.95rem;margin-top:1rem">Tippe das sichtbare Zielzeichen:</p><input type="text" class="char-target-input" id="q6-char-input" maxlength="2" autocomplete="off" placeholder="?"><div class="status-msg" id="q6-status-msg" style="color:var(--text-muted);margin-top:1rem"></div></div>
+          <div class="trophy-view" id="q6-trophy-view"><div class="trophy-icon">🏆</div><h2 id="q6-result-title">Quest 6 beendet!</h2><p id="q6-result-desc" style="color:var(--text-muted);max-width:500px"></p><div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center"><button class="btn-start-course" onclick="resetQ6()">🔄 Noch einmal</button><a href="A3.html" class="btn-start-course" id="q6-to-a3-btn" style="background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;text-decoration:none">Weiter zu A3 ➔</a></div></div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script src="../tk/xp.js"></script>
+  <script src="altGrScene.js"></script>
+  <script>
+    (function(){
+      var groups={everyday:{icon:'✉️',title:'Alltag',desc:'E-Mail, Hashtags, Preise und Temperatur'},tech:{icon:'💻',title:'Informatik',desc:'Zeichen für Pfade und Befehle'},brackets:{icon:'[]',title:'Klammern',desc:'Eckige und geschweifte Klammern im Code'}};
+      var items=[
+        {group:'everyday',title:'Klammeraffe',char:'@',keys:['AltGr','2'],mode:'at',flow:['AltGr + 2','@','E-Mail'],desc:'Das @ trennt Benutzername und Domain in einer E-Mail-Adresse.',remember:'Beispiel: anna@schule.ch'},
+        {group:'everyday',title:'Hashtag / Raute',char:'#',keys:['AltGr','3'],mode:'hash',flow:['AltGr + 3','#','Hashtag'],desc:'Das # kennzeichnet Hashtags und wird auch in Code verwendet.',remember:'Beispiel: #Informatik'},
+        {group:'everyday',title:'Euro-Zeichen',char:'€',keys:['AltGr','E'],mode:'euro',flow:['AltGr + E','€','Preis'],desc:'Das € zeigt an, dass ein Betrag in Euro angegeben ist.',remember:'Beispiel: 29.90 €'},
+        {group:'everyday',title:'Gradzeichen',char:'°',keys:['AltGr','4'],mode:'degree',flow:['AltGr + 4','°','Temperatur'],desc:'Das Gradzeichen steht bei Temperaturen und Winkelangaben.',remember:'Beispiel: 21 °C'},
+        {group:'tech',title:'Senkrechter Strich (Pipe)',char:'|',keys:['AltGr','7'],mode:'pipe',flow:['AltGr + 7','|','Befehl'],desc:'Die Pipe verbindet in der Befehlszeile häufig zwei Befehle miteinander.',remember:'Das Zeichen heisst „Pipe“.'},
+        {group:'tech',title:'Backslash',char:'\\',keys:['AltGr','<'],mode:'backslash',flow:['AltGr + <','\\','Windows-Pfad'],desc:'Der Backslash trennt unter Windows Teile eines Dateipfads.',remember:'Beispiel: C:\\Users\\Schule'},
+        {group:'brackets',title:'Eckige Klammer auf',char:'[',keys:['AltGr','ü'],mode:'squareOpen',flow:['AltGr + ü','[','Liste öffnen'],desc:'Die öffnende eckige Klammer beginnt zum Beispiel eine Liste.',remember:'ü → ['},
+        {group:'brackets',title:'Eckige Klammer zu',char:']',keys:['AltGr','¨'],mode:'squareClose',flow:['AltGr + ¨',']','Liste schliessen'],desc:'Die schliessende eckige Klammer beendet die Liste.',remember:'¨ → ]'},
+        {group:'brackets',title:'Geschweifte Klammer auf',char:'{',keys:['AltGr','ä'],mode:'curlyOpen',flow:['AltGr + ä','{','Block öffnen'],desc:'Die öffnende geschweifte Klammer beginnt in vielen Sprachen einen Codeblock.',remember:'ä → {'},
+        {group:'brackets',title:'Geschweifte Klammer zu',char:'}',keys:['AltGr','$'],mode:'curlyClose',flow:['AltGr + $','}','Block schliessen'],desc:'Die schliessende geschweifte Klammer beendet den Codeblock.',remember:'$ → }'}
+      ];
+      var grid=document.getElementById('theoryGrid'),scenes=[],phaseActive=true,lastGroup='';
+      function keyHtml(keys){return keys.map(function(k){return '<kbd>'+String(k).replace(/</g,'&lt;')+'</kbd>';}).join('<span class="anim-plus">+</span>');}
+      function flowHtml(flow){return '<div class="anim-flow">'+flow.map(function(step,i){return (i?'<b>→</b>':'')+'<span>'+String(step).replace(/</g,'&lt;')+'</span>';}).join('')+'</div>';}
+      items.forEach(function(item,index){
+        if(item.group!==lastGroup){var g=groups[item.group],head=document.createElement('div');head.className='theory-section';head.innerHTML='<div class="theory-section-icon">'+g.icon+'</div><div><h2>'+g.title+'</h2><p>'+g.desc+'</p></div>';grid.appendChild(head);lastGroup=item.group;}
+        var card=document.createElement('article');card.className='anim-card';card.innerHTML='<div class="anim-head"><div><div class="anim-number">Zeichen '+(index+1)+' von 10</div><h2 class="anim-title">'+item.title+'</h2></div><div style="display:grid;justify-items:end;gap:6px"><div class="anim-symbol">'+String(item.char).replace(/</g,'&lt;')+'</div><div class="anim-keys">'+keyHtml(item.keys)+'</div></div></div><div class="anim-scene"></div><div class="anim-foot">'+flowHtml(item.flow)+'<p class="anim-desc">'+item.desc+'</p><p class="anim-remember"><strong>Merke:</strong> '+item.remember+'</p><div class="anim-actions"><button type="button" class="replay-btn" data-replay="'+index+'">↻ Wiederholen</button></div></div>';grid.appendChild(card);
+        var scene=createAltGrScene(card.querySelector('.anim-scene'),{mode:item.mode,autoplay:false});scenes.push({scene:scene,card:card,visible:false});
+      });
+      var observer=new IntersectionObserver(function(entries){entries.forEach(function(entry){var i=scenes.findIndex(function(x){return x.card===entry.target;});if(i<0)return;scenes[i].visible=entry.isIntersecting&&entry.intersectionRatio>.18;scenes[i].card.classList.toggle('is-visible',scenes[i].visible);scenes[i].scene.setActive(phaseActive&&scenes[i].visible);});},{threshold:[0,.18,.4]});
+      scenes.forEach(function(x){observer.observe(x.card);});
+      grid.addEventListener('click',function(e){var btn=e.target.closest('[data-replay]');if(!btn)return;var i=Number(btn.dataset.replay);if(scenes[i])scenes[i].scene.play();});
+      window.tk2SetTheoryActive=function(v){phaseActive=Boolean(v);scenes.forEach(function(x){x.scene.setActive(phaseActive&&x.visible);});};
+    })();
+  </script>
+  <script src="a2-app.js"></script>
+</body>
+</html>

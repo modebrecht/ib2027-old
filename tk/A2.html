@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A2: Praxiskurs - Sonderzeichen (AltGr - CH-Layout)</title>
+    <link rel="stylesheet" href="vendor/fonts.css">
+    <link rel="stylesheet" href="shared.css">
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        .back-link:hover {
+            color: var(--accent-amber);
+        }
+
+        .badge-ch {
+            background: rgba(245, 158, 11, 0.2);
+            border: 1px solid var(--accent-amber);
+            color: #fde047;
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        .tab-btn {
+            min-width: 0;
+            padding: 10px 6px;
+            text-align: center;
+            border: none;
+            background: none;
+            color: var(--text-muted);
+            font-family: inherit;
+            font-weight: 700;
+            font-size: clamp(0.8rem, 2.5vw, 0.95rem);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .tab-btn.active {
+            background: var(--accent-amber);
+            color: #0f172a;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
+        }
+
+        .theory-item {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border-color);
+            padding: 12px 16px;
+            border-radius: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .theory-note {
+            margin-top: 1.2rem;
+            background: rgba(245, 158, 11, 0.08);
+            border: 1px solid rgba(245, 158, 11, 0.35);
+            border-radius: 14px;
+            padding: 14px 16px;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.9;
+        }
+
+        .theory-note strong {
+            color: #fde047;
+        }
+
+        .theory-note kbd {
+            font-size: 0.85rem;
+            padding: 2px 7px;
+        }
+
+        .theory-keys {
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 6px !important;
+            white-space: nowrap !important;
+            flex-shrink: 0 !important;
+        }
+
+        kbd {
+            background: #1e293b;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 3px 0 rgba(0, 0, 0, 0.5);
+            color: #fde047;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-family: 'Space Grotesk', monospace;
+            font-size: 1rem;
+            font-weight: 700;
+            white-space: nowrap;
+            display: inline-block;
+        }
+
+        .big-symbol-kbd {
+            background: rgba(245, 158, 11, 0.15);
+            border: 1px solid var(--accent-amber);
+            color: #fde047;
+            font-size: 1.2rem;
+            padding: 4px 10px;
+            border-radius: 8px;
+            min-width: 38px;
+            text-align: center;
+            display: inline-block;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--accent-amber), var(--accent-green));
+            transition: width 0.3s ease;
+        }
+
+        .carousel-card {
+            background: #090d16;
+            border: 2px solid var(--accent-amber);
+            border-radius: 24px;
+            padding: clamp(1.5rem, 4vw, 2.5rem) clamp(0.8rem, 3vw, 2rem);
+            width: 100%;
+            max-width: 650px;
+            box-shadow: 0 0 40px rgba(245, 158, 11, 0.25);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .carousel-card.q5-card {
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 40px rgba(6, 182, 212, 0.25);
+        }
+
+        .carousel-card.q6-card {
+            border-color: var(--accent-purple);
+            box-shadow: 0 0 40px rgba(139, 92, 246, 0.25);
+        }
+
+        .symbol-hero-box {
+            background: rgba(245, 158, 11, 0.15);
+            border: 2px solid var(--accent-amber);
+            color: #fde047;
+            width: 95px;
+            height: 95px;
+            border-radius: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.8rem;
+            font-family: 'Space Grotesk', monospace;
+            font-weight: 800;
+            margin: 0 auto 1.2rem auto;
+            box-shadow: 0 0 30px rgba(245, 158, 11, 0.35);
+        }
+
+        .shortcut-display {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin: 1.5rem 0;
+            flex-wrap: nowrap;
+        }
+
+        .plus-sign {
+            font-size: clamp(1.2rem, 3.5vw, 1.8rem);
+            font-weight: 800;
+            color: var(--text-muted);
+            user-select: none;
+            flex-shrink: 0;
+        }
+
+        .big-kbd {
+            background: #1e293b;
+            border: 2px solid rgba(245, 158, 11, 0.4);
+            box-shadow: 0 6px 0 rgba(0, 0, 0, 0.6);
+            color: #fde047;
+            flex: 1 1 auto;
+            max-width: 130px;
+            min-width: 60px;
+            height: clamp(55px, 12vh, 78px);
+            padding: 0 6px;
+            border-radius: 14px;
+            font-family: 'Space Grotesk', monospace;
+            font-size: clamp(1.0rem, 4vw, 1.6rem);
+            font-weight: 800;
+            white-space: nowrap !important;
+            word-break: keep-all;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s ease;
+        }
+
+        .big-kbd.pressed-success {
+            background: linear-gradient(135deg, #10b981 0%, #047857 100%) !important;
+            border-color: #34d399 !important;
+            color: white !important;
+            box-shadow: 0 0 35px rgba(16, 185, 129, 0.95) !important;
+        }
+
+        .action-label {
+            font-size: clamp(1.5rem, 4.5vw, 2.1rem);
+            font-weight: 800;
+            color: #f8fafc;
+            font-family: 'Space Grotesk', sans-serif;
+            margin-bottom: 0.3rem;
+        }
+
+        .btn-start-course {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: #0f172a;
+            padding: 12px 28px;
+            font-size: 1.05rem;
+            font-weight: 800;
+            border: none;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 10px 25px rgba(245, 158, 11, 0.4);
+            margin-top: 1rem;
+        }
+
+        .btn-start-course:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(245, 158, 11, 0.6);
+        }
+
+        button:active, .btn-start-course:active, .btn-hint:active, .btn-reset-game:active, .btn-home:active, a:active {
+            transform: translateY(3px) scale(0.97) !important;
+            box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.4) !important;
+            transition: transform 0.05s ease, box-shadow 0.05s ease !important;
+        }
+
+        .char-target-input {
+            width: 100px;
+            height: 65px;
+            font-size: 2.5rem;
+            text-align: center;
+            background: #0f172a;
+            border: 2px solid var(--accent-amber);
+            color: #fde047;
+            border-radius: 12px;
+            margin-top: 1rem;
+            outline: none;
+            font-family: 'Space Grotesk', monospace;
+        }
+
+    </style>
+</head>
+<body>
+
+    <header class="top-bar">
+        <a href="A1.html" class="back-link">
+            ← Zurück zu Arbeitsblatt A1
+        </a>
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <div class="xp-pill">
+                ⚡ XP: <span class="global-xp-val">0</span>
+            </div>
+            <span class="badge-ch">Arbeitsblatt A2</span>
+        </div>
+    </header>
+
+    <div class="container">
+
+        <!-- LOCK CHECK FOR A2 (Requires Q3 from A1 >= 70%) -->
+        <div class="card lock-screen" id="a2-lock-screen" style="display: none;">
+            <div style="font-size: 4rem;">🔒</div>
+            <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.8rem; color: #fca5a5;">
+                Arbeitsblatt A2 ist noch gesperrt!
+            </h2>
+            <p style="color: var(--text-muted); font-size: 1.05rem; max-width: 550px;">
+                Du benötigst <strong>mindestens 70% Genauigkeit</strong> in <u>Quest 3 (Blind-Profi) von Arbeitsblatt A1</u>, um A2 freizuschalten.
+            </p>
+            <a href="A1.html" class="btn-start-course" style="text-decoration: none;">
+                Zurück zu A1 ➔
+            </a>
+        </div>
+
+        <div id="a2-content-wrap">
+            <div class="phase-tabs">
+                <button class="tab-btn active" id="tab-1" onclick="switchPhase(1)">📖 1. Theorie</button>
+                <button class="tab-btn" id="tab-2" onclick="switchPhase(2)">⚡ Q4: AltGr Geführt</button>
+                <button class="tab-btn" id="tab-3" onclick="switchPhase(3)">🎲 Q5: 50/50 Rätsel</button>
+                <button class="tab-btn" id="tab-4" onclick="switchPhase(4)">🧠 Q6: Blind-Profi</button>
+            </div>
+
+            <!-- PHASE 1: THEORIE -->
+            <div id="phase-1" class="card">
+                <h1 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.8rem; margin-bottom: 0.5rem;">
+                    Sonderzeichen mit AltGr (Schweizer Tastatur)
+                </h1>
+                <p style="color: var(--text-muted); font-size: 1.05rem; margin-bottom: 1.5rem;">
+                    Die Taste <kbd style="color:#fde047;">AltGr</kbd> rechts von der Leertaste schaltet das 3. Zeichen unten rechts auf den Tasten frei!
+                </p>
+
+                <div class="grid-2">
+                    <div class="theory-item"><div style="display:flex; align-items:center; gap:10px;"><kbd class="big-symbol-kbd">@</kbd> <span style="font-weight: 600;">Klammeraffe</span></div><div class="theory-keys"><kbd>AltGr</kbd> + <kbd>2</kbd></div></div>
+                    <div class="theory-item"><div style="display:flex; align-items:center; gap:10px;"><kbd class="big-symbol-kbd">#</kbd> <span style="font-weight: 600;">Hashtag / Raute</span></div><div class="theory-keys"><kbd>AltGr</kbd> + <kbd>3</kbd></div></div>
+                    <div class="theory-item"><div style="display:flex; align-items:center; gap:10px;"><kbd class="big-symbol-kbd">€</kbd> <span style="font-weight: 600;">Euro-Zeichen</span></div><div class="theory-keys"><kbd>AltGr</kbd> + <kbd>E</kbd></div></div>
+                    <div class="theory-item"><div style="display:flex; align-items:center; gap:10px;"><kbd class="big-symbol-kbd">|</kbd> <span style="font-weight: 600;">Senkrechter Strich (Pipe)</span></div><div class="theory-keys"><kbd>AltGr</kbd> + <kbd>7</kbd></div></div>
+                    <div class="theory-item"><div style="display:flex; align-items:center; gap:10px;"><kbd class="big-symbol-kbd">\</kbd> <span style="font-weight: 600;">Backslash</span></div><div class="theory-keys"><kbd>AltGr</kbd> + <kbd>&lt;</kbd></div></div>
+                    <div class="theory-item"><div style="display:flex; align-items:center; gap:10px;"><kbd class="big-symbol-kbd">[</kbd> <span style="font-weight: 600;">Eckige Klammer auf</span></div><div class="theory-keys"><kbd>AltGr</kbd> + <kbd>ü</kbd></div></div>
+                    <div class="theory-item"><div style="display:flex; align-items:center; gap:10px;"><kbd class="big-symbol-kbd">]</kbd> <span style="font-weight: 600;">Eckige Klammer zu</span></div><div class="theory-keys"><kbd>AltGr</kbd> + <kbd>¨</kbd></div></div>
+                    <div class="theory-item"><div style="display:flex; align-items:center; gap:10px;"><kbd class="big-symbol-kbd">{</kbd> <span style="font-weight: 600;">Geschweifte Klammer auf</span></div><div class="theory-keys"><kbd>AltGr</kbd> + <kbd>ä</kbd></div></div>
+                    <div class="theory-item"><div style="display:flex; align-items:center; gap:10px;"><kbd class="big-symbol-kbd">}</kbd> <span style="font-weight: 600;">Geschweifte Klammer zu</span></div><div class="theory-keys"><kbd>AltGr</kbd> + <kbd>$</kbd></div></div>
+                    <div class="theory-item"><div style="display:flex; align-items:center; gap:10px;"><kbd class="big-symbol-kbd">°</kbd> <span style="font-weight: 600;">Gradzeichen</span></div><div class="theory-keys"><kbd>AltGr</kbd> + <kbd>4</kbd></div></div>
+                </div>
+
+                <div class="theory-note">
+                    <strong>Merke dir die Reihenfolge:</strong> Die vier Klammern liegen der Reihe nach auf den vier Tasten rechts neben
+                    <kbd>P</kbd> bzw. <kbd>L</kbd>: <kbd>ü</kbd> → <kbd>[</kbd>, <kbd>¨</kbd> → <kbd>]</kbd>, <kbd>ä</kbd> → <kbd>{</kbd>, <kbd>$</kbd> → <kbd>}</kbd>.
+                </div>
+
+                <div style="text-align: center; margin-top: 2rem;">
+                    <button class="btn-start-course" onclick="switchPhase(2)">
+                        Bereit? Quest 4 (AltGr Geführt) starten! ➔
+                    </button>
+                </div>
+            </div>
+
+            <!-- PHASE 2: QUEST 4 (ALTGR GEFÜHRT) -->
+            <div id="phase-2" class="card" style="display: none;">
+                <div class="trainer-container">
+                    <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                        <span style="font-weight: 700; color: var(--text-muted);" id="q4-counter-label">Zeichen 1 von 10</span>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <button class="btn-reset-game" onclick="resetQ4()">🔄 Neues Game</button>
+                            <span style="font-weight: 700; color: var(--accent-green);" id="q4-score-live">Genauigkeit: 100%</span>
+                        </div>
+                    </div>
+
+                    <div class="progress-bar-wrap">
+                        <div class="progress-bar-fill" id="q4-progress-bar"></div>
+                    </div>
+
+                    <div class="carousel-card" id="q4-card">
+                        <div style="font-size: 0.8rem; color: var(--accent-green); text-transform: uppercase; font-weight: 700; letter-spacing: 1px; margin-bottom: 0.5rem;">
+                            ⚡ Geführter Mode – Tippe das gezeigte Zeichen:
+                        </div>
+                        <div class="symbol-hero-box" id="q4-symbol-box">@</div>
+                        <div class="action-label" id="q4-title">Klammeraffe</div>
+                        <div class="action-desc" id="q4-desc">Wichtig für jede E-Mail-Adresse!</div>
+
+                        <div class="shortcut-display">
+                            <div class="big-kbd">AltGr</div>
+                            <div class="plus-sign">+</div>
+                            <div class="big-kbd" id="q4-key2">2</div>
+                        </div>
+
+                        <p style="color: var(--text-muted); font-size: 0.95rem;">Tippe das Sonderzeichen in das Feld:</p>
+                        <input type="text" class="char-target-input" id="q4-char-input" maxlength="2" placeholder="?" autocomplete="off">
+
+                        <div class="status-msg" id="q4-status-msg" style="color: var(--text-muted); margin-top: 1rem;">
+                            Tippe das Sonderzeichen ein...
+                        </div>
+                    </div>
+
+                    <div class="trophy-view" id="q4-trophy-view">
+                        <div class="trophy-icon">🇨🇭🏆</div>
+                        <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.8rem;" id="q4-result-title">
+                            Quest 4 beendet!
+                        </h2>
+                        <p style="color: var(--text-muted); font-size: 1.05rem; max-width: 500px;" id="q4-result-desc">
+                            Dein Ergebnis: 0% Genauigkeit.
+                        </p>
+                        <div style="display: flex; gap: 12px; margin-top: 1rem; flex-wrap: wrap; justify-content: center;">
+                            <button class="btn-start-course" onclick="resetQ4()">🔄 Noch einmal versuchen</button>
+                            <button class="btn-start-course" id="q4-to-q5-btn" style="background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); color: white;" onclick="switchPhase(3)">
+                                Weiter zu Quest 5 (50/50 Rätsel) ➔
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PHASE 3: QUEST 5 (ALTGR 50/50 RÄTSEL) -->
+            <div id="phase-3" class="card" style="display: none;">
+                <div class="lock-screen" id="q5-lock-screen">
+                    <div class="lock-icon">🔒</div>
+                    <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.8rem; color: #fca5a5;">
+                        Quest 5 ist gesperrt!
+                    </h2>
+                    <p style="color: var(--text-muted); font-size: 1.05rem; max-width: 550px;">
+                        Du benötigst <strong>mindestens 80% Genauigkeit</strong> in <u>Quest 4 (AltGr Geführt)</u>, um Quest 5 freizuschalten.
+                    </p>
+                    <button class="btn-start-course" onclick="switchPhase(2)">
+                        Zurück zu Quest 4 ➔
+                    </button>
+                </div>
+
+                <div class="trainer-container" id="q5-game-screen" style="display: none;">
+                    <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                        <span style="font-weight: 700; color: var(--text-muted);" id="q5-counter-label">50/50 1 von 10</span>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <button class="btn-reset-game" onclick="resetQ5()">🔄 Neues Game</button>
+                            <span style="font-weight: 700; color: var(--accent-cyan);" id="q5-score-live">Genauigkeit: 100%</span>
+                        </div>
+                    </div>
+
+                    <div class="progress-bar-wrap">
+                        <div class="progress-bar-fill" id="q5-progress-bar" style="background: linear-gradient(90deg, var(--accent-cyan), var(--accent-green));"></div>
+                    </div>
+
+                    <div class="carousel-card q5-card" id="q5-card">
+                        <div class="symbol-hero-box" id="q5-symbol-box">@</div>
+                        <div class="action-label" id="q5-title">Klammeraffe</div>
+                        <div class="action-desc" id="q5-desc">Wichtig für jede E-Mail-Adresse!</div>
+
+                        <div class="shortcut-display" id="q5-shortcut-display"></div>
+
+                        <button class="btn-hint" id="q5-hint-btn" onclick="useQ5Hint()">💡 Tipp kaufen (-30 XP)</button>
+
+                        <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 1rem;">Tippe das Sonderzeichen in das Feld:</p>
+                        <input type="text" class="char-target-input" id="q5-char-input" maxlength="2" placeholder="?" autocomplete="off">
+
+                        <div class="status-msg" id="q5-status-msg" style="color: var(--text-muted); margin-top: 1rem;">
+                            Tippe das Sonderzeichen ein...
+                        </div>
+                    </div>
+
+                    <div class="trophy-view" id="q5-trophy-view">
+                        <div class="trophy-icon">🎲🏆</div>
+                        <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.8rem;" id="q5-result-title">
+                            Quest 5 beendet!
+                        </h2>
+                        <p style="color: var(--text-muted); font-size: 1.05rem; max-width: 500px;" id="q5-result-desc">
+                            Dein Ergebnis: 0% Genauigkeit.
+                        </p>
+                        <div style="display: flex; gap: 12px; margin-top: 1rem; flex-wrap: wrap; justify-content: center;">
+                            <button class="btn-start-course" onclick="resetQ5()">🔄 Noch einmal versuchen</button>
+                            <button class="btn-start-course" id="q5-to-q6-btn" style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); color: white;" onclick="switchPhase(4)">
+                                Weiter zu Quest 6 (Blind-Profi) ➔
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PHASE 4: QUEST 6 (ALTGR BLIND-PROFI / MEMORY MODE) -->
+            <div id="phase-4" class="card" style="display: none;">
+                <div class="lock-screen" id="q6-lock-screen">
+                    <div class="lock-icon">🔒</div>
+                    <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.8rem; color: #fca5a5;">
+                        Quest 6 ist gesperrt!
+                    </h2>
+                    <p style="color: var(--text-muted); font-size: 1.05rem; max-width: 550px;">
+                        Du benötigst <strong>mindestens 70% Genauigkeit</strong> in <u>Quest 5 (50/50 Rätsel)</u>, um den Blind-Profi-Modus freizuschalten.
+                    </p>
+                    <button class="btn-start-course" onclick="switchPhase(3)">
+                        Zurück zu Quest 5 ➔
+                    </button>
+                </div>
+
+                <div class="trainer-container" id="q6-game-screen" style="display: none;">
+                    <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                        <span style="font-weight: 700; color: var(--text-muted);" id="q6-counter-label">Blind 1 von 10</span>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <button class="btn-reset-game" onclick="resetQ6()">🔄 Neues Game</button>
+                            <span style="font-weight: 700; color: var(--accent-purple);" id="q6-score-live">Genauigkeit: 100%</span>
+                        </div>
+                    </div>
+
+                    <div class="progress-bar-wrap">
+                        <div class="progress-bar-fill" id="q6-progress-bar" style="background: linear-gradient(90deg, var(--accent-purple), var(--accent-cyan));"></div>
+                    </div>
+
+                    <div class="carousel-card q6-card" id="q6-card">
+                        <div style="font-size: 0.8rem; color: var(--accent-purple); text-transform: uppercase; font-weight: 700; letter-spacing: 1px;">
+                            🧠 Memory Mode – Aus dem Gedächtnis:
+                        </div>
+                        <div class="action-label" id="q6-title" style="margin-top: 0.5rem;">Klammeraffe</div>
+                        <div class="action-desc" id="q6-desc">Wichtig für jede E-Mail-Adresse!</div>
+
+                        <div class="shortcut-display" id="q6-shortcut-display">
+                            <div class="big-kbd">?</div>
+                            <div class="plus-sign">+</div>
+                            <div class="big-kbd">?</div>
+                        </div>
+
+                        <button class="btn-hint" id="q6-hint-btn" onclick="useQ6Hint()">💡 Tipp kaufen (-30 XP)</button>
+
+                        <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 1rem;">Tippe das Sonderzeichen in das Feld:</p>
+                        <input type="text" class="char-target-input" id="q6-char-input" maxlength="2" placeholder="?" autocomplete="off">
+
+                        <div class="status-msg" id="q6-status-msg" style="color: var(--text-muted); margin-top: 1rem;">
+                            Tippe das Sonderzeichen ein...
+                        </div>
+                    </div>
+
+                    <div class="trophy-view" id="q6-trophy-view">
+                        <div class="trophy-icon">🇨🇭🏆</div>
+                        <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.8rem;" id="q6-result-title">
+                            Quest 6 gemeistert!
+                        </h2>
+                        <p style="color: var(--text-muted); font-size: 1.05rem; max-width: 500px;" id="q6-result-desc">
+                            Dein Ergebnis: 0% Genauigkeit.
+                        </p>
+                        <div style="display: flex; gap: 12px; margin-top: 1rem; flex-wrap: wrap; justify-content: center;">
+                            <button class="btn-start-course" onclick="resetQ6()">🔄 Noch einmal versuchen</button>
+                            <a href="A3.html" class="btn-start-course" id="q6-to-a3-btn" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; text-decoration: none;">
+                                Weiter zu A3 (Boss-Challenge "Maus weglegen") ➔
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Global XP Engine -->
+    <script src="xp.js"></script>
+    <script>
+        const altgrItems = [
+            { title: "Klammeraffe", char: "@", key2: "2", desc: "Wichtig für jede E-Mail-Adresse." },
+            { title: "Hashtag / Raute", char: "#", key2: "3", desc: "Für Social Media, Programmierung und Hashtags." },
+            { title: "Euro-Zeichen", char: "€", key2: "E", desc: "Das Währungszeichen für Euro." },
+            { title: "Senkrechter Strich (Pipe)", char: "|", key2: "7", desc: "Wichtig in der Informatik & Befehlszeile." },
+            { title: "Backslash", char: "\\", key2: "<", desc: "Trennzeichen in Windows-Dateipfaden." },
+            { title: "Eckige Klammer auf", char: "[", key2: "ü", desc: "Für Arrays und Listen im Code. Die Taste rechts neben dem P." },
+            { title: "Eckige Klammer zu", char: "]", key2: "¨", desc: "Schliesst die eckige Klammer. Die Taste mit dem ! darüber." },
+            { title: "Geschweifte Klammer auf", char: "{", key2: "ä", desc: "Hauptklammer in vielen Programmiersprachen." },
+            { title: "Geschweifte Klammer zu", char: "}", key2: "$", desc: "Schliesst den Codeblock." },
+            { title: "Gradzeichen", char: "°", key2: "4", desc: "Für Temperaturangaben wie 21 °C." }
+        ];
+
+        let activePhase = 1;
+
+        function shuffleArray(arr) {
+            const array = [...arr];
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // Q4 State
+        let q4Items = shuffleArray(altgrItems);
+        let q4Index = 0;
+        let q4CorrectHits = 0;
+        let q4TotalAttempts = 0;
+        let q4Locked = false;
+
+        // Q5 State
+        let q5Items = shuffleArray(altgrItems);
+        let q5Index = 0;
+        let q5CorrectHits = 0;
+        let q5TotalAttempts = 0;
+        let q5HintRevealed = false;
+        let q5Locked = false;
+
+        // Q6 State
+        let q6Items = shuffleArray(altgrItems);
+        let q6Index = 0;
+        let q6CorrectHits = 0;
+        let q6TotalAttempts = 0;
+        let q6HintRevealed = false;
+        let q6Locked = false;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!isQuestUnlocked('q4')) {
+                document.getElementById('a2-lock-screen').style.display = 'flex';
+                document.getElementById('a2-content-wrap').style.display = 'none';
+            } else {
+                document.getElementById('a2-lock-screen').style.display = 'none';
+                document.getElementById('a2-content-wrap').style.display = 'block';
+            }
+        });
+
+        // Einfügen per Zwischenablage (Strg+V, Rechtsklick, Drag&Drop) verhindern:
+        // Das Ziel der Übung ist, das Sonderzeichen mit AltGr selbst zu tippen, nicht es hineinzukopieren.
+        ['q4-char-input', 'q5-char-input', 'q6-char-input'].forEach(id => {
+            const input = document.getElementById(id);
+            input.addEventListener('paste', (e) => e.preventDefault());
+            input.addEventListener('drop', (e) => e.preventDefault());
+            input.addEventListener('contextmenu', (e) => e.preventDefault());
+        });
+
+        function switchPhase(phaseNum) {
+            activePhase = phaseNum;
+            document.getElementById('phase-1').style.display = phaseNum === 1 ? 'block' : 'none';
+            document.getElementById('phase-2').style.display = phaseNum === 2 ? 'block' : 'none';
+            document.getElementById('phase-3').style.display = phaseNum === 3 ? 'block' : 'none';
+            document.getElementById('phase-4').style.display = phaseNum === 4 ? 'block' : 'none';
+
+            document.getElementById('tab-1').classList.toggle('active', phaseNum === 1);
+            document.getElementById('tab-2').classList.toggle('active', phaseNum === 2);
+            document.getElementById('tab-3').classList.toggle('active', phaseNum === 3);
+            document.getElementById('tab-4').classList.toggle('active', phaseNum === 4);
+
+            if (phaseNum === 2) updateQ4Card();
+            else if (phaseNum === 3) checkQ5Unlock();
+            else if (phaseNum === 4) checkQ6Unlock();
+        }
+
+        /* --- QUEST 4 LOGIC (ALTGR GEFÜHRT) --- */
+        function resetQ4() {
+            q4Items = shuffleArray(altgrItems);
+            q4Index = 0;
+            q4CorrectHits = 0;
+            q4TotalAttempts = 0;
+            document.getElementById('q4-card').style.display = 'block';
+            document.getElementById('q4-trophy-view').style.display = 'none';
+            updateQ4Card();
+        }
+
+        function updateQ4Card() {
+            q4Locked = false;
+            if (q4Index >= q4Items.length) {
+                document.getElementById('q4-card').style.display = 'none';
+                const trophyView = document.getElementById('q4-trophy-view');
+                trophyView.style.display = 'flex';
+
+                let pct = Math.round((q4CorrectHits / Math.max(1, q4TotalAttempts)) * 100);
+                saveQuestScore('q4', pct);
+
+                const resTitle = document.getElementById('q4-result-title');
+                const resDesc = document.getElementById('q4-result-desc');
+                const toQ5Btn = document.getElementById('q4-to-q5-btn');
+
+                if (pct >= 80) {
+                    resTitle.innerText = "🏆 Quest 4 bestanden!";
+                    resTitle.style.color = "var(--accent-green)";
+                    resDesc.innerText = `Glückwunsch! Du hast ${pct}% Genauigkeit erreicht. Quest 5 (50/50) ist FREIGESCHALTET!`;
+                    toQ5Btn.style.display = "inline-block";
+                } else {
+                    resTitle.innerText = "⚠️ Noch nicht ganz (unter 80%)";
+                    resTitle.style.color = "var(--accent-amber)";
+                    resDesc.innerText = `Du hast ${pct}% Genauigkeit erreicht. Du benötigst mindestens 80%, um Quest 5 freizuschalten!`;
+                    toQ5Btn.style.display = "none";
+                }
+                return;
+            }
+
+            const item = q4Items[q4Index];
+            document.getElementById('q4-symbol-box').innerText = item.char;
+            document.getElementById('q4-title').innerText = item.title;
+            document.getElementById('q4-desc').innerText = item.desc;
+            document.getElementById('q4-key2').innerText = item.key2;
+
+            document.getElementById('q4-counter-label').innerText = `Zeichen ${q4Index + 1} von ${q4Items.length}`;
+            let progressPct = ((q4Index + 1) / q4Items.length) * 100;
+            document.getElementById('q4-progress-bar').style.width = `${progressPct}%`;
+
+            let livePct = q4TotalAttempts === 0 ? 100 : Math.round((q4CorrectHits / q4TotalAttempts) * 100);
+            document.getElementById('q4-score-live').innerText = `Genauigkeit: ${livePct}%`;
+
+            const input = document.getElementById('q4-char-input');
+            input.value = "";
+            input.focus();
+
+            const statusMsg = document.getElementById('q4-status-msg');
+            statusMsg.innerHTML = 'Warte auf Tastatur-Eingabe... <span style="color:var(--accent-amber);">Drücke die Tasten!</span>';
+            statusMsg.style.color = "var(--text-muted)";
+            document.getElementById('q4-card').classList.remove('success-flash');
+        }
+
+        document.getElementById('q4-char-input').addEventListener('input', (e) => {
+            if (activePhase !== 2 || q4Index >= q4Items.length || q4Locked) return;
+            const targetChar = q4Items[q4Index].char;
+            const typedVal = e.target.value;
+            if (!typedVal) return;
+
+            if (typedVal.includes(targetChar)) {
+                q4Locked = true;
+                addGlobalXP(10);
+                playSound('correct');
+                q4CorrectHits++;
+                q4TotalAttempts++;
+
+                const card = document.getElementById('q4-card');
+                const statusMsg = document.getElementById('q4-status-msg');
+                card.classList.add('success-flash');
+                statusMsg.innerHTML = '✨ <span style="color: var(--accent-green);">+10 XP!</span>';
+
+                setTimeout(() => {
+                    q4Index++;
+                    updateQ4Card();
+                }, 600);
+            } else {
+                q4Locked = true;
+                addGlobalXP(-10);
+                playSound('wrong');
+                q4TotalAttempts++;
+
+                const card = document.getElementById('q4-card');
+                const statusMsg = document.getElementById('q4-status-msg');
+                card.classList.add('error-flash');
+                statusMsg.innerHTML = '❌ <span style="color: var(--accent-red);">-10 XP!</span>';
+
+                setTimeout(() => {
+                    card.classList.remove('error-flash');
+                    e.target.value = "";
+                    q4Locked = false;
+                }, 600);
+            }
+        });
+
+        /* --- QUEST 5 LOGIC (ALTGR 50/50) --- */
+        function checkQ5Unlock() {
+            const isUnlocked = isQuestUnlocked('q5');
+            const lockScreen = document.getElementById('q5-lock-screen');
+            const gameScreen = document.getElementById('q5-game-screen');
+
+            if (!isUnlocked) {
+                lockScreen.style.display = 'flex';
+                gameScreen.style.display = 'none';
+            } else {
+                lockScreen.style.display = 'none';
+                gameScreen.style.display = 'flex';
+                updateQ5Card();
+            }
+        }
+
+        function resetQ5() {
+            q5Items = shuffleArray(altgrItems);
+            q5Index = 0;
+            q5CorrectHits = 0;
+            q5TotalAttempts = 0;
+            q5HintRevealed = false;
+
+            document.getElementById('q5-card').style.display = 'block';
+            document.getElementById('q5-trophy-view').style.display = 'none';
+            updateQ5Card();
+        }
+
+        function updateQ5Card() {
+            q5Locked = false;
+            if (q5Index >= q5Items.length) {
+                document.getElementById('q5-card').style.display = 'none';
+                const trophyView = document.getElementById('q5-trophy-view');
+                trophyView.style.display = 'flex';
+
+                let pct = Math.round((q5CorrectHits / Math.max(1, q5TotalAttempts)) * 100);
+                saveQuestScore('q5', pct);
+
+                const resTitle = document.getElementById('q5-result-title');
+                const resDesc = document.getElementById('q5-result-desc');
+                const toQ6Btn = document.getElementById('q5-to-q6-btn');
+
+                if (pct >= 70) {
+                    resTitle.innerText = "🎲🏆 Quest 5 (50/50 Rätsel) gemeistert!";
+                    resTitle.style.color = "var(--accent-green)";
+                    resDesc.innerText = `Super! Du hast ${pct}% Genauigkeit erreicht. Quest 6 (Blind-Profi) ist FREIGESCHALTET!`;
+                    toQ6Btn.style.display = "inline-block";
+                } else {
+                    resTitle.innerText = "⚠️ Noch nicht ganz (unter 70%)";
+                    resTitle.style.color = "var(--accent-amber)";
+                    resDesc.innerText = `Du hast ${pct}% Genauigkeit erreicht. Du benötigst mindestens 70%, um Quest 6 freizuschalten!`;
+                    toQ6Btn.style.display = "none";
+                }
+                return;
+            }
+
+            q5HintRevealed = false;
+            const item = q5Items[q5Index];
+            document.getElementById('q5-symbol-box').innerText = item.char;
+            document.getElementById('q5-title').innerText = item.title;
+            document.getElementById('q5-desc').innerText = item.desc;
+
+            // Pick randomly whether to hide key1 (AltGr) or key2
+            const hideKey1 = Math.random() < 0.5;
+            const displayBox = document.getElementById('q5-shortcut-display');
+            displayBox.innerHTML = `
+                <div class="big-kbd">${hideKey1 ? '?' : 'AltGr'}</div>
+                <div class="plus-sign">+</div>
+                <div class="big-kbd">${hideKey1 ? item.key2 : '?'}</div>
+            `;
+
+            const currentXP = getGlobalXP();
+            const hintBtn = document.getElementById('q5-hint-btn');
+            if (currentXP < 30) {
+                hintBtn.innerText = `💡 Tipp kaufen (-30 XP | Zu wenig XP!)`;
+                hintBtn.disabled = true;
+            } else {
+                hintBtn.innerText = `💡 Tipp kaufen (-30 XP)`;
+                hintBtn.disabled = false;
+            }
+
+            document.getElementById('q5-counter-label').innerText = `Rätsel ${q5Index + 1} von ${q5Items.length}`;
+            let progressPct = ((q5Index + 1) / q5Items.length) * 100;
+            document.getElementById('q5-progress-bar').style.width = `${progressPct}%`;
+
+            let livePct = q5TotalAttempts === 0 ? 100 : Math.round((q5CorrectHits / q5TotalAttempts) * 100);
+            document.getElementById('q5-score-live').innerText = `Genauigkeit: ${livePct}%`;
+
+            const input = document.getElementById('q5-char-input');
+            input.value = "";
+            input.focus();
+
+            const statusMsg = document.getElementById('q5-status-msg');
+            statusMsg.innerHTML = 'Warte auf Tastatur-Eingabe... <span style="color:var(--accent-amber);">Drücke die Tasten!</span>';
+            statusMsg.style.color = "var(--text-muted)";
+            document.getElementById('q5-card').classList.remove('success-flash', 'error-flash');
+        }
+
+        function useQ5Hint() {
+            let currentXP = getGlobalXP();
+            if (currentXP < 30) {
+                playSound('wrong');
+                return;
+            }
+
+            if (!q5HintRevealed) {
+                q5HintRevealed = true;
+                addGlobalXP(-30);
+                playSound('hint');
+
+                const item = q5Items[q5Index];
+                const displayBox = document.getElementById('q5-shortcut-display');
+                displayBox.innerHTML = `
+                    <div class="big-kbd">AltGr</div>
+                    <div class="plus-sign">+</div>
+                    <div class="big-kbd">${item.key2}</div>
+                `;
+
+                const hintBtn = document.getElementById('q5-hint-btn');
+                hintBtn.innerText = `💡 Tipp gekauft (-30 XP)!`;
+                hintBtn.disabled = true;
+            }
+        }
+
+        document.getElementById('q5-char-input').addEventListener('input', (e) => {
+            if (activePhase !== 3 || q5Index >= q5Items.length || q5Locked) return;
+            const targetChar = q5Items[q5Index].char;
+            const typedVal = e.target.value;
+            if (!typedVal) return;
+
+            if (typedVal.includes(targetChar)) {
+                q5Locked = true;
+                addGlobalXP(10);
+                playSound('correct');
+                q5CorrectHits++;
+                q5TotalAttempts++;
+
+                const card = document.getElementById('q5-card');
+                const statusMsg = document.getElementById('q5-status-msg');
+                card.classList.add('success-flash');
+                statusMsg.innerHTML = '✨ <span style="color: var(--accent-green);">+10 XP!</span>';
+
+                setTimeout(() => {
+                    q5Index++;
+                    updateQ5Card();
+                }, 600);
+            } else {
+                q5Locked = true;
+                addGlobalXP(-10);
+                playSound('wrong');
+                q5TotalAttempts++;
+
+                const card = document.getElementById('q5-card');
+                const statusMsg = document.getElementById('q5-status-msg');
+                card.classList.add('error-flash');
+                statusMsg.innerHTML = '❌ <span style="color: var(--accent-red);">-10 XP!</span>';
+
+                setTimeout(() => {
+                    card.classList.remove('error-flash');
+                    e.target.value = "";
+                    q5Locked = false;
+                }, 600);
+            }
+        });
+
+        /* --- QUEST 6 LOGIC (ALTGR BLIND-PROFI) --- */
+        function checkQ6Unlock() {
+            const isUnlocked = isQuestUnlocked('q6');
+            const lockScreen = document.getElementById('q6-lock-screen');
+            const gameScreen = document.getElementById('q6-game-screen');
+
+            if (!isUnlocked) {
+                lockScreen.style.display = 'flex';
+                gameScreen.style.display = 'none';
+            } else {
+                lockScreen.style.display = 'none';
+                gameScreen.style.display = 'flex';
+                updateQ6Card();
+            }
+        }
+
+        function resetQ6() {
+            q6Items = shuffleArray(altgrItems);
+            q6Index = 0;
+            q6CorrectHits = 0;
+            q6TotalAttempts = 0;
+            q6HintRevealed = false;
+
+            document.getElementById('q6-card').style.display = 'block';
+            document.getElementById('q6-trophy-view').style.display = 'none';
+            updateQ6Card();
+        }
+
+        function updateQ6Card() {
+            q6Locked = false;
+            if (q6Index >= q6Items.length) {
+                document.getElementById('q6-card').style.display = 'none';
+                const trophyView = document.getElementById('q6-trophy-view');
+                trophyView.style.display = 'flex';
+
+                let pct = Math.round((q6CorrectHits / Math.max(1, q6TotalAttempts)) * 100);
+                saveQuestScore('q6', pct);
+
+                const resTitle = document.getElementById('q6-result-title');
+                const resDesc = document.getElementById('q6-result-desc');
+                const toA3Btn = document.getElementById('q6-to-a3-btn');
+
+                if (pct >= 70) {
+                    resTitle.innerText = "🇨🇭🏆 Quest 6 (Blind-Profi) gemeistert!";
+                    resTitle.style.color = "var(--accent-green)";
+                    resDesc.innerText = `Überragend! Du hast ${pct}% im Blind-Test erreicht. Boss-Challenge (A3.html) ist FREIGESCHALTET!`;
+                    toA3Btn.style.display = "inline-block";
+                } else {
+                    resTitle.innerText = "⚠️ Noch nicht ganz (unter 70%)";
+                    resTitle.style.color = "var(--accent-amber)";
+                    resDesc.innerText = `Du hast ${pct}% im Blind-Test erreicht. Du benötigst mindestens 70%, um Boss-Challenge A3 freizuschalten!`;
+                    toA3Btn.style.display = "none";
+                }
+                return;
+            }
+
+            q6HintRevealed = false;
+            const item = q6Items[q6Index];
+            document.getElementById('q6-title').innerText = item.title;
+            document.getElementById('q6-desc').innerText = item.desc;
+
+            const displayBox = document.getElementById('q6-shortcut-display');
+            if (displayBox) {
+                displayBox.innerHTML = `<div class="big-kbd">?</div><div class="plus-sign">+</div><div class="big-kbd">?</div>`;
+            }
+
+            const currentXP = getGlobalXP();
+            const hintBtn = document.getElementById('q6-hint-btn');
+            if (currentXP < 30) {
+                hintBtn.innerText = `💡 Tipp kaufen (-30 XP | Zu wenig XP!)`;
+                hintBtn.disabled = true;
+            } else {
+                hintBtn.innerText = `💡 Tipp kaufen (-30 XP)`;
+                hintBtn.disabled = false;
+            }
+
+            document.getElementById('q6-counter-label').innerText = `Blind ${q6Index + 1} von ${q6Items.length}`;
+            let progressPct = ((q6Index + 1) / q6Items.length) * 100;
+            document.getElementById('q6-progress-bar').style.width = `${progressPct}%`;
+
+            let livePct = q6TotalAttempts === 0 ? 100 : Math.round((q6CorrectHits / q6TotalAttempts) * 100);
+            document.getElementById('q6-score-live').innerText = `Genauigkeit: ${livePct}%`;
+
+            const input = document.getElementById('q6-char-input');
+            input.value = "";
+            input.focus();
+
+            const statusMsg = document.getElementById('q6-status-msg');
+            statusMsg.innerHTML = 'Warte auf Tastatur-Eingabe... <span style="color:var(--accent-amber);">Drücke die Tasten!</span>';
+            statusMsg.style.color = "var(--text-muted)";
+            document.getElementById('q6-card').classList.remove('success-flash', 'error-flash');
+        }
+
+        function useQ6Hint() {
+            let currentXP = getGlobalXP();
+            if (currentXP < 30) {
+                playSound('wrong');
+                return;
+            }
+
+            if (!q6HintRevealed) {
+                q6HintRevealed = true;
+                addGlobalXP(-30);
+                playSound('hint');
+
+                const item = q6Items[q6Index];
+                const displayBox = document.getElementById('q6-shortcut-display');
+                if (displayBox) {
+                    displayBox.innerHTML = `<div class="big-kbd">AltGr</div><div class="plus-sign">+</div><div class="big-kbd">${item.key2}</div>`;
+                }
+
+                const hintBtn = document.getElementById('q6-hint-btn');
+                hintBtn.innerText = `💡 Tipp gekauft (-30 XP)!`;
+                hintBtn.disabled = true;
+            }
+        }
+
+        document.getElementById('q6-char-input').addEventListener('input', (e) => {
+            if (activePhase !== 4 || q6Index >= q6Items.length || q6Locked) return;
+            const targetChar = q6Items[q6Index].char;
+            const typedVal = e.target.value;
+            if (!typedVal) return;
+
+            if (typedVal.includes(targetChar)) {
+                q6Locked = true;
+                addGlobalXP(10);
+                playSound('correct');
+                q6CorrectHits++;
+                q6TotalAttempts++;
+
+                const item = q6Items[q6Index];
+                const displayBox = document.getElementById('q6-shortcut-display');
+                if (displayBox) {
+                    displayBox.innerHTML = `<div class="big-kbd pressed-success">AltGr</div><div class="plus-sign">+</div><div class="big-kbd pressed-success">${item.key2}</div>`;
+                }
+
+                const card = document.getElementById('q6-card');
+                const statusMsg = document.getElementById('q6-status-msg');
+                card.classList.add('success-flash');
+                statusMsg.innerHTML = '✨ <span style="color: var(--accent-green);">+10 XP!</span>';
+
+                setTimeout(() => {
+                    q6Index++;
+                    updateQ6Card();
+                }, 600);
+            } else {
+                q6Locked = true;
+                addGlobalXP(-10);
+                playSound('wrong');
+                q6TotalAttempts++;
+
+                const card = document.getElementById('q6-card');
+                const statusMsg = document.getElementById('q6-status-msg');
+                card.classList.add('error-flash');
+                statusMsg.innerHTML = '❌ <span style="color: var(--accent-red);">-10 XP!</span>';
+
+                setTimeout(() => {
+                    card.classList.remove('error-flash');
+                    e.target.value = "";
+                    q6Locked = false;
+                }, 600);
+            }
+        });
+    </script>
+</body>
+</html>

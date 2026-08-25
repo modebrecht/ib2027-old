@@ -1,0 +1,12 @@
+/* Shared worksheet header glassmorphism */
+.worksheet-header {
+  background: rgba(255, 255, 255, .35);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border-bottom: 1px solid rgba(255, 255, 255, .40);
+}
+
+.dark .worksheet-header {
+  background: rgba(15, 23, 42, .60);
+  border-bottom-color: rgba(51, 65, 85, .50);
+}

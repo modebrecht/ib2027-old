@@ -1,0 +1,1440 @@
+<!DOCTYPE html>
+<html lang="de" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A12: VELOCITY EcoCorp 2080 • Ultra-Cinematic CEO Office Experience</title>
+    <script src="assets/js/tailwind.min.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        cyber: {
+                            50: '#f0fdf4', 100: '#dcfce7', 400: '#4ade80', 500: '#22c55e', 600: '#16a34a', 700: '#15803d', 800: '#166534', 900: '#052e16', 950: '#021A0E'
+                        },
+                        velocity: {
+                            gold: '#fbbf24', legendary: '#f59e0b', epic: '#a855f7', rare: '#3b82f6', trash: '#ef4444'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Segoe UI', 'Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                        mono: ['Consolas', 'Courier New', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="assets/css/fontawesome.min.css">
+    <style>
+        @import url('assets/fonts/inter.css');
+
+        * { user-select: none; transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease; }
+
+        /* STRICT GLOBAL MINIMUM FONT SIZE OF 14PX ACROSS ENTIRE APPLICATION */
+        html, body {
+            font-size: 14px !important;
+        }
+
+        /* FORCE ALL TAILWIND SMALLER FONT CLASSES TO BE AT LEAST 14PX */
+        .text-\[9px\], .text-\[10px\], .text-\[11px\], .text-xs {
+            font-size: 14px !important;
+            line-height: 1.35 !important;
+        }
+
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #030712; }
+        ::-webkit-scrollbar-thumb { background: #f59e0b; border-radius: 4px; }
+
+        @keyframes stampPop {
+            0% { transform: scale(3) rotate(-15deg); opacity: 0; }
+            100% { transform: scale(1) rotate(-5deg); opacity: 1; }
+        }
+        @keyframes botFloat {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-8px) rotate(2deg); }
+        }
+        @keyframes accountantSlide {
+            0% { opacity: 0; transform: translateY(40px) scale(0.9); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        
+        /* ULTRA CINEMATIC 3D CAMERA ZOOM TRANSITION */
+        @keyframes cinematicShutterOpen {
+            0% { clip-path: polygon(0 0, 100% 0, 100% 0, 0 0, 0 100%, 100% 100%, 100% 100%, 0 100%); }
+            100% { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 0 100%, 100% 100%, 100% 0, 0 0); }
+        }
+
+        @keyframes holoPulseGlow {
+            0%, 100% { filter: drop-shadow(0 0 25px rgba(245, 158, 11, 0.6)); }
+            50% { filter: drop-shadow(0 0 60px rgba(6, 182, 212, 0.9)); }
+        }
+
+        @keyframes dossier3DFlip {
+            0% { opacity: 0; transform: perspective(1200px) rotateX(45deg) translateY(120px) scale(0.8); }
+            60% { opacity: 1; transform: perspective(1200px) rotateX(-5deg) translateY(-10px) scale(1.02); }
+            100% { opacity: 1; transform: perspective(1200px) rotateX(0deg) translateY(0) scale(1); }
+        }
+
+        @keyframes gameOverPulse {
+            0%, 100% { box-shadow: 0 0 50px rgba(239, 68, 68, 0.7); }
+            50% { box-shadow: 0 0 100px rgba(239, 68, 68, 1); }
+        }
+        @keyframes shineSweep {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(200%); }
+        }
+        @keyframes dynamicGradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* INSOLVENZ ANIMATED BACKGROUND: RED WITH BLACK DOTS DRIFTING RIGHT TO LEFT */
+        @keyframes dotsDriftRightToLeft {
+            0% { background-position: 300px 0, 150px 0; }
+            100% { background-position: 0px 0, -150px 0; }
+        }
+
+        .bg-insolvenz-dots {
+            background-color: #b91c1c;
+            background-image: 
+                radial-gradient(rgba(0, 0, 0, 0.85) 22%, transparent 22%),
+                radial-gradient(rgba(0, 0, 0, 0.65) 18%, transparent 18%);
+            background-size: 24px 24px, 36px 36px;
+            background-position: 0 0, 12px 12px;
+            animation: dotsDriftRightToLeft 6s linear infinite;
+        }
+
+        .animate-stamp { animation: stampPop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+        .animate-bot { animation: botFloat 3.5s ease-in-out infinite; }
+        .animate-accountant { animation: accountantSlide 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+        .animate-holo-glow { animation: holoPulseGlow 2.5s infinite ease-in-out; }
+        .animate-dossier-3d { animation: dossier3DFlip 0.75s cubic-bezier(0.23, 1, 0.32, 1) forwards; }
+        .animate-gameover { animation: gameOverPulse 1.5s infinite; }
+
+        /* GIANT ANIMATED DUAL-COLOR GLOWING START BUTTON */
+        .btn-ceo-giant {
+            background: linear-gradient(90deg, #06b6d4 0%, #eab308 33%, #10b981 66%, #06b6d4 100%);
+            background-size: 300% 100%;
+            animation: dynamicGradientMove 4s ease infinite;
+            box-shadow: 0 0 55px rgba(6, 182, 212, 0.8), inset 0 0 25px rgba(255, 255, 255, 0.6);
+            border: 3px solid #ffffff;
+            color: #030712;
+            font-weight: 900;
+        }
+        .btn-ceo-giant:hover {
+            box-shadow: 0 0 90px rgba(234, 179, 8, 1), inset 0 0 35px rgba(255, 255, 255, 0.8);
+            transform: scale(1.05) translateY(-3px);
+        }
+
+        .crt-bg {
+            background: #030712;
+        }
+
+        /* HIGH-VISIBILITY GOLDEN DASHBOARD CARD STYLING */
+        .golden-dashboard-card {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 50%, #b45309 100%);
+            border: 3px solid #fef08a;
+            box-shadow: 0 15px 35px rgba(245, 158, 11, 0.4), inset 0 0 25px rgba(255, 255, 255, 0.3);
+            color: #030712;
+        }
+
+        /* GOLDEN CEO ADVISOR CARD (ALL GOLD UNTIL CLICKED) */
+        .golden-advisor-card {
+            background: linear-gradient(90deg, #fbbf24 0%, #f59e0b 50%, #d97706 100%);
+            border: 3px solid #fef08a;
+            box-shadow: 0 10px 30px rgba(245, 158, 11, 0.5);
+            color: #030712;
+        }
+        .golden-advisor-card:hover {
+            transform: scale(1.02) translateY(-2px);
+            box-shadow: 0 15px 40px rgba(245, 158, 11, 0.8);
+        }
+
+        /* HARDWARE INSPECTION CARD STYLING */
+        .bl-card {
+            background: rgba(15, 23, 42, 0.94);
+            backdrop-filter: blur(24px);
+            border: 2.5px solid rgba(245, 158, 11, 0.7);
+            border-radius: 1.5rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.9), 0 0 30px rgba(245, 158, 11, 0.3);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .bl-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-color: #f59e0b !important;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.95), 0 0 50px rgba(245, 158, 11, 0.6) !important;
+        }
+
+        .bl-card-greenwash {
+            border-color: rgba(239, 68, 68, 0.7) !important;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.9), 0 0 30px rgba(239, 68, 68, 0.3) !important;
+        }
+        .bl-card-greenwash:hover {
+            border-color: #ef4444 !important;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.95), 0 0 50px rgba(239, 68, 68, 0.6) !important;
+        }
+
+        .bl-header-banner {
+            background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%);
+            color: #030712;
+            font-weight: 900;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            position: relative;
+            overflow: hidden;
+        }
+        .bl-header-banner::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 50%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            animation: shineSweep 3s infinite;
+        }
+
+        .bl-header-greenwash {
+            background: linear-gradient(90deg, #ef4444 0%, #b91c1c 100%) !important;
+            color: #ffffff !important;
+        }
+
+        .bl-asset-viewport {
+            height: 220px;
+            width: 100%;
+            object-fit: contain;
+            background: radial-gradient(circle at 50% 50%, rgba(245, 158, 11, 0.18) 0%, rgba(15, 23, 42, 0.95) 75%);
+            border-bottom: 2px solid rgba(245, 158, 11, 0.4);
+            padding: 1.25rem;
+            filter: drop-shadow(0 15px 15px rgba(0,0,0,0.8));
+        }
+
+        .bl-asset-viewport-greenwash {
+            background: radial-gradient(circle at 50% 50%, rgba(239, 68, 68, 0.18) 0%, rgba(15, 23, 42, 0.95) 75%) !important;
+            border-bottom-color: rgba(239, 68, 68, 0.4) !important;
+        }
+
+        .stamp-approved {
+            border: 5px solid #22c55e;
+            color: #22c55e;
+            background: rgba(34, 197, 94, 0.22);
+            text-shadow: 0 0 15px rgba(34, 197, 94, 0.9);
+            box-shadow: 0 0 30px rgba(34, 197, 94, 0.7);
+            transform: rotate(-8deg);
+            backdrop-filter: blur(10px);
+        }
+        .stamp-rejected {
+            border: 5px solid #ef4444;
+            color: #ef4444;
+            background: rgba(239, 68, 68, 0.22);
+            text-shadow: 0 0 15px rgba(239, 68, 68, 0.9);
+            box-shadow: 0 0 30px rgba(239, 68, 68, 0.7);
+            transform: rotate(8deg);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-bl-approve {
+            background: linear-gradient(180deg, #15803d 0%, #166534 100%);
+            border: 2px solid #22c55e;
+            box-shadow: 0 0 15px rgba(34, 197, 94, 0.3);
+        }
+        .btn-bl-approve:hover {
+            background: linear-gradient(180deg, #16a34a 0%, #15803d 100%);
+            box-shadow: 0 0 25px rgba(34, 197, 94, 0.7);
+            transform: translateY(-2px);
+        }
+
+        .btn-bl-reject {
+            background: linear-gradient(180deg, #991b1b 0%, #7f1d1d 100%);
+            border: 2px solid #ef4444;
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.3);
+        }
+        .btn-bl-reject:hover {
+            background: linear-gradient(180deg, #dc2626 0%, #991b1b 100%);
+            box-shadow: 0 0 25px rgba(239, 68, 68, 0.7);
+            transform: translateY(-2px);
+        }
+
+        @media print {
+            .no-print { display: none !important; }
+            html, body { height: auto !important; background: white !important; color: black !important; font-size: 11pt; }
+            .print-certificate { border: 2px solid #16a34a !important; box-shadow: none !important; background: white !important; color: black !important; display: block !important; }
+        }
+    </style>
+</head>
+<body id="gameBody" class="crt-bg text-slate-100 min-h-full flex flex-col font-sans antialiased selection:bg-amber-500 selection:text-slate-950 relative overflow-x-hidden">
+
+    <!-- INTERACTIVE 3D PARALLAX SPACE & ORBS CANVAS BACKGROUND -->
+    <canvas id="spaceOrbsCanvas" class="fixed inset-0 pointer-events-none z-0 opacity-80"></canvas>
+
+    <!-- Top Sticky Velocity HUD Control Bar WITH ALWAYS VISIBLE LIVE ACCOUNT BALANCE -->
+    <div class="sticky top-0 z-50 bg-slate-950/95 border-b border-amber-500/50 px-4 py-3 flex items-center justify-between no-print backdrop-blur-xl shadow-2xl font-mono">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-yellow-600 border border-amber-300 flex items-center justify-center font-black text-slate-950 text-base shadow-lg">
+                VL
+            </div>
+            <div>
+                <span class="text-sm font-black text-white tracking-wider uppercase block">VELOCITY TECHNOLOGIES</span>
+                <span class="text-xs text-amber-400 block tracking-widest uppercase">3-JAHRES CEO SIMULATION</span>
+            </div>
+        </div>
+
+        <!-- ALWAYS-VISIBLE LIVE STICKY KONTOSTAND & QUARTAL BADGE -->
+        <div class="flex items-center gap-4 text-sm font-mono">
+            <div class="bg-slate-900 border-2 border-amber-400 px-4 py-2 rounded-xl flex items-center gap-2 shadow-lg">
+                <i class="fa-solid fa-vault text-yellow-400 text-base"></i>
+                <span class="text-slate-200 font-bold">KONTO:</span>
+                <span id="stickyBudget" class="text-lg font-black text-yellow-400">75.000 €</span>
+            </div>
+
+            <div id="yearBadge" class="bg-gradient-to-r from-amber-500/20 to-yellow-500/20 border border-amber-500/60 px-4 py-2 rounded-xl text-amber-300 font-black shadow-md">
+                JAHR 1 • Q 1 / 12
+            </div>
+
+            <button onclick="resetGame()" class="px-4 py-2 bg-rose-950/90 border border-rose-600/60 text-rose-300 rounded-xl hover:bg-rose-900 hover:scale-105 transition flex items-center gap-2 font-bold shadow-md">
+                <i class="fa-solid fa-rotate-right"></i> NEUSTART
+            </button>
+        </div>
+    </div>
+
+    <!-- MAIN CONTAINER -->
+    <main class="max-w-5xl mx-auto w-full px-4 py-6 space-y-6 flex-grow relative z-10">
+
+        <!-- SCREEN 1: COLORFUL SIDE-BY-SIDE CEO BOARDING TERMINAL -->
+        <div id="screenBoarding" class="bl-card rounded-3xl p-6 sm:p-10 text-center space-y-8 shadow-2xl border-2 border-amber-500/60 max-w-4xl mx-auto my-auto">
+            
+            <!-- MINIMALIST TITLE -->
+            <div class="space-y-3">
+                <h1 class="text-4xl sm:text-6xl font-black text-white uppercase tracking-tight italic font-mono leading-none">
+                    VELOCITY CEO SIMULATION
+                </h1>
+                <p class="text-amber-400 text-base sm:text-lg font-mono font-bold">
+                    3 Jahre • 12 Quartale • CO₂ senken • Insolvenz vermeiden!
+                </p>
+            </div>
+
+            <!-- COLORFUL SIDE-BY-SIDE GOALS GRID (MINIMUM 14PX EVERYWHERE) -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 font-mono text-left max-w-3xl mx-auto">
+                <div class="p-4 bg-gradient-to-br from-amber-500 to-yellow-600 border-2 border-amber-300 rounded-2xl shadow-xl text-white">
+                    <span class="text-sm text-amber-100 uppercase font-black block mb-1"><i class="fa-solid fa-vault mr-1"></i> START-KONTO:</span>
+                    <span class="text-2xl sm:text-3xl font-black text-white block">75.000 €</span>
+                </div>
+                <div class="p-4 bg-gradient-to-br from-emerald-600 to-teal-700 border-2 border-emerald-300 rounded-2xl shadow-xl text-white">
+                    <span class="text-sm text-emerald-100 uppercase font-black block mb-1"><i class="fa-solid fa-smog mr-1"></i> START-CO₂:</span>
+                    <span class="text-2xl sm:text-3xl font-black text-white block">220 Tonnen</span>
+                </div>
+                <div class="p-4 bg-gradient-to-br from-cyan-600 to-blue-700 border-2 border-cyan-300 rounded-2xl shadow-xl text-white">
+                    <span class="text-sm text-cyan-100 uppercase font-black block mb-1"><i class="fa-solid fa-users mr-1"></i> REPUTATION:</span>
+                    <span class="text-2xl sm:text-3xl font-black text-white block">45 %</span>
+                </div>
+
+                <!-- ANIMATED RED INSOLVENZ CARD WITH BLACK DOTS MOVING RIGHT TO LEFT -->
+                <div class="p-4 bg-insolvenz-dots border-2 border-rose-300 rounded-2xl shadow-2xl text-white relative overflow-hidden">
+                    <span class="text-sm text-rose-100 uppercase font-black block mb-1"><i class="fa-solid fa-skull-crossbones mr-1"></i> RISIKO:</span>
+                    <span class="text-2xl sm:text-3xl font-black text-white block">INSOLVENZ</span>
+                </div>
+            </div>
+
+            <!-- GIANT INSTANT START BUTTON WITH ULTRA-CINEMATIC TRANSITION -->
+            <div class="pt-2">
+                <button onclick="startCinematicCeoExperience()" class="btn-ceo-giant px-8 py-7 rounded-2xl text-xl sm:text-2xl uppercase tracking-wider flex items-center justify-center gap-3 mx-auto font-mono w-full max-w-2xl shadow-2xl">
+                    <i class="fa-solid fa-briefcase text-3xl"></i>
+                    <span>🚀 3-JAHRES CEO MANDAT STARTEN</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- SCREEN 1.5: ULTRA-CINEMATIC FULLSCREEN HIGH-TECH CEO EXECUTIVE OVERLAY -->
+        <div id="screenCinematicIntro" class="fixed inset-0 z-50 bg-slate-950/95 flex flex-col items-center justify-center p-6 text-center hidden backdrop-blur-2xl overflow-hidden font-mono">
+            
+            <!-- HOLOGRAPHIC GRID LINES BACKGROUND -->
+            <div class="absolute inset-0 opacity-20 pointer-events-none bg-[radial-gradient(#f59e0b_1px,transparent_1px)] [background-size:24px_24px]"></div>
+
+            <div class="max-w-3xl w-full space-y-8 relative z-10 animate-holo-glow">
+                
+                <!-- STEP 1: ELEVATOR / FLOOR AUDIT -->
+                <div id="cineStep1" class="space-y-2">
+                    <span class="inline-block px-4 py-1.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 text-xs font-black tracking-widest uppercase animate-pulse">
+                        🏢 ELEVATOR TO EXECUTIVE SUITE • FLOOR 80
+                    </span>
+                    <h2 class="text-4xl sm:text-6xl font-black text-white uppercase italic tracking-tight italic drop-shadow-2xl">
+                        👔 WILLKOMMEN IM CEO BÜRO
+                    </h2>
+                </div>
+
+                <!-- STEP 2: 3D HOLOGRAPHIC DESK VIEWPORT & LIVE BOOT COUNTER -->
+                <div class="bl-card p-8 border-2 border-amber-400/80 shadow-2xl space-y-6 bg-slate-900/90 text-left">
+                    <div class="flex items-center justify-between border-b border-amber-500/30 pb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 rounded-2xl bg-amber-400 text-slate-950 flex items-center justify-center font-black text-2xl shadow-xl">
+                                <i class="fa-solid fa-building-user"></i>
+                            </div>
+                            <div>
+                                <span id="cineCeoTitle" class="text-base font-black text-white block uppercase">CHIEF EXECUTIVE OFFICER (CEO)</span>
+                                <span class="text-xs text-amber-400 block font-bold">VELOCITY TECHNOLOGIES HEADQUARTER</span>
+                            </div>
+                        </div>
+                        <span class="px-3 py-1 bg-emerald-500/20 border border-emerald-400 text-emerald-300 rounded-lg text-xs font-bold uppercase animate-pulse">TERMINAL: ONLINE</span>
+                    </div>
+
+                    <!-- KINETIC BRIEFING TEXT -->
+                    <p id="cineSpeechText" class="text-base sm:text-lg text-slate-200 font-sans leading-relaxed font-semibold">
+                        "Dein Chef-Sessel im 80. Stockwerk ist betriebsbereit. Auf deinem Terminal treffen JETZT die ersten Hardware-Anträge der Abteilungen ein!"
+                    </p>
+
+                    <!-- LIVE COUNTER BOOTUP ANIMATION -->
+                    <div class="grid grid-cols-3 gap-3 font-mono text-center pt-2">
+                        <div class="bg-slate-950 p-3 rounded-xl border border-amber-500/40">
+                            <span class="text-xs text-slate-400 block uppercase">START-KONTO</span>
+                            <span id="cineCounterBudget" class="text-xl font-black text-yellow-400">0 €</span>
+                        </div>
+                        <div class="bg-slate-950 p-3 rounded-xl border border-emerald-500/40">
+                            <span class="text-xs text-slate-400 block uppercase">START-CO₂</span>
+                            <span id="cineCounterCo2" class="text-xl font-black text-emerald-400">220 t</span>
+                        </div>
+                        <div class="bg-slate-950 p-3 rounded-xl border border-cyan-500/40">
+                            <span class="text-xs text-slate-400 block uppercase">REPUTATION</span>
+                            <span id="cineCounterRep" class="text-xl font-black text-cyan-400">45 %</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PROGRESS BAR & SKIP BUTTON -->
+                <div class="flex items-center justify-between gap-4">
+                    <div class="w-full bg-slate-900 rounded-full h-3 overflow-hidden border border-slate-800">
+                        <div id="cineProgressBar" class="bg-gradient-to-r from-cyan-400 via-amber-400 to-emerald-400 h-full w-0 transition-all duration-300"></div>
+                    </div>
+                    <button onclick="skipCinematicIntro()" class="px-6 py-3 bg-amber-400 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider hover:bg-yellow-300 shrink-0 shadow-xl">
+                        DIREKT ZUM COCKPIT <i class="fa-solid fa-bolt ml-1"></i>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- SCREEN 2: GAME OVER SCREEN WITH ANIMATED DRIFTING BLACK DOTS -->
+        <div id="screenGameOver" class="cyber-card bg-insolvenz-dots rounded-3xl p-8 sm:p-12 text-center space-y-6 hidden border-4 border-rose-400 animate-gameover shadow-2xl">
+            <div class="w-20 h-20 rounded-full bg-black/80 border-2 border-rose-400 text-rose-400 flex items-center justify-center font-black text-4xl mx-auto animate-bounce shadow-2xl">
+                <i class="fa-solid fa-skull-crossbones"></i>
+            </div>
+            <h2 class="text-4xl font-black text-white font-mono uppercase tracking-wider italic drop-shadow-lg">
+                GAME OVER • INSOLVENZ!
+            </h2>
+            <p id="gameOverReason" class="text-base sm:text-lg text-white font-bold max-w-xl mx-auto font-sans leading-relaxed bg-black/60 p-5 rounded-2xl border border-white/20">
+                Du hast das Firmenbudget überschritten! VELOCITY Technologies ist zahlungsunfähig und musste Konkurs anmelden.
+            </p>
+            <div class="pt-4 font-mono">
+                <button onclick="resetGame()" class="px-8 py-4 rounded-2xl bg-slate-950 border-2 border-white hover:bg-black text-white font-black text-sm uppercase tracking-widest shadow-2xl transition hover:scale-105">
+                    <i class="fa-solid fa-rotate-right mr-2"></i> NEUEN VERSUCH STARTEN
+                </button>
+            </div>
+        </div>
+
+        <!-- SCREEN 3: VELOCITY CEO COCKPIT -->
+        <div id="screenCockpit" class="space-y-6 hidden transition-all duration-500">
+
+            <!-- HIGH-VISIBILITY GOLDEN DASHBOARD METERS (BLACK/WHITE TEXT FOR ULTIMATE READABILITY) -->
+            <div class="golden-dashboard-card rounded-3xl p-5 space-y-4 font-mono shadow-2xl">
+                <div class="flex items-center justify-between border-b border-black/20 pb-3">
+                    <div class="flex items-center gap-2">
+                        <span class="w-3.5 h-3.5 rounded-full bg-slate-950 animate-ping"></span>
+                        <span class="text-slate-950 font-black text-base uppercase tracking-wider">⚡ VELOCITY • CEO LIVE METRIKEN</span>
+                    </div>
+
+                    <div class="flex items-center gap-6 text-sm">
+                        <div class="flex items-center gap-2 font-black bg-slate-950 text-yellow-400 px-3.5 py-1.5 rounded-xl shadow">
+                            <i class="fa-solid fa-vault"></i>
+                            <span class="text-slate-200 font-bold">KONTO:</span>
+                            <span id="meterBudget" class="text-base font-black">75.000 €</span>
+                        </div>
+
+                        <div class="flex items-center gap-2 font-black bg-slate-950 text-emerald-400 px-3.5 py-1.5 rounded-xl shadow">
+                            <i class="fa-solid fa-smog"></i>
+                            <span class="text-slate-200 font-bold">CO₂:</span>
+                            <span id="meterCo2" class="text-base font-black">220 Tonnen</span>
+                        </div>
+
+                        <div class="flex items-center gap-2 font-black bg-slate-950 text-cyan-400 px-3.5 py-1.5 rounded-xl shadow">
+                            <i class="fa-solid fa-users"></i>
+                            <span class="text-slate-200 font-bold">REPUTATION:</span>
+                            <span id="meterRep" class="text-base font-black">45 %</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PROGRESS BARS WITH HIGH CONTRAST TEXT -->
+                <div class="grid grid-cols-3 gap-4 font-mono">
+                    <div class="space-y-1.5 bg-slate-950/90 p-3 rounded-xl border border-black/20">
+                        <div class="flex justify-between text-xs text-white font-bold uppercase">
+                            <span>KONTO (€):</span>
+                            <span class="text-yellow-400 font-black">Insolvenz &lt; 0 €</span>
+                        </div>
+                        <div class="h-3 bg-slate-900 rounded-full overflow-hidden border border-slate-700">
+                            <div id="barBudget" class="bg-yellow-400 h-full transition-all duration-700" style="width: 100%"></div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-1.5 bg-slate-950/90 p-3 rounded-xl border border-black/20">
+                        <div class="flex justify-between text-xs text-white font-bold uppercase">
+                            <span>CO₂ BILANZ:</span>
+                            <span class="text-emerald-400 font-black">Ziel &lt; 40t</span>
+                        </div>
+                        <div class="h-3 bg-slate-900 rounded-full overflow-hidden border border-slate-700">
+                            <div id="barCo2" class="bg-rose-500 h-full transition-all duration-700" style="width: 100%"></div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-1.5 bg-slate-950/90 p-3 rounded-xl border border-black/20">
+                        <div class="flex justify-between text-xs text-white font-bold uppercase">
+                            <span>IMAGE:</span>
+                            <span class="text-cyan-400 font-black">Ziel &gt; 80 %</span>
+                        </div>
+                        <div class="h-3 bg-slate-900 rounded-full overflow-hidden border border-slate-700">
+                            <div id="barRep" class="bg-cyan-400 h-full transition-all duration-700" style="width: 45%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- INTERACTIVE ALL-GOLD CLICK-TO-LISTEN CEO ADVISOR BAR -->
+            <div id="advisorCard" onclick="revealAdvisorText()" class="golden-advisor-card rounded-3xl p-5 border-2 border-yellow-200 flex items-center gap-4 cursor-pointer transition group shadow-2xl">
+                <div id="botAvatar" class="w-14 h-14 rounded-2xl bg-slate-950 text-yellow-400 flex items-center justify-center font-black text-2xl shrink-0 animate-bot border border-yellow-300 shadow-lg">
+                    <i class="fa-solid fa-headphones text-yellow-400 text-2xl"></i>
+                </div>
+                <div class="space-y-1 flex-grow font-mono">
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-black text-slate-950 uppercase tracking-widest block"><i class="fa-solid fa-circle-dot text-slate-950 mr-1.5"></i> CEO ADVISOR</span>
+                        <span id="advisorBadge" class="text-xs font-black bg-slate-950 text-yellow-400 px-3 py-1 rounded-xl shadow uppercase">🎧 KLICKEN ZUM ANHÖREN</span>
+                    </div>
+                    <p id="botAdvice" class="text-base text-slate-950 font-black italic font-sans">
+                        » HIER KLICKEN: CEO-RATSCHLAG FÜR DIESES QUARTAL ANHÖREN «
+                    </p>
+                </div>
+            </div>
+
+            <!-- DECISION CARDS CONTAINER (VELOCITY HARDWARE ITEM CARDS) -->
+            <div class="space-y-6">
+                <div class="border-b border-amber-500/30 pb-3 font-mono flex items-center justify-between">
+                    <div>
+                        <span id="quarterTitle" class="text-sm font-bold text-amber-400 uppercase">JAHR 1 • QUARTAL 1 DE 12</span>
+                        <h2 class="text-2xl font-black text-white uppercase italic">INSPEKTIONS-KARTEN DER ABTEILUNGEN</h2>
+                    </div>
+                    <span id="qCounterBadge" class="text-sm font-mono font-bold bg-slate-900 border border-amber-500/40 text-amber-400 px-3.5 py-1.5 rounded-xl">2 ITEMS IM COCKPIT</span>
+                </div>
+
+                <!-- VELOCITY HARDWARE ITEM CARDS GRID -->
+                <div id="actionsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- Populated dynamically via JS -->
+                </div>
+
+                <!-- NAVIGATION CONTROLS -->
+                <div class="pt-4 flex justify-between items-center font-mono border-t border-slate-800">
+                    <span id="decisionsCounter" class="text-sm text-slate-300 font-bold">Inspeziere alle Items im Quartal!</span>
+                    <button onclick="nextQuarter()" id="btnNextQuarter" class="px-8 py-4 rounded-xl bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-600 text-slate-950 font-black text-sm uppercase tracking-wider shadow-xl flex items-center gap-2 transition hover:scale-105">
+                        <span>NÄCHSTES QUARTAL ABSCHLIESSEN</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- SCREEN 4: ANNUAL ACCOUNTANT AUDIT MODAL SCREEN (AFTER EVERY 4 QUARTERS) -->
+        <div id="screenAccountantAudit" class="bl-card rounded-3xl p-8 sm:p-12 text-center space-y-8 hidden border-4 border-yellow-400 animate-accountant shadow-2xl max-w-3xl mx-auto my-auto">
+            <div class="flex items-center justify-center gap-4 border-b border-amber-500/40 pb-5">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-400 to-yellow-600 text-slate-950 flex items-center justify-center font-black text-3xl shadow-xl">
+                    <i class="fa-solid fa-calculator"></i>
+                </div>
+                <div class="text-left font-mono">
+                    <span class="text-xs font-black text-amber-400 uppercase tracking-widest block"><i class="fa-solid fa-file-invoice-dollar mr-1"></i> FINANZ-AUDIT VOM BUCHHALTER</span>
+                    <h2 id="accountantYearTitle" class="text-3xl font-black text-white uppercase italic">JAHR 1 ABSCHLUSS-BERICHT</h2>
+                </div>
+            </div>
+
+            <!-- ACCOUNTANT SPEECH BUBBLE -->
+            <div class="bg-slate-950/90 p-5 rounded-2xl border border-amber-500/50 font-sans text-left space-y-2 shadow-inner">
+                <div class="flex items-center gap-2 font-mono text-xs text-amber-400 font-bold uppercase">
+                    <i class="fa-solid fa-user-tie"></i>
+                    <span>DER CHEF-BUCHHALTER BERICHTET:</span>
+                </div>
+                <p id="accountantSpeech" class="text-base text-slate-200 leading-relaxed font-semibold">
+                    "Sehr geehrter CEO, wir haben die Bilanz für dieses Geschäftsjahr abgeschlossen! Durch deine nachhaltigen Hardware-Erlasse konnten wir neue Firmenkunden gewinnen."
+                </p>
+            </div>
+
+            <!-- ANNUAL REVENUE & STAT CHANGES GRID -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 font-mono text-left">
+                <!-- REVENUE INJECTION -->
+                <div class="p-5 bg-gradient-to-br from-emerald-600 to-teal-800 border-2 border-emerald-300 rounded-2xl shadow-xl text-white space-y-1">
+                    <span class="text-xs text-emerald-100 uppercase font-black block"><i class="fa-solid fa-arrow-trend-up mr-1"></i> UMSATZ-ZUSTROM:</span>
+                    <span id="accountantRevenueText" class="text-2xl font-black text-white block">+15.000 €</span>
+                    <span class="text-xs text-emerald-200 block">Durch grüne Erlasse</span>
+                </div>
+
+                <!-- CO2 BILANZ -->
+                <div class="p-5 bg-slate-950 border-2 border-slate-800 rounded-2xl shadow-xl space-y-1">
+                    <span class="text-xs text-slate-400 uppercase font-black block"><i class="fa-solid fa-smog text-emerald-400 mr-1"></i> CO₂ BILANZ:</span>
+                    <span id="accountantCo2Text" class="text-2xl font-black text-emerald-400 block">-50 Tonnen</span>
+                    <span class="text-xs text-slate-400 block">Kumulierte Einsparung</span>
+                </div>
+
+                <!-- REPUTATION -->
+                <div class="p-5 bg-slate-950 border-2 border-slate-800 rounded-2xl shadow-xl space-y-1">
+                    <span class="text-xs text-slate-400 uppercase font-black block"><i class="fa-solid fa-users text-cyan-400 mr-1"></i> IMAGE &amp; REPUTATION:</span>
+                    <span id="accountantRepText" class="text-2xl font-black text-cyan-400 block">+25 %</span>
+                    <span class="text-xs text-slate-400 block">Kundenzustrom-Rate</span>
+                </div>
+            </div>
+
+            <!-- ANIMATED NEW BANK BALANCE HIGHLIGHT -->
+            <div class="p-6 bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 rounded-2xl text-slate-950 font-mono shadow-2xl border-4 border-yellow-200 text-center space-y-1">
+                <span class="text-xs font-black uppercase tracking-widest block"><i class="fa-solid fa-vault mr-1"></i> AKTUALISIERTER KONTOSTAND DEINES UNTERNEHMENS:</span>
+                <span id="accountantNewBalance" class="text-4xl font-black block tracking-tight">86.000 €</span>
+            </div>
+
+            <!-- PROCEED TO NEXT YEAR BUTTON -->
+            <div class="pt-2">
+                <button onclick="continueAfterAccountant()" id="btnAccountantContinue" class="btn-ceo-giant px-8 py-5 rounded-2xl text-lg uppercase tracking-wider flex items-center justify-center gap-3 mx-auto font-mono w-full shadow-2xl">
+                    <span>🚀 IN DAS NÄCHSTE GESCHÄFTSJAHR STARTEN</span>
+                    <i class="fa-solid fa-arrow-right text-2xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- SCREEN 5: FINALE 3-YEAR AUDIT & CERTIFICATE -->
+        <div id="screenFinale" class="cyber-card rounded-3xl p-6 sm:p-10 text-center space-y-8 hidden border-2 border-amber-500/50 print-certificate shadow-2xl">
+            <div class="space-y-3 border-b border-slate-800 pb-6">
+                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 font-mono text-xs font-black uppercase tracking-widest animate-pulse">
+                    <i class="fa-solid fa-award text-amber-400"></i> VELOCITY 3-JAHRES HARDWARE ZERTIFIKAT
+                </div>
+                <h2 class="text-3xl sm:text-4xl font-black text-white font-mono uppercase italic">
+                    VELOCITY TECHNOLOGIES • LEGENDARY SUSTAINABILITY
+                </h2>
+                <p class="text-slate-300 text-sm font-mono">
+                    Informatische Bildung • Modul A12: VELOCITY Hardware Item Inspector
+                </p>
+            </div>
+
+            <div class="grid grid-cols-3 gap-4 text-left font-mono text-sm bg-slate-900/80 p-4 rounded-2xl border border-slate-800">
+                <div><span class="text-slate-400 block text-xs">CHIEF EXECUTIVE OFFICER (CEO):</span><span id="certPilot" class="font-bold text-white text-base">--</span></div>
+                <div><span class="text-slate-400 block text-xs">KLASSE:</span><span id="certClass" class="font-bold text-white text-base">--</span></div>
+                <div><span class="text-slate-400 block text-xs">DATUM:</span><span id="certDate" class="font-bold text-white text-base">--</span></div>
+            </div>
+
+            <!-- FINAL STATS -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 font-mono">
+                <div class="p-5 bg-slate-950 rounded-2xl border border-yellow-500/30 space-y-1 shadow-lg">
+                    <span class="text-xs text-slate-400 uppercase">END-LIQUIDITÄT:</span>
+                    <span id="finalBudget" class="text-3xl font-black text-yellow-400 block">0 €</span>
+                    <span id="finalBudgetStatus" class="text-xs font-bold block text-emerald-400">Solide Gewirtschaftet</span>
+                </div>
+                <div class="p-5 bg-slate-950 rounded-2xl border border-emerald-500/30 space-y-1 shadow-lg">
+                    <span class="text-xs text-slate-400 uppercase">END CO₂-FUSSABDRUCK:</span>
+                    <span id="finalCo2" class="text-3xl font-black text-emerald-400 block">0 Tonnen</span>
+                    <span id="finalCo2Status" class="text-xs font-bold block text-emerald-400">Unter Öko-Limit (&lt;40t)</span>
+                </div>
+                <div class="p-5 bg-slate-950 rounded-2xl border border-cyan-500/30 space-y-1 shadow-lg">
+                    <span class="text-xs text-slate-400 uppercase">REPUTATION &amp; KUNDEN:</span>
+                    <span id="finalRep" class="text-3xl font-black text-cyan-400 block">0 %</span>
+                    <span id="finalRepStatus" class="text-xs font-bold block text-cyan-400">Greenwashing vermieden</span>
+                </div>
+            </div>
+
+            <div class="p-5 bg-slate-900/90 rounded-2xl border border-cyan-500/30 text-left font-mono space-y-2">
+                <span class="text-sm font-bold text-cyan-400 uppercase block"><i class="fa-solid fa-award text-yellow-400 mr-2"></i> AUDIT-BEWERTUNG DES AUFSICHTSRATS:</span>
+                <p id="finalVerdictText" class="text-sm text-slate-200 leading-relaxed font-sans">
+                    Glänzendes 3-Jahres Ergebnis als CEO! Du hast die Firma ohne Konkurs durch 12 Quartale gesteuert und echten Klimaschutz geleistet.
+                </p>
+            </div>
+
+            <div class="pt-4 flex justify-between items-center no-print font-mono">
+                <button onclick="showScreen('cockpit')" class="px-5 py-3 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 text-xs font-bold uppercase">ZURÜCK ZUM COCKPIT</button>
+                <button onclick="window.print()" class="px-8 py-4 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-400 text-slate-950 font-black text-xs uppercase tracking-widest shadow-xl">ZERTIFIKAT DRUCKEN / PDF SPEICHERN</button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="max-w-6xl mx-auto w-full px-6 py-8 text-center font-mono text-xs text-slate-400 uppercase tracking-widest no-print border-t border-slate-900 mt-10">
+        Informatische Bildung • Modul A12 • VELOCITY Executive Hardware Simulator
+    </footer>
+
+    <!-- INTERACTIVE 3D PARALLAX SPACE & ORBS ENGINE SCRIPT -->
+    <script src="assets/js/worksheet-common.js"></script>
+    <script>
+        // 3D PARALLAX SPACE & GLOWING ORBS ENGINE
+        const spaceCanvas = document.getElementById('spaceOrbsCanvas');
+        const sCtx = spaceCanvas.getContext('2d');
+
+        let mouseX = 0, mouseY = 0;
+        let targetX = 0, targetY = 0;
+
+        function resizeSpaceCanvas() {
+            spaceCanvas.width = window.innerWidth;
+            spaceCanvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeSpaceCanvas);
+        resizeSpaceCanvas();
+
+        window.addEventListener('mousemove', (e) => {
+            mouseX = (e.clientX - window.innerWidth / 2) * 0.08;
+            mouseY = (e.clientY - window.innerHeight / 2) * 0.08;
+        });
+
+        const orbs = [
+            { x: window.innerWidth * 0.2, y: window.innerHeight * 0.3, radius: 140, color: 'rgba(6, 182, 212, 0.15)', depth: 0.3, pulseSpeed: 0.02 },
+            { x: window.innerWidth * 0.8, y: window.innerHeight * 0.2, radius: 180, color: 'rgba(245, 158, 11, 0.18)', depth: 0.5, pulseSpeed: 0.015 },
+            { x: window.innerWidth * 0.3, y: window.innerHeight * 0.8, radius: 210, color: 'rgba(168, 85, 247, 0.12)', depth: 0.2, pulseSpeed: 0.01 },
+            { x: window.innerWidth * 0.75, y: window.innerHeight * 0.75, radius: 160, color: 'rgba(34, 197, 94, 0.15)', depth: 0.4, pulseSpeed: 0.025 }
+        ];
+
+        const spaceDust = [];
+        for (let i = 0; i < 120; i++) {
+            spaceDust.push({
+                x: Math.random() * window.innerWidth,
+                y: Math.random() * window.innerHeight,
+                z: Math.random() * 2 + 0.2,
+                size: Math.random() * 2 + 0.5,
+                alpha: Math.random() * 0.8 + 0.2
+            });
+        }
+
+        let pulseAngle = 0;
+
+        function animate3DSpace() {
+            targetX += (mouseX - targetX) * 0.05;
+            targetY += (mouseY - targetY) * 0.05;
+            pulseAngle += 0.02;
+
+            sCtx.clearRect(0, 0, spaceCanvas.width, spaceCanvas.height);
+
+            orbs.forEach(orb => {
+                const px = orb.x + targetX * orb.depth;
+                const py = orb.y + targetY * orb.depth;
+                const currentRadius = orb.radius + Math.sin(pulseAngle * orb.pulseSpeed * 50) * 15;
+
+                const grad = sCtx.createRadialGradient(px, py, 0, px, py, currentRadius);
+                grad.addColorStop(0, orb.color);
+                grad.addColorStop(0.5, orb.color.replace(/[\d\.]+\)$/, '0.05)'));
+                grad.addColorStop(1, 'transparent');
+
+                sCtx.beginPath();
+                sCtx.arc(px, py, currentRadius, 0, Math.PI * 2);
+                sCtx.fillStyle = grad;
+                sCtx.fill();
+            });
+
+            spaceDust.forEach(star => {
+                const px = star.x + targetX * star.z;
+                const py = star.y + targetY * star.z;
+
+                sCtx.beginPath();
+                sCtx.arc(px, py, star.size, 0, Math.PI * 2);
+                sCtx.fillStyle = `rgba(255, 255, 255, ${star.alpha})`;
+                sCtx.shadowBlur = star.size * 3;
+                sCtx.shadowColor = '#06b6d4';
+                sCtx.fill();
+                sCtx.shadowBlur = 0;
+            });
+
+            requestAnimationFrame(animate3DSpace);
+        }
+        animate3DSpace();
+
+        let audioCtx = null;
+
+        function playSynthSound(type) {
+            try {
+                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+                osc.connect(gain); gain.connect(audioCtx.destination); const t = audioCtx.currentTime;
+                if (type === 'good') {
+                    osc.type = 'triangle'; osc.frequency.setValueAtTime(440, t); osc.frequency.setValueAtTime(880, t + 0.12);
+                    gain.gain.setValueAtTime(0.2, t); gain.gain.linearRampToValueAtTime(0.01, t + 0.2);
+                    osc.start(t); osc.stop(t + 0.2);
+                } else if (type === 'riser') {
+                    osc.type = 'sawtooth'; osc.frequency.setValueAtTime(100, t); osc.frequency.exponentialRampToValueAtTime(800, t + 0.8);
+                    gain.gain.setValueAtTime(0.3, t); gain.gain.linearRampToValueAtTime(0.01, t + 0.85);
+                    osc.start(t); osc.stop(t + 0.85);
+                } else if (type === 'stamp') {
+                    osc.type = 'sawtooth'; osc.frequency.setValueAtTime(200, t); osc.frequency.setValueAtTime(100, t + 0.1);
+                    gain.gain.setValueAtTime(0.3, t); gain.gain.linearRampToValueAtTime(0.01, t + 0.12);
+                    osc.start(t); osc.stop(t + 0.12);
+                } else if (type === 'gameover') {
+                    osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150, t); osc.frequency.linearRampToValueAtTime(40, t + 0.5);
+                    gain.gain.setValueAtTime(0.4, t); gain.gain.linearRampToValueAtTime(0.01, t + 0.5);
+                    osc.start(t); osc.stop(t + 0.5);
+                } else if (type === 'advisor') {
+                    osc.type = 'sine'; osc.frequency.setValueAtTime(523.25, t); osc.frequency.setValueAtTime(659.25, t + 0.1); osc.frequency.setValueAtTime(783.99, t + 0.2);
+                    gain.gain.setValueAtTime(0.25, t); gain.gain.linearRampToValueAtTime(0.01, t + 0.35);
+                    osc.start(t); osc.stop(t + 0.35);
+                } else if (type === 'money') {
+                    osc.type = 'triangle'; osc.frequency.setValueAtTime(587.33, t); osc.frequency.setValueAtTime(880, t + 0.15); osc.frequency.setValueAtTime(1174.66, t + 0.3);
+                    gain.gain.setValueAtTime(0.3, t); gain.gain.linearRampToValueAtTime(0.01, t + 0.45);
+                    osc.start(t); osc.stop(t + 0.45);
+                }
+            } catch(e) {}
+        }
+
+        function spawnFloatingStat(text, colorClass, x, y) {
+            const el = document.createElement('div');
+            el.className = `floating-stat-fx ${colorClass}`;
+            el.innerText = text;
+            el.style.left = `${x - 20}px`;
+            el.style.top = `${y - 30}px`;
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 1200);
+        }
+
+        let isAdvisorRevealed = false;
+
+        function revealAdvisorText() {
+            playSynthSound('advisor');
+            isAdvisorRevealed = true;
+            document.getElementById('botAdvice').className = "text-base text-slate-950 font-black font-sans bg-yellow-300/60 p-2.5 rounded-xl border border-black/20 shadow-inner";
+            document.getElementById('botAdvice').innerText = "» CEO ADVISOR: Vergleiche die ITEM STATS! Grüne Pfeile ▲ zeigen echte Einsparungen, Rote Pfeile ▼ warnen vor Müll & Insolvenz! «";
+            document.getElementById('advisorBadge').className = "text-xs font-black bg-slate-950 text-emerald-400 px-3 py-1 rounded-xl shadow uppercase animate-bounce";
+            document.getElementById('advisorBadge').innerHTML = "✅ RAT FREIGESCHALTET";
+        }
+
+        // HIGH-TECH CINEMATIC OVERLAY SEQUENCER
+        let cineTimer = null;
+
+        function startCinematicCeoExperience() {
+            playSynthSound('riser');
+            
+            // Retrieve pilot student name
+            let pilotName = 'CEO';
+            try {
+                if (typeof getStudentData === 'function') {
+                    const d = getStudentData();
+                    if (d && d.name) pilotName = d.name;
+                }
+            } catch(e) {}
+
+            document.getElementById('cineCeoTitle').innerText = `CHIEF EXECUTIVE OFFICER: ${pilotName.toUpperCase()}`;
+
+            const overlay = document.getElementById('screenCinematicIntro');
+            overlay.classList.remove('hidden');
+
+            const pBar = document.getElementById('cineProgressBar');
+            const counterBudget = document.getElementById('cineCounterBudget');
+            
+            pBar.style.width = '0%';
+            
+            let progress = 0;
+            let currentBudgetVal = 0;
+
+            cineTimer = setInterval(() => {
+                progress += 5;
+                pBar.style.width = `${progress}%`;
+
+                if (currentBudgetVal < 75000) {
+                    currentBudgetVal += 3750;
+                    counterBudget.innerText = `${currentBudgetVal.toLocaleString()} €`;
+                }
+
+                if (progress >= 100) {
+                    clearInterval(cineTimer);
+                    setTimeout(() => {
+                        overlay.classList.add('hidden');
+                        startGame();
+                    }, 300);
+                }
+            }, 80);
+        }
+
+        function skipCinematicIntro() {
+            if (cineTimer) clearInterval(cineTimer);
+            document.getElementById('screenCinematicIntro').classList.add('hidden');
+            startGame();
+        }
+
+        const game = {
+            csoName: 'CEO', csoClass: 'B24', csoDate: '',
+            quarter: 1, budget: 75000, co2: 220, rep: 45,
+            decisions: {}
+        };
+
+        const quartersData = {
+            1: [
+                {
+                    id: 'act1', title: 'Velocity Refurbished-Flotte', rarity: 'LEGENDARY IT HARDWARE', power: '950',
+                    flavour: '»Refurbished Beats Brand New. 80% Less Carbon, 100% Power.«',
+                    dept: 'HERSTELLER: VELOCITY HARDWARE',
+                    desc: 'Umstellung aller 300 Mitarbeiter-Laptops auf aufbereitete Business-Geräte.',
+                    assetImg: 'assets/VL-Chassis.webp', isGreenwashing: false, cost: 14000, co2Delta: -50, repDelta: 25,
+                    approveEffect: '✅ GENEHMIGUNG: Sparen -50t CO₂ • Kundenzustrom: +25% Image • Konto: -14.000 €',
+                    rejectEffect: '❌ ABLEHNUNG: Bewahrt +14.000 € Konto • Verfehlt CO₂-Ziel (0t CO₂ gespart)'
+                },
+                {
+                    id: 'act2', title: 'CO₂-Zertifikate Ablasshandel', rarity: 'TRASH GREENWASHING TRAP', power: '120',
+                    flavour: '»Kauf dir ein reines Gewissen! Die Umwelt merkt den Schwindel eh.«',
+                    dept: 'HERSTELLER: PR SCAMMERS INC.',
+                    desc: 'Kauf von 180 CO₂-Zertifikaten aus Übersee zur reinen Kompensation.',
+                    svgIcon: `<svg class="w-24 h-24 text-rose-500" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h40v36H12z"/><path d="M20 12l12-8 12 8"/><circle cx="32" cy="38" r="8"/><path d="M32 30v16M24 38h16"/></svg>`,
+                    isGreenwashing: true, cost: 9000, co2Delta: 0, repDelta: -20,
+                    approveEffect: '✅ GENEHMIGUNG: 0t CO₂ gespart! Konto: -9.000 € • Gefahr von Greenwashing-Shitstorm (-20% Image)',
+                    rejectEffect: '❌ ABLEHNUNG: Bewahrt +9.000 € Firmenbudget & schützt vor Skandal! (+15% Integrität)'
+                }
+            ],
+            2: [
+                {
+                    id: 'act3', title: 'Server-Virtualisierung & NVMe', rarity: 'EPIC RACK UPGRADE', power: '880',
+                    flavour: '»Lösch den 4K-Datenmüll! Schlafende Server verbrauchen echtes Geld.«',
+                    dept: 'HERSTELLER: VELOCITY STORAGE',
+                    desc: 'Umrüstung auf VL-SSD / VL-NVMe Racks & Löschen von 40 TB Datenmüll.',
+                    assetImg: 'assets/VL-SSD.webp', isGreenwashing: false, cost: 6000, co2Delta: -30, repDelta: 15,
+                    approveEffect: '✅ GENEHMIGUNG: Sparen -30t CO₂ • Konto: -6.000 € • Effizienzschub',
+                    rejectEffect: '❌ ABLEHNUNG: Bewahrt +6.000 € • Server verbrauchen weiter Volllast-Strom.'
+                },
+                {
+                    id: 'act4', title: 'Öko-Sticker auf Plastikbeutel', rarity: 'TRASH ALIBI ITEM', power: '050',
+                    flavour: '»Grünes Klebeband macht aus Plastik kein Bioprodukt.«',
+                    dept: 'HERSTELLER: FAKE ECO SOLUTIONS',
+                    desc: 'Bedrucken aller Kantinen-Beutel mit grünem Logo.',
+                    svgIcon: `<svg class="w-24 h-24 text-rose-400" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 20l8-12h16l8 12v36H16z"/><circle cx="32" cy="38" r="6"/><path d="M32 34v8"/></svg>`,
+                    isGreenwashing: true, cost: 3500, co2Delta: -0.1, repDelta: -10,
+                    approveEffect: '✅ GENEHMIGUNG: Konto: -3.500 € • Fast 0t Effekt • Wird als Alibi durchschaut',
+                    rejectEffect: '❌ ABLEHNUNG: Bewahrt +3.500 € Budget für echte IT-Projekte.'
+                }
+            ],
+            3: [
+                {
+                    id: 'act5', title: 'Velocity Hardware Repair Hub', rarity: 'LEGENDARY WORKBENCH', power: '920',
+                    flavour: '»Löten statt Wegwerfen! Verdoppelt die Gerätelebensdauer.«',
+                    dept: 'HERSTELLER: VELOCITY REPAIR HUB',
+                    desc: 'Einrichtung einer internen Werkbank mit VL-PSU & VL-RAM Lager.',
+                    assetImg: 'assets/VL-PSU.webp', isGreenwashing: false, cost: 7000, co2Delta: -35, repDelta: 20,
+                    approveEffect: '✅ GENEHMIGUNG: Sparen -35t CO₂ • Halbiert Neuanschaffungen • Konto: -7.000 €',
+                    rejectEffect: '❌ ABLEHNUNG: Bewahrt +7.000 € • Defekte Geräte landen ungenutzt im Müll.'
+                },
+                {
+                    id: 'act6', title: 'Vorstands-Luxus E-Sportwagen', rarity: 'TRASH BUDGET BUSTER', power: '010',
+                    flavour: '»Sieht schick aus, leert aber das Firmenkonto in 3 Sekunden.«',
+                    dept: 'HERSTELLER: LUXURY CARS GMBH',
+                    desc: 'Anschaffung von Elektro-Sportwagen für den Vorstand.',
+                    svgIcon: `<svg class="w-24 h-24 text-rose-500" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 40l8-16h32l8 16v12H8z"/><circle cx="20" cy="52" r="6"/><circle cx="44" cy="52" r="6"/></svg>`,
+                    isGreenwashing: true, cost: 40000, co2Delta: -2, repDelta: -25,
+                    approveEffect: '✅ GENEHMIGUNG: GEFAHR! Konto: -40.000 €! Droht Insolvenz bei nur -2t CO₂!',
+                    rejectEffect: '❌ ABLEHNUNG: Retter des Kontos! Bewahrt +40.000 € für die Liquidität der Firma.'
+                }
+            ],
+            4: [
+                {
+                    id: 'act7', title: 'Velocity Roof Solar & Kühlung', rarity: 'LEGENDARY ENERGY GRID', power: '990',
+                    flavour: '»Sonnenkraft kühlt den Serverraum. Maximale Autarkie!«',
+                    dept: 'HERSTELLER: VELOCITY SOLAR',
+                    desc: 'Dach-Solarzellen gekoppelt mit VL-CPUCOOLER Rechenzentrumskühlung.',
+                    assetImg: 'assets/VL-CPUCOOLER.webp', isGreenwashing: false, cost: 12000, co2Delta: -40, repDelta: 30,
+                    approveEffect: '✅ GENEHMIGUNG: Sparen -40t CO₂ • Solarenergie • Kundenzustrom +30% • Konto: -12.000 €',
+                    rejectEffect: '❌ ABLEHNUNG: Bewahrt +12.000 € • Weiter Strombezug aus Kohlenetzen.'
+                },
+                {
+                    id: 'act8', title: '"Nicht drucken" E-Mail Signatur', rarity: 'TRASH ALIBI TEXT', power: '005',
+                    flavour: '»Kostet fast nichts, bringt aber auch absolut garnichts.«',
+                    dept: 'HERSTELLER: ALIBI DESK INC.',
+                    desc: 'Grüne Textzeile unter Mitarbeiter E-Mails.',
+                    svgIcon: `<svg class="w-24 h-24 text-slate-400" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 16h48v32H8z"/><path d="M8 16l24 20 24-20"/></svg>`,
+                    isGreenwashing: true, cost: 500, co2Delta: -0.01, repDelta: 0,
+                    approveEffect: '✅ GENEHMIGUNG: Konto: -500 € • Kein Messbarer Nutzen',
+                    rejectEffect: '❌ ABLEHNUNG: Bewahrt +500 € • Vermiedene Alibi-Aktion.'
+                }
+            ],
+            5: [
+                {
+                    id: 'act9', title: 'Green Cloud Routing System', rarity: 'EPIC NETWORK ITEM', power: '840',
+                    flavour: '»Wasserkraft im Datencenter schlägt Kohle-Server um Längen.«',
+                    dept: 'HERSTELLER: VELOCITY NETWORKS',
+                    desc: 'Routing aller Serveranfragen über 100% Wasserkraft-Datencenter.',
+                    assetImg: 'assets/VL-Network.webp', isGreenwashing: false, cost: 8000, co2Delta: -20, repDelta: 15,
+                    approveEffect: '✅ GENEHMIGUNG: Sparen -20t CO₂ • Konto: -8.000 €',
+                    rejectEffect: '❌ ABLEHNUNG: Bewahrt +8.000 € • Server nutzen Kohle-Netz.'
+                },
+                {
+                    id: 'act10', title: 'Flugmeisen-Kompensation für Events', rarity: 'TRASH COMPENSATION', power: '080',
+                    flavour: '»Baum-Zertifikate lösen keine Inlandsflug-Abgase.«',
+                    dept: 'HERSTELLER: SCAM FLIGHT INC.',
+                    desc: 'Spende an dubiose Baumpflanz-Aktion im Ausland für Inlands-Flüge.',
+                    svgIcon: `<svg class="w-24 h-24 text-rose-500" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h40v36H12z"/><path d="M20 12l12-8 12 8"/></svg>`,
+                    isGreenwashing: true, cost: 10000, co2Delta: 0, repDelta: -15,
+                    approveEffect: '✅ GENEHMIGUNG: Konto: -10.000 € Verlust ohne CO₂-Einsparung',
+                    rejectEffect: '❌ ABLEHNUNG: Bewahrt +10.000 € • Besser Zugfahrten buchen!'
+                }
+            ],
+            6: [
+                {
+                    id: 'act11', title: 'GPU Undervolting & Render-Lab', rarity: 'RARE TECH UPGRADE', power: '790',
+                    flavour: '»Weniger Spannung = Geringere Hitze = -15 Tonnen CO₂.«',
+                    dept: 'HERSTELLER: VELOCITY GPU LAB',
+                    desc: 'Einsatz von VL-GPU Karten mit stromsparender Firmware.',
+                    assetImg: 'assets/VL-GPU.webp', isGreenwashing: false, cost: 4000, co2Delta: -15, repDelta: 10,
+                    approveEffect: '✅ GENEHMIGUNG: Sparen -15t CO₂ • Konto: -4.000 €',
+                    rejectEffect: '❌ ABLEHNUNG: Bewahrt +4.000 € • GPUs verbrauchen Spitzenstrom.'
+                },
+                {
+                    id: 'act12', title: 'Kaffeekapsel-Recycling Behälter', rarity: 'TRASH RECYCLING', power: '020',
+                    flavour: '»Aluminium-Kapseln zu recyclen ist teurer als Siebträger-Kaffee.«',
+                    dept: 'HERSTELLER: CAPSULE CORP',
+                    desc: 'Miete von teuren Alu-Recycling-Behältern für die Teeküche.',
+                    svgIcon: `<svg class="w-24 h-24 text-rose-400" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2"><circle cx="32" cy="32" r="20"/></svg>`,
+                    isGreenwashing: true, cost: 2500, co2Delta: -0.2, repDelta: -5,
+                    approveEffect: '✅ GENEHMIGUNG: Konto: -2.500 € bei kaum Auswirkung',
+                    rejectEffect: '❌ ABLEHNUNG: Bewahrt +2.500 € • Auf Siebstempel-Kaffee umsteigen.'
+                }
+            ],
+            7: [
+                {
+                    id: 'act13', title: 'High-Efficiency VL-PSU Netzteile', rarity: 'EPIC POWER SUPPLY', power: '860',
+                    flavour: '»80-Plus Titanium Gold Netzteile reduzieren Wärme-Verluste.«',
+                    dept: 'HERSTELLER: VELOCITY POWER',
+                    desc: 'Austausch von 500 alten Netzteilen gegen VL-PSU Titanium Gold.',
+                    assetImg: 'assets/VL-PSU.webp', isGreenwashing: false, cost: 9000, co2Delta: -25, repDelta: 20,
+                    approveEffect: '✅ GENEHMIGUNG: Sparen -25t CO₂ • Konto: -9.000 €',
+                    rejectEffect: '❌ ABLEHNUNG: Bewahrt +9.000 € • Stromnetz verpufft weiter als Wärme.'
+                },
+                {
+                    id: 'act14', title: 'Vorstands-Yacht Sponsoring', rarity: 'TRASH LUXURY TRAP', power: '015',
+                    flavour: '»Eine Luxus-Yacht rettet keine Ozeane.«',
+                    dept: 'HERSTELLER: LUXURY YACHTS',
+                    desc: 'Sponsoring einer Segelyacht mit Aufschrift "Clean Ocean Velocity".',
+                    svgIcon: `<svg class="w-24 h-24 text-rose-500" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 44l24 8 24-8-8-24H16z"/></svg>`,
+                    isGreenwashing: true, cost: 25000, co2Delta: 0, repDelta: -30,
+                    approveEffect: '✅ GENEHMIGUNG: Konto: -25.000 € Verschwendung • Massiver Shitstorm',
+                    rejectEffect: '❌ ABLEHNUNG: Bewahrt +25.000 € • Verhindert PR-Katastrophe.'
+                }
+            ],
+            8: [
+                {
+                    id: 'act15', title: 'Smart-Switch Nacht-Abschaltung', rarity: 'RARE HARDWARE RELAY', power: '720',
+                    flavour: '»Feierabend um 20 Uhr: Relais kappt Standby-Strom.«',
+                    dept: 'HERSTELLER: VELOCITY RELAY',
+                    desc: 'Automatische Relais-Abschaltung aller Bildschirme um 20 Uhr.',
+                    assetImg: 'assets/VL-Motherboard.webp', isGreenwashing: false, cost: 3000, co2Delta: -15, repDelta: 10,
+                    approveEffect: '✅ GENEHMIGUNG: Sehr günstig (Konto: -3.000 €) • Sparen -15t CO₂',
+                    rejectEffect: '❌ ABLEHNUNG: Bewahrt +3.000 € • Standby-Verschwendung läuft weiter.'
+                },
+                {
+                    id: 'act16', title: 'Grüner Teppich im Foyer', rarity: 'TRASH DECO ITEM', power: '005',
+                    flavour: '»Moos auf dem Boden kühlt keine Server.«',
+                    dept: 'HERSTELLER: FOYER DECO GMBH',
+                    desc: 'Verlegung eines Moos-Teppichs in der Empfangshalle.',
+                    svgIcon: `<svg class="w-24 h-24 text-slate-400" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2"><rect x="12" y="20" width="40" height="24" rx="4"/></svg>`,
+                    isGreenwashing: true, cost: 4000, co2Delta: 0, repDelta: -5,
+                    approveEffect: '✅ GENEHMIGUNG: Konto: -4.000 € • Deko-Gimmick ohne IT-Bezug',
+                    rejectEffect: '❌ ABLEHNUNG: Bewahrt +4.000 € Budget.'
+                }
+            ],
+            9: [
+                {
+                    id: 'act17', title: 'Velocity Circular Re-Use Program', rarity: 'LEGENDARY RE-USE SYSTEM', power: '970',
+                    flavour: '»Alte Hardware aufarbeiten & Vertrauen im Markt gewinnen!«',
+                    dept: 'HERSTELLER: VELOCITY CIRCULAR',
+                    desc: 'Rücknahme alter Kundenlaptops zur Aufbereitung (VL-Chassis).',
+                    assetImg: 'assets/VL-Chassis.webp', isGreenwashing: false, cost: 8000, co2Delta: -30, repDelta: 30,
+                    approveEffect: '✅ GENEHMIGUNG: Sparen -30t CO₂ • Kundenzustrom +30% Image! • Konto: -8.000 €',
+                    rejectEffect: '❌ ABLEHNUNG: Bewahrt +8.000 € • Verpasste Chance im Re-Use.'
+                },
+                {
+                    id: 'act18', title: 'Dubioser Öko-Award Kauf', rarity: 'TRASH FAKE AWARD', power: '030',
+                    flavour: '»Gekaufte Pokale fliegen bei der Presse sofort auf.«',
+                    dept: 'HERSTELLER: FAKE TROPHY AGENCY',
+                    desc: 'Kauf eines gekauften Öko-Preises von einer Online-Agentur.',
+                    svgIcon: `<svg class="w-24 h-24 text-rose-500" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2"><circle cx="32" cy="24" r="12"/><path d="M24 34l-8 18 16-6 16 6-8-18"/></svg>`,
+                    isGreenwashing: true, cost: 12000, co2Delta: 0, repDelta: -25,
+                    approveEffect: '✅ GENEHMIGUNG: Konto: -12.000 € • Aufdeckung durch Presse führt zu Imageschaden',
+                    rejectEffect: '❌ ABLEHNUNG: Bewahrt +12.000 € • Ehrlicher Weg belohnt.'
+                }
+            ],
+            10: [
+                {
+                    id: 'act19', title: 'NVMe Storage Tiering', rarity: 'EPIC NVME SPEICHER', power: '850',
+                    flavour: '»Rotationsfreie SSDs sparen Watt & beschleunigen Abfragen.«',
+                    dept: 'HERSTELLER: VELOCITY NVME',
+                    desc: 'Einsatz von VL-NVMe Speichern zur Reduktion von Festplatten-Rotationsstrom.',
+                    assetImg: 'assets/VL-SSD.webp', isGreenwashing: false, cost: 6000, co2Delta: -20, repDelta: 15,
+                    approveEffect: '✅ GENEHMIGUNG: Sparen -20t CO₂ • Konto: -6.000 € • Hohe Geschwindigkeit',
+                    rejectEffect: '❌ ABLEHNUNG: Bewahrt +6.000 € • Alte HDDs rotieren weiter.'
+                },
+                {
+                    id: 'act20', title: 'Plastikfreie Kugelschreiber Aktion', rarity: 'TRASH MERCH ITEM', power: '015',
+                    flavour: '»Holz-Stift rettet das Weltklima nicht.«',
+                    dept: 'HERSTELLER: MERCH PRINT GMBH',
+                    desc: 'Verteilen von 5.000 Holz-Kugelschreibern auf Messen.',
+                    svgIcon: `<svg class="w-24 h-24 text-slate-400" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 48l32-32 8 8-32 32z"/></svg>`,
+                    isGreenwashing: true, cost: 5000, co2Delta: -0.1, repDelta: 0,
+                    approveEffect: '✅ GENEHMIGUNG: Konto: -5.000 € • Teuer ohne echte CO₂-Einsparung',
+                    rejectEffect: '❌ ABLEHNUNG: Bewahrt +5.000 € Budget.'
+                }
+            ],
+            11: [
+                {
+                    id: 'act21', title: 'Geometrische Abwärme-Heizung', rarity: 'LEGENDARY HEAT EXCHANGE', power: '980',
+                    flavour: '»Serverraum-Hitze beheizt das Bürogebäude im Winter!«',
+                    dept: 'HERSTELLER: VELOCITY HEATING',
+                    desc: 'Einspeisung der Serverraum-Abwärme in das Firmen-Heizsystem.',
+                    assetImg: 'assets/VL-CPUCOOLER.webp', isGreenwashing: false, cost: 10000, co2Delta: -35, repDelta: 25,
+                    approveEffect: '✅ GENEHMIGUNG: Sparen -35t CO₂ Heizöl! • Konto: -10.000 €',
+                    rejectEffect: '❌ ABLEHNUNG: Bewahrt +10.000 € • Abwärme verpufft ungenutzt.'
+                },
+                {
+                    id: 'act22', title: 'Luxus-VIP Helikopter Shuttle', rarity: 'TRASH HELICOPTER BUSTER', power: '005',
+                    flavour: '»Fliegt Kerosin in die Atmosphäre und Geld aus dem Fenster.«',
+                    dept: 'HERSTELLER: VIP SHUTTLE CORP',
+                    desc: 'Helikopter-Transport für Kunden vom Flughafen zum Headquarter.',
+                    svgIcon: `<svg class="w-24 h-24 text-rose-500" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 36h40M32 20v16M20 44h24"/></svg>`,
+                    isGreenwashing: true, cost: 30000, co2Delta: 15, repDelta: -35,
+                    approveEffect: '✅ GENEHMIGUNG: CO₂ STEIGT um +15t! Konto: -30.000 €! Insolvenzgefahr!',
+                    rejectEffect: '❌ ABLEHNUNG: Bewahrt +30.000 € • Richtige Führungsentscheidung des CEO.'
+                }
+            ],
+            12: [
+                {
+                    id: 'act23', title: 'Finale Zero-Carbon Zertifizierung', rarity: 'LEGENDARY MASTERPIECE', power: '999',
+                    flavour: '»Der krönende Abschluss nach 3 Jahren strammer Führung!«',
+                    dept: 'HERSTELLER: VELOCITY BOARD',
+                    desc: 'Abschließende Zertifizierung der gesamten IT-Flotte (VL-Chassis & VL-Motherboard).',
+                    assetImg: 'assets/VL-Chassis.webp', isGreenwashing: false, cost: 5000, co2Delta: -25, repDelta: 35,
+                    approveEffect: '✅ GENEHMIGUNG: Krönender Abschluss! Konto: -5.000 € • Kundenzustrom +35% Image!',
+                    rejectEffect: '❌ ABLEHNUNG: Bewahrt +5.000 € • Zertifikats-Verzicht.'
+                },
+                {
+                    id: 'act24', title: 'Klimaneutral-Party im Luxus-Hotel', rarity: 'TRASH PARTY TRAP', power: '010',
+                    flavour: '»Feiern vor dem Ziel bringt nur Konkurs.«',
+                    dept: 'HERSTELLER: PARTY EVENT INC.',
+                    desc: 'Feier der angeblichen Klimaneutralität vor Abschluss der Maßnahmen.',
+                    svgIcon: `<svg class="w-24 h-24 text-rose-400" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 20l24 24M44 20L20 44"/></svg>`,
+                    isGreenwashing: true, cost: 20000, co2Delta: 0, repDelta: -20,
+                    approveEffect: '✅ GENEHMIGUNG: Konto: -20.000 € Verschwendung vor dem Ziel',
+                    rejectEffect: '❌ ABLEHNUNG: Bewahrt +20.000 € • Sparen für echte IT-Projekte.'
+                }
+            ]
+        };
+
+        function startGame() {
+            // RETRIEVE STUDENT DATA FROM LOCALSTORAGE IF AVAILABLE
+            try {
+                if (typeof getStudentData === 'function') {
+                    const data = getStudentData();
+                    if (data && data.name) game.csoName = data.name;
+                    if (data && data.klasse) game.csoClass = data.klasse;
+                }
+            } catch(e) {}
+
+            game.csoDate = new Date().toISOString().split('T')[0];
+
+            playSynthSound('good');
+            showScreen('cockpit');
+            renderQuarter();
+        }
+
+        function showScreen(id) {
+            ['screenBoarding', 'screenCinematicIntro', 'screenGameOver', 'screenCockpit', 'screenAccountantAudit', 'screenFinale'].forEach(s => document.getElementById(s).classList.add('hidden'));
+            if (id === 'boarding') document.getElementById('screenBoarding').classList.remove('hidden');
+            if (id === 'gameover') document.getElementById('screenGameOver').classList.remove('hidden');
+            if (id === 'cockpit') document.getElementById('screenCockpit').classList.remove('hidden');
+            if (id === 'accountant') document.getElementById('screenAccountantAudit').classList.remove('hidden');
+            if (id === 'finale') document.getElementById('screenFinale').classList.remove('hidden');
+        }
+
+        function renderQuarter() {
+            const q = game.quarter;
+            const yearNum = Math.ceil(q / 4);
+            const qInYear = ((q - 1) % 4) + 1;
+
+            document.getElementById('yearBadge').innerText = `JAHR ${yearNum} • Q ${qInYear} / 4 (GESAMT: ${q}/12)`;
+            document.getElementById('quarterTitle').innerText = `JAHR ${yearNum} • QUARTAL ${qInYear} (QUARTAL ${q} DE 12)`;
+
+            // RESET ADVISOR STATE FOR EACH QUARTAL
+            isAdvisorRevealed = false;
+            document.getElementById('botAdvice').className = "text-base text-slate-950 font-black italic font-sans";
+            document.getElementById('botAdvice').innerText = "» HIER KLICKEN: CEO-RATSCHLAG FÜR DIESES QUARTAL ANHÖREN «";
+            document.getElementById('advisorBadge').className = "text-xs font-black bg-slate-950 text-yellow-400 px-3 py-1 rounded-xl shadow uppercase";
+            document.getElementById('advisorBadge').innerHTML = "🎧 KLICKEN ZUM ANHÖREN";
+
+            const actions = quartersData[q] || quartersData[1];
+            const grid = document.getElementById('actionsGrid');
+            grid.innerHTML = '';
+
+            actions.forEach((act, idx) => {
+                const dec = game.decisions[act.id];
+                
+                let isGreenwash = act.isGreenwashing;
+                let cardClass = isGreenwash ? 'bl-card bl-card-greenwash animate-dossier-3d' : 'bl-card animate-dossier-3d';
+                let headerClass = isGreenwash ? 'bl-header-banner bl-header-greenwash' : 'bl-header-banner';
+                let viewportClass = isGreenwash ? 'bl-asset-viewport bl-asset-viewport-greenwash' : 'bl-asset-viewport';
+
+                let visualMedia = '';
+                if (act.assetImg) {
+                    visualMedia = `<img src="${act.assetImg}" alt="${act.title}" class="${viewportClass}">`;
+                } else if (act.svgIcon) {
+                    visualMedia = `<div class="${viewportClass} flex items-center justify-center">${act.svgIcon}</div>`;
+                }
+
+                let stampMarkup = '';
+                if (dec === 'approve') {
+                    stampMarkup = `<div class="absolute top-12 right-6 stamp-approved px-4 py-2 rounded-xl font-mono font-black text-sm uppercase animate-stamp">✅ GENEHMIGT</div>`;
+                } else if (dec === 'reject') {
+                    stampMarkup = `<div class="absolute top-12 right-6 stamp-rejected px-4 py-2 rounded-xl font-mono font-black text-sm uppercase animate-stamp">❌ ABGELEHNT</div>`;
+                }
+
+                const card = document.createElement('div');
+                card.className = cardClass;
+                card.style.animationDelay = `${idx * 0.25}s`;
+
+                card.innerHTML = `
+                    ${stampMarkup}
+
+                    <!-- ITEM RARITY HEADER BANNER WITH ITEM POWER BADGE -->
+                    <div class="${headerClass} px-4 py-3 flex justify-between items-center text-sm font-mono">
+                        <div class="flex items-center gap-2">
+                            <span class="bg-black/30 px-2.5 py-1 rounded font-black text-sm">POWER ${act.power || '900'}</span>
+                            <span class="font-bold"><i class="fa-solid fa-layer-group mr-1"></i> ${act.rarity}</span>
+                        </div>
+                        <span class="bg-black/40 px-3 py-1 rounded border border-white/20 font-black text-sm">KOSTEN: -${act.cost.toLocaleString()} €</span>
+                    </div>
+
+                    <!-- 3D SPOTLIGHT VIEWPORT SHOWCASE -->
+                    ${visualMedia}
+
+                    <!-- ITEM STATS & FLAVOUR TEXT CONTAINER -->
+                    <div class="p-5 space-y-4 flex-grow font-mono">
+                        <div>
+                            <div class="text-sm text-amber-400 font-bold uppercase tracking-widest">${act.dept}</div>
+                            <h3 class="font-black text-xl text-white uppercase italic tracking-wide">${act.title}</h3>
+                        </div>
+
+                        <!-- RED / GOLD FLAVOUR TEXT -->
+                        <div class="text-sm italic ${isGreenwash ? 'text-rose-400 font-bold' : 'text-amber-300'} font-sans bg-black/40 p-3 rounded-lg border border-white/5">
+                            ${act.flavour}
+                        </div>
+
+                        <p class="text-sm text-slate-200 leading-relaxed font-sans border-t border-slate-800 pt-2">
+                            ${act.desc}
+                        </p>
+
+                        <!-- ITEM STAT COMPARISON GRID (GREEN UP / RED DOWN ARROWS) -->
+                        <div class="bg-slate-950/90 p-4 rounded-xl border border-slate-800 space-y-2.5 text-sm font-mono shadow-inner">
+                            <div class="flex justify-between items-center">
+                                <span class="text-slate-300 font-bold"><i class="fa-solid fa-smog text-emerald-400 mr-1.5"></i> CO₂ IMPACT:</span>
+                                <span class="font-black text-base ${act.co2Delta <= 0 ? 'text-emerald-400' : 'text-rose-500'}">
+                                    ${act.co2Delta <= 0 ? '▲ ' + act.co2Delta + 't' : '▼ +' + act.co2Delta + 't'}
+                                </span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-slate-300 font-bold"><i class="fa-solid fa-coins text-amber-400 mr-1.5"></i> PREIS / KOSTEN:</span>
+                                <span class="font-black text-base text-rose-400">
+                                    ▼ -${act.cost.toLocaleString()} €
+                                </span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-slate-300 font-bold"><i class="fa-solid fa-chart-line text-cyan-400 mr-1.5"></i> REPUTATION / IMAGE:</span>
+                                <span class="font-black text-base ${act.repDelta >= 0 ? 'text-emerald-400' : 'text-rose-500'}">
+                                    ${act.repDelta >= 0 ? '▲ +' + act.repDelta + '%' : '▼ ' + act.repDelta + '%'}
+                                </span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- ITEM ACTION BUTTONS AT BOTTOM -->
+                    <div class="p-4 bg-slate-950/90 border-t border-slate-800 grid grid-cols-2 gap-3 font-mono">
+                        <button onclick="makeDecision('${act.id}', 'approve', event, ${act.cost})" class="btn-bl-approve py-3.5 text-emerald-100 font-black text-sm rounded-xl flex items-center justify-center gap-1.5 transition">
+                            <i class="fa-solid fa-check"></i> GENEHMIGEN (-${act.cost.toLocaleString()} €)
+                        </button>
+                        <button onclick="makeDecision('${act.id}', 'reject', event, ${act.cost})" class="btn-bl-reject py-3.5 text-rose-100 font-black text-sm rounded-xl flex items-center justify-center gap-1.5 transition">
+                            <i class="fa-solid fa-ban"></i> ABLEHNEN (0 €)
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+
+            updateMeters();
+        }
+
+        function makeDecision(actId, decision, event, cost) {
+            playSynthSound('stamp');
+            game.decisions[actId] = decision;
+
+            if (event) {
+                if (decision === 'approve') {
+                    spawnFloatingStat(`-${cost.toLocaleString()} €`, 'text-rose-400', event.clientX, event.clientY);
+                } else {
+                    spawnFloatingStat(`0 € (BEWAHRT)`, 'text-emerald-400', event.clientX, event.clientY);
+                }
+            }
+
+            renderQuarter();
+        }
+
+        function updateMeters() {
+            let totalCost = 0;
+            let totalCo2Delta = 0;
+            let totalRepDelta = 0;
+
+            Object.keys(game.decisions).forEach(actId => {
+                const dec = game.decisions[actId];
+                let act = null;
+                Object.values(quartersData).forEach(qList => {
+                    const found = qList.find(a => a.id === actId);
+                    if (found) act = found;
+                });
+
+                if (act) {
+                    if (dec === 'approve') {
+                        totalCost += act.cost;
+                        totalCo2Delta += act.co2Delta;
+                        totalRepDelta += act.repDelta;
+                    } else if (dec === 'reject' && act.isGreenwashing) {
+                        totalRepDelta += 15;
+                    }
+                }
+            });
+
+            const completedYears = Math.floor((game.quarter - 1) / 4);
+            const annualRevenue = completedYears * 15000;
+
+            const remBudget = 75000 + annualRevenue - totalCost;
+            const currentCo2 = Math.max(0, 220 + totalCo2Delta);
+            const currentRep = Math.min(100, Math.max(0, 45 + totalRepDelta));
+
+            document.getElementById('meterBudget').innerText = `${remBudget.toLocaleString()} €`;
+            document.getElementById('stickyBudget').innerText = `${remBudget.toLocaleString()} €`;
+
+            const budgetColor = remBudget >= 0 ? 'text-yellow-400 font-black' : 'text-rose-500 font-black animate-pulse';
+            document.getElementById('meterBudget').className = budgetColor;
+            document.getElementById('stickyBudget').className = budgetColor;
+
+            document.getElementById('barBudget').style.width = `${Math.max(0, Math.min(100, (remBudget / 75000) * 100))}%`;
+
+            document.getElementById('meterCo2').innerText = `${currentCo2} Tonnen`;
+            document.getElementById('barCo2').style.width = `${Math.max(0, Math.min(100, (currentCo2 / 220) * 100))}%`;
+
+            document.getElementById('meterRep').innerText = `${currentRep} %`;
+            document.getElementById('barRep').style.width = `${currentRep}%`;
+
+            if (remBudget < 0) {
+                playSynthSound('gameover');
+                document.getElementById('gameOverReason').innerText = `Zahlungsunfähig! Das Firmen-Konto liegt bei ${remBudget.toLocaleString()} €. VELOCITY Technologies musste Konkurs anmelden!`;
+                showScreen('gameover');
+            }
+        }
+
+        function nextQuarter() {
+            const currentActs = quartersData[game.quarter];
+            const allDecided = currentActs.every(a => game.decisions[a.id]);
+
+            if (!allDecided) {
+                alert('Bitte triff eine Entscheidung für alle Anträge im aktuellen Quartal!');
+                return;
+            }
+
+            // TRIGGER ACCOUNTANT AUDIT AFTER EVERY 4 QUARTERS (Q4, Q8, Q12)
+            if (game.quarter % 4 === 0) {
+                showAccountantAuditScreen();
+            } else {
+                game.quarter++;
+                renderQuarter();
+            }
+        }
+
+        function showAccountantAuditScreen() {
+            const endedYear = Math.floor(game.quarter / 4);
+            playSynthSound('money');
+
+            let totalCost = 0, totalCo2Delta = 0, totalRepDelta = 0;
+            Object.keys(game.decisions).forEach(actId => {
+                const dec = game.decisions[actId];
+                let act = null;
+                Object.values(quartersData).forEach(qList => {
+                    const found = qList.find(a => a.id === actId);
+                    if (found) act = found;
+                });
+                if (act) {
+                    if (dec === 'approve') {
+                        totalCost += act.cost; totalCo2Delta += act.co2Delta; totalRepDelta += act.repDelta;
+                    } else if (dec === 'reject' && act.isGreenwashing) {
+                        totalRepDelta += 15;
+                    }
+                }
+            });
+
+            // Calculate current stats before adding new year's revenue
+            const currentBalanceBeforeNewRevenue = 75000 + ((endedYear - 1) * 15000) - totalCost;
+            const newBalanceAfterRevenue = currentBalanceBeforeNewRevenue + 15000;
+
+            document.getElementById('accountantYearTitle').innerText = `JAHR ${endedYear} • AUDIT VOM BUCHHALTER`;
+            document.getElementById('accountantSpeech').innerText = `"Sehr geehrter CEO, wir haben das Geschäftsjahr ${endedYear} erfolgreich bilanziert! Durch deine neuen Erlasse fließen unserem Firmenkonto frische +15.000 € Umsatz zu."`;
+            document.getElementById('accountantRevenueText').innerText = `+15.000 €`;
+            document.getElementById('accountantCo2Text').innerText = `${totalCo2Delta <= 0 ? totalCo2Delta : '+' + totalCo2Delta} t CO₂`;
+            document.getElementById('accountantRepText').innerText = `${totalRepDelta >= 0 ? '+' + totalRepDelta : totalRepDelta} % Image`;
+            
+            // Animate New Bank Balance
+            document.getElementById('accountantNewBalance').innerText = `${newBalanceAfterRevenue.toLocaleString()} €`;
+
+            if (game.quarter === 12) {
+                document.getElementById('btnAccountantContinue').innerHTML = `<span>🏆 FINALES ZERTIFIKAT ANZEIGEN</span><i class="fa-solid fa-award text-2xl"></i>`;
+            } else {
+                document.getElementById('btnAccountantContinue').innerHTML = `<span>🚀 IN DAS NÄCHSTE GESCHÄFTSJAHR STARTEN</span><i class="fa-solid fa-arrow-right text-2xl"></i>`;
+            }
+
+            showScreen('accountant');
+        }
+
+        function continueAfterAccountant() {
+            if (game.quarter < 12) {
+                game.quarter++;
+                playSynthSound('good');
+                showScreen('cockpit');
+                renderQuarter();
+            } else {
+                renderFinale();
+                showScreen('finale');
+            }
+        }
+
+        function renderFinale() {
+            document.getElementById('certPilot').innerText = game.csoName;
+            document.getElementById('certClass').innerText = game.csoClass;
+            document.getElementById('certDate').innerText = game.csoDate;
+
+            let totalCost = 0, totalCo2Delta = 0, totalRepDelta = 0;
+            Object.keys(game.decisions).forEach(actId => {
+                const dec = game.decisions[actId];
+                let act = null;
+                Object.values(quartersData).forEach(qList => {
+                    const found = qList.find(a => a.id === actId);
+                    if (found) act = found;
+                });
+                if (act) {
+                    if (dec === 'approve') {
+                        totalCost += act.cost; totalCo2Delta += act.co2Delta; totalRepDelta += act.repDelta;
+                    } else if (dec === 'reject' && act.isGreenwashing) {
+                        totalRepDelta += 15;
+                    }
+                }
+            });
+
+            const remBudget = 75000 + 30000 - totalCost;
+            const currentCo2 = Math.max(0, 220 + totalCo2Delta);
+            const currentRep = Math.min(100, Math.max(0, 45 + totalRepDelta));
+
+            document.getElementById('finalBudget').innerText = `${remBudget.toLocaleString()} €`;
+            document.getElementById('finalCo2').innerText = `${currentCo2} Tonnen`;
+            document.getElementById('finalRep').innerText = `${currentRep} %`;
+
+            let text = 'Du hast die 3 Jahre als CEO überstanden. Achte in Zukunft noch stetiger auf dein Firmen-Konto!';
+            if (remBudget >= 0 && currentCo2 <= 40 && currentRep >= 80) {
+                text = '🏆 ÜBERRAGENDER 3-JAHRES ERFOLG! Du hast VELOCITY Technologies ohne Insolvenz durch 12 Quartale gesteuert, den CO₂-Ausstoß auf unter 40 Tonnen gesenkt und Rekord-Kundenvertrauen erzielt!';
+            }
+            document.getElementById('finalVerdictText').innerText = text;
+        }
+
+        function resetGame() { location.reload(); }
+    </script>
+</body>
+</html>

@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<!-- saved from url=(0031)https://ithw.vercel.app/memory/ -->
+<html lang="de" style="--card-min: 160px; --card-text: 23px;"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>🧩 IT‑Hardware Memory – v2.5</title>
+  <style>
+    :root{
+      --bg:#0f1115; --card:#171a21; --card-front:#1f2430; --accent:#13c2c2; --good:#19be6b; --bad:#ff4d4f; --text:#e8ecf1; --muted:#9aa4b2; --grid-gap:8px;
+      --card-min:170px; /* Default-Kartenbreite */
+      --card-text:12px; /* Schriftgröße auf den Karten */
+    }
+    *{box-sizing:border-box}
+    body{ margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Inter,Arial,sans-serif; background:radial-gradient(1200px 800px at 20% -10%,#17202d 0%,#0f1115 40%,#0b0d12 100%); color:var(--text) }
+    header{ padding:18px 16px 10px; display:flex; gap:14px; align-items:center; justify-content:space-between; flex-wrap:wrap; border-bottom:1px solid #1b2230 }
+    h1{font-size:clamp(18px,2.4vw,22px); margin:0; letter-spacing:.2px; font-weight:700}
+    .controls{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+    select,button{ background:var(--card); color:var(--text); border:1px solid #263243; border-radius:10px; padding:10px 12px; font-size:14px; box-shadow:0 1px 0 rgba(255,255,255,.03) inset, 0 8px 24px rgba(0,0,0,.25) }
+    button.primary{background:linear-gradient(180deg,#1f9fa0,#158b8c); border-color:#0d6d6e}
+    button.ghost{background:transparent; border-color:#2a3445; color:var(--muted)}
+    button:disabled{opacity:.5; cursor:not-allowed}
+    /* Start-Button Pulse */
+    #startBtn.pulse{ outline:none; border-color:var(--accent); box-shadow:0 0 0 2px rgba(19,194,194,.26), 0 0 14px rgba(19,194,194,.40); animation:breathe 1.8s ease-in-out infinite alternate, glowPulseSoft 1.8s ease-in-out infinite alternate }
+    @keyframes breathe { from { transform: scale(1); } to { transform: scale(1.02); } }
+    @keyframes glowPulseSoft { from { box-shadow: 0 0 0 2px rgba(19,194,194,.26), 0 0 10px rgba(19,194,194,.34); } to { box-shadow: 0 0 0 4px rgba(19,194,194,.36), 0 0 20px rgba(19,194,194,.44); } }
+
+    .stats{ display:flex; flex-direction:row; align-items:center; gap:10px; flex-wrap:nowrap; justify-content:space-between; color:var(--muted) }
+    .stat{ display:flex; align-items:center; justify-content:center; background:var(--card); border:1px solid #202b3b; border-radius:10px; padding:6px 8px; font-variant-numeric:tabular-nums; flex:1 1 0; min-width:0; text-align:center; white-space:nowrap }
+    .stat b{color:var(--text)}
+
+    main{max-width:1100px; margin:20px auto; padding:0 16px 28px}
+    .hint{ color:var(--muted); font-size:13px; margin-top:8px }
+
+    .board{ display:grid; gap:var(--grid-gap); place-items:stretch; margin-top:16px; grid-template-columns:repeat(auto-fit, minmax(var(--card-min), 1fr)); transition:grid-template-columns .2s ease }
+    .card{ width:100%; aspect-ratio:2/3; perspective:900px; position:relative }
+    .face{ position:absolute; inset:0; border-radius:14px; border:1px solid #243246; display:flex; align-items:center; justify-content:center; padding:10px; backface-visibility:hidden; transform-style:preserve-3d; box-shadow:0 10px 24px rgba(0,0,0,.35), 0 1px 0 rgba(255,255,255,.04) inset; transition:transform .32s ease }
+    .front{ background:linear-gradient(180deg,#202636,#1a1f2c); transform:rotateY(180deg) }
+    .back{ background:linear-gradient(180deg,#11141b,#0f131a); color:#8aa0b8; letter-spacing:.4px; font-weight:600 }
+    .back .joker{ display:block; line-height:1; font-size:clamp(96px,10vw,360px) }
+    @supports (font-size: 1cqw){ .card{ container-type:inline-size } .back .joker{ font-size:clamp(96px,120cqw,360px) } }
+    .card.flipped .front{ transform:rotateY(0deg) }
+    .card.flipped .back{ transform:rotateY(180deg) }
+    .emoji{font-size:clamp(28px,5vw,38px); filter:drop-shadow(0 2px 0 rgba(0,0,0,.25))}
+    .label{ text-align:center; margin-top:8px; font-size:var(--card-text); color:#cbd6e3; line-height:1.25 }
+    .desc{ font-size:var(--card-text); color:#dbe3ef; line-height:1.25; text-align:center; padding:0 6px }
+    .matched .front{ outline:2px solid rgba(25,190,107,.7) }
+    .shake{ animation:shake .32s linear }
+    @keyframes shake{ 20%{transform:translateX(-3px)} 40%{transform:translateX(3px)} 60%{transform:translateX(-2px)} 80%{transform:translateX(2px)} }
+
+    /* Spaltenmodus */
+    .board.split{ grid-template-columns:1fr 1fr; align-items:start }
+    .board.split .col{ display:grid; grid-template-columns:repeat(auto-fit, minmax(var(--card-min), 1fr)); gap:var(--grid-gap) }
+    .card.always-front .front{ transform:rotateY(0deg) }
+    .card.always-front .back{ display:none }
+    .card.target .front{ outline:2px solid var(--accent); box-shadow:0 0 0 2px rgba(19,194,194,.25), 0 0 12px rgba(19,194,194,.35) }
+
+    .modal{ position:fixed; inset:0; display:none; place-items:center; background:rgba(4,7,12,.6); backdrop-filter:blur(4px); z-index:10 }
+    .modal.show{ display:grid }
+    .dialog{ width:min(560px,92vw); background:var(--card-front); border:1px solid #2a354a; border-radius:16px; padding:18px }
+    .dialog h2{ margin:0 0 8px; font-size:22px }
+    .dialog p{ margin:4px 0; color:var(--muted) }
+    .scorelist table{ width:100%; border-collapse:collapse; font-size:12px; color:var(--muted) }
+    .scorelist th,.scorelist td{ padding:6px 8px; border-bottom:1px solid #253148; text-align:left }
+    .scorelist th{ color:var(--text) }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🧩 IT‑Hardware Memory</h1>
+    <div class="controls">
+      <label for="difficulty" style="color:var(--muted)">Modus:</label>
+      <select id="difficulty" aria-label="Modus wählen">
+        <option value="easy">Einfach – Begriff ↔ Beschreibung (12 Karten)</option>
+        <option value="medium">Mittel – Begriff ↔ Beschreibung (18 Karten)</option>
+        <option value="hard">Schwer – Begriff ↔ Beschreibung (24 Karten)</option>
+        <option value="hard_split">Mix (Einfach bis Schwer)</option>
+        <option value="random">Randomizer (Spalten) – 24 Karten (60% neu / 40% alt)</option>
+      </select>
+      <button id="startBtn" class="primary pulse">Start</button>
+      <button id="restartBtn" class="ghost" disabled="">Neu mischen</button>
+      <button id="leaderBtn" class="ghost">Bestenliste</button>
+    </div>
+    <div class="controls" style="flex:1 1 100%; gap:14px">
+      <label style="color:var(--muted); display:flex; align-items:center; gap:8px">Umdreh‑Verzögerung:
+        <input id="flipDelay" type="range" min="600" max="5000" step="100" value="1100">
+        <span id="flipVal">1.4s</span>
+      </label>
+      <label style="color:var(--muted); display:flex; align-items:center; gap:8px">Kartengröße:
+        <input id="cardSize" type="range" min="100" max="300" step="10" value="170">
+        <span id="sizeVal">160px</span>
+      </label>
+      <label style="color:var(--muted); display:flex; align-items:center; gap:8px">Textgröße:
+        <input id="textSize" type="range" min="10" max="32" step="1" value="12">
+        <span id="textSizeVal">23px</span>
+      </label>
+    </div>
+    <div class="stats">
+      <div class="stat">Punkte: <b id="points">0</b></div>
+      <div class="stat">Züge: <b id="moves">0</b></div>
+      <div class="stat">Treffer: <b id="hits">0</b></div>
+      <div class="stat">Zeit: <b id="time">00:00</b></div>
+    </div>
+  </header>
+
+  <main>
+    <p class="hint">Wähle einen Modus und klicke <b>Start</b>. <b>Punktelogik</b>: Effizienz-basiert (je weniger Züge pro Treffer, desto mehr Punkte), Zeitbonus (&lt;2:00 = +10, 2–3 = 0, ≥3:00 = −10), <b>Combo‑Bonus</b> bei Serien. NEU: <b>Randomizer</b> mischt 60% neue + 40% bekannte Karten, Spaltenmodus wie „Schwer (Spalten)“.</p>
+    <section id="board" class="board" aria-live="polite"><div style="grid-column:1/-1; text-align:center; color:var(--muted); padding:24px 0">Modus wählen und <b>Start</b> klicken. Neu: <b>Randomizer</b> (60% neu / 40% bekannt) im Spaltenmodus.</div></section>
+  </main>
+
+  <!-- Ergebnis-Modal -->
+  <div id="modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="dialog">
+      <h2 id="modalTitle">Runde geschafft! 🎉</h2>
+      <p id="summary"></p>
+      <div class="stars" id="stars" aria-hidden="true"></div>
+      <div id="scoreList" class="scorelist"></div>
+      <div style="display:flex; gap:8px; margin-top:10px">
+        <button id="again" class="primary">Nochmal</button>
+        <button id="change" class="ghost">Modus ändern</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bestenliste-Modal -->
+  <div id="leaderModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="leaderTitle">
+    <div class="dialog">
+      <h2 id="leaderTitle">🏆 Bestenliste – Top 3 je Modus</h2>
+      <div id="leaderContent"></div>
+      <div class="leader-footer" style="display:flex; gap:8px; margin-top:10px; justify-content:space-between; align-items:center; flex-wrap:wrap">
+        <p class="leader-hint" style="margin:0">📸 Screenshot: <b>[Win]</b>+<b>[Shift]</b>+<b>S</b> → Bereich wählen → speichern → in <b>Outlook</b> anhängen.</p>
+        <button id="closeLeader" class="primary">Schließen</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+// ===== IT‑Hardware Memory – v2.5 Script =====
+(function(){ window.addEventListener('error', function(e){ try{ var bar=document.getElementById('jsError'); if(!bar){ bar=document.createElement('div'); bar.id='jsError'; bar.style.cssText='position:fixed;left:0;right:0;bottom:0;background:#3b0b0b;color:#fff;padding:8px 12px;font:12px/1.4 system-ui;z-index:9999;'; document.body.appendChild(bar);} bar.textContent='JS-Fehler: '+e.message+(e.lineno?(' @'+e.lineno+(e.colno?(':'+e.colno):'')):''); }catch(_){}}); })();
+
+// ---- Datensätze ------------------------------------------------------------
+var SET_EASY = [
+  {id:'cpu', emoji:'🧠', term:'CPU', desc:'Das Gehirn des Computers, führt Rechenoperationen aus.'},
+  {id:'ram', emoji:'⚡', term:'RAM', desc:'Schneller Zwischenspeicher für laufende Programme.'},
+  {id:'mb',  emoji:'🔌', term:'Mainboard', desc:'Zentrales Board, verbindet und versorgt alle Komponenten.'},
+  {id:'ssd', emoji:'🚀', term:'SSD', desc:'Sehr schneller Massenspeicher ohne bewegliche Teile.'},
+  {id:'gpu', emoji:'🎨', term:'GPU', desc:'Grafikprozessor, berechnet Bilder, Videos und 3D-Inhalte.'},
+  {id:'psu', emoji:'🔋', term:'Netzteil', desc:'Versorgt alle Komponenten zuverlässig mit Strom.'}
+];
+var SET_MEDIUM = [
+  {id:'hdd', emoji:'💽', term:'HDD', desc:'Klassischer Massenspeicher mit rotierenden Scheiben, langsamer als SSD.'},
+  {id:'nvme',emoji:'🏎️', term:'NVMe', desc:'Schnittstelle/Protokoll für sehr schnelle SSDs über PCI-Express.'},
+  {id:'cool',emoji:'🥶', term:'CPU-Kühler', desc:'Leitet Wärme von der CPU weg, hält sie kühl.'},
+  {id:'case',emoji:'🖥️', term:'Gehäuse', desc:'Schützt Hardware, sorgt für Luftstrom und Montagepunkte.'},
+  {id:'lan', emoji:'🌐', term:'Netzwerkkarte', desc:'Ermöglicht die Netzwerkverbindung (LAN).'},
+  {id:'wlan',emoji:'📶', term:'WLAN-Adapter', desc:'Stellt drahtlose Netzwerkverbindung her.'},
+  {id:'od',  emoji:'📀', term:'Optisches Laufwerk', desc:'Liest/Schreibt CDs/DVDs/Blu-ray.'},
+  {id:'sound',emoji:'🎵', term:'Soundkarte', desc:'Verarbeitet Audio-Ein/Ausgabe mit höherer Qualität als Onboard.'},
+  {id:'usv', emoji:'🛡️', term:'USV', desc:'Überbrückt kurz Stromausfälle; sicheres Herunterfahren.'}
+];
+var SET_HARD = [
+  {id:'pcie', emoji:'⚙️', term:'PCI-Express', desc:'High-Speed-Bus für Grafikkarten, NVMe-SSDs und Erweiterungskarten.'},
+  {id:'sata', emoji:'🔗', term:'SATA', desc:'Schnittstelle für HDDs/SSDs/optische Laufwerke (langsamer als SSD).'},
+  {id:'m2',   emoji:'📏', term:'M.2-Slot', desc:'Kompakter Steckplatz für NVMe-/SATA-SSDs und Module.'},
+  {id:'dimm', emoji:'🧩', term:'DIMM', desc:'Speichermodul-Formfaktor für RAM.'},
+  {id:'usb',  emoji:'🔌', term:'USB', desc:'Universelle Schnittstelle für Eingabegeräte, Speichersticks und andere Geräte.'},
+  {id:'hdmi', emoji:'📺', term:'HDMI', desc:'Digitale Schnittstelle für Bild und Ton, verbindet PC mit Monitor oder Fernseher.'},
+  {id:'dvi',  emoji:'⚪️', term:'DVI', desc:'Digitale Videoschnittstelle (älter als HDMI/DP), meist weiße Buchse.'},
+  {id:'dp',   emoji:'🖥️', term:'DisplayPort', desc:'Moderne Bild-/Ton-Schnittstelle für hohe Auflösung und Hz.'},
+  {id:'vga',  emoji:'🔵', term:'VGA', desc:'Alter, analoger Bildanschluss, heute kaum noch genutzt.'},
+  {id:'paste',emoji:'🧴', term:'Thermalpaste', desc:'Verbessert Wärmeübertragung zwischen Chip und Kühler.'},
+  {id:'cmos', emoji:'🕒', term:'CMOS-Batterie', desc:'Hält BIOS/UEFI-Einstellungen und Uhrzeit ohne Netzstrom.'},
+  {id:'bios', emoji:'🧭', term:'BIOS/UEFI', desc:'Firmware zum Starten und Konfigurieren der Hardware.'},
+  {id:'monitor',emoji:'🖥️', term:'Monitor', desc:'Ausgabegerät, zeigt Bildschirminhalte des Computers an.'}
+];
+
+// Zusatz-Set für Randomizer (neue Items)
+// v2.5: VRAM hinzugefügt; v2.4: Gehäuselüfter; v2.3: AIO-Wasserkühlung
+var SET_NEW = [
+  {id:'usbc',   emoji:'⭕', term:'USB‑C', desc:'Beidseitig steckbarer USB‑Stecker; Daten, Strom und teils Video.'},
+  {id:'usba',   emoji:'🔌', term:'USB‑A', desc:'Klassischer rechteckiger USB‑Stecker für viele Geräte.'},
+  {id:'dualram',emoji:'↔️', term:'Dual‑Channel RAM', desc:'Zwei RAM‑Riegel arbeiten parallel – mehr Bandbreite.'},
+  {id:'tb',     emoji:'⚡', term:'Thunderbolt', desc:'Sehr schneller Standard über USB‑C (bis 40 Gbit/s); Docks, Monitore, Daisy‑Chain.'},
+  {id:'rj45',   emoji:'🌐', term:'RJ45 / Ethernet', desc:'Netzwerkbuchse fürs LAN am Mainboard oder an Karten.'},
+  {id:'audio35',emoji:'🎧', term:'3.5 mm Audio', desc:'Klinke für Kopfhörer, Mikrofon oder Lautsprecher.'},
+  {id:'atx24',  emoji:'🧩', term:'ATX 24‑Pin', desc:'Hauptstromstecker vom Netzteil zum Mainboard.'},
+  {id:'sd',     emoji:'🧾', term:'SD‑Karte', desc:'Wechselkarte für Fotos/Video/Daten, per Kartenleser nutzbar.'},
+  {id:'floppy', emoji:'💾', term:'Diskette', desc:'Historisches Speichermedium, sehr geringe Kapazität.'},
+  {id:'cdrom',  emoji:'💿', term:'CD‑ROM', desc:'Optisches Medium (CD); wird heute selten genutzt.'},
+  {id:'dvd',    emoji:'📀', term:'DVD', desc:'Optisches Medium mit mehr Speicher als CD.'},
+  {id:'bluray', emoji:'🔷', term:'Blu‑ray', desc:'Optisches Medium mit hoher Kapazität, HD/4K‑Filme.'},
+  {id:'raid',   emoji:'🧱', term:'RAID', desc:'Verbund mehrerer Laufwerke für Redundanz/Leistung.'},
+  {id:'aio',    emoji:'💧', term:'AIO‑Wasserkühlung', desc:'CPU‑Kühlung mit Pumpe & Radiator; leise und effizient.'},
+  {id:'fan',    emoji:'🌀', term:'Gehäuselüfter', desc:'Bewegt Luft, kühlt das System.'},
+  {id:'vram',   emoji:'🖼️', term:'VRAM', desc:'Grafikspeicher der GPU; hält Texturen/Bilder für hohe Auflösung & 3D.'}
+];
+// ---- Elemente --------------------------------------------------------------
+var boardEl = document.getElementById('board');
+var pointsEl = document.getElementById('points');
+var movesEl  = document.getElementById('moves');
+var hitsEl   = document.getElementById('hits');
+var timeEl   = document.getElementById('time');
+var startBtn = document.getElementById('startBtn');
+var restartBtn = document.getElementById('restartBtn');
+var diffSel  = document.getElementById('difficulty');
+var modalEl  = document.getElementById('modal');
+var summaryEl= document.getElementById('summary');
+var starsEl  = document.getElementById('stars');
+var againBtn = document.getElementById('again');
+var changeBtn= document.getElementById('change');
+var flipSlider = document.getElementById('flipDelay');
+var flipVal = document.getElementById('flipVal');
+var sizeSlider = document.getElementById('cardSize');
+var sizeVal = document.getElementById('sizeVal');
+var textSlider = document.getElementById('textSize');
+var textSizeVal = document.getElementById('textSizeVal');
+var leaderBtn = document.getElementById('leaderBtn');
+var leaderModal = document.getElementById('leaderModal');
+var leaderContent = document.getElementById('leaderContent');
+var closeLeader = document.getElementById('closeLeader');
+
+// ---- State -----------------------------------------------------------------
+function resetState(){
+  return {
+    running:false, difficulty:'easy',
+    deck:[], flipped:[], lock:false,
+    points:0, moves:0, hits:0, misses:0,
+    combo:0, maxCombo:0, comboBonus:0, totalPairs:0,
+    timer:null, startTime:null,
+    flipDelay: Number(localStorage.getItem('memFlipDelay')) || 1100,
+    cardMin: Number(localStorage.getItem('memCardMin')) || 170,
+    textSize: Number(localStorage.getItem('memTextSize')) || 12,
+    // Spaltenmodussteuerung
+    autoSelectPermit:false,
+    modeSplit:false, deckLeft:[], deckRight:[], selectedLeft:null
+  };
+}
+var state = resetState();
+
+// ---- Utils -----------------------------------------------------------------
+function formatTime(ms){ var s=Math.floor(ms/1000), m=Math.floor(s/60), r=s%60; return (m<10?'0'+m:m)+':' + (r<10?'0'+r:r); }
+function shuffle(arr){ for(var i=arr.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=arr[i]; arr[i]=arr[j]; arr[j]=t; } return arr; }
+
+// ---- Deck-Bau --------------------------------------------------------------
+function createDeck(difficulty){
+  var pool=[], pairCount=6; // easy: 6 Paare = 12 Karten
+  if(difficulty==='easy'){ pool = SET_EASY.slice(); pairCount = 6; }
+  else if(difficulty==='medium'){ pool = SET_EASY.concat(SET_MEDIUM); pairCount = 9; }
+  else { pool = SET_EASY.concat(SET_MEDIUM, SET_HARD); pairCount = 12; }
+  var chosen = shuffle(pool).slice(0, pairCount);
+  var deck=[]; for(var i=0;i<chosen.length;i++){ var p=chosen[i]; deck.push({pairId:p.id, kind:'term', content:(p.emoji+' '+p.term), type:'term'}); deck.push({pairId:p.id, kind:'desc', content:p.desc, type:'desc'}); }
+  return shuffle(deck);
+}
+// Split-Deck (Schwer – Spalten)
+function createSplitDeck(){
+  var pool = SET_EASY.concat(SET_MEDIUM, SET_HARD);
+  var chosen = shuffle(pool).slice(0, 12);
+  var left=[], right=[];
+  for(var i=0;i<chosen.length;i++){
+    var p=chosen[i];
+    left.push({pairId:p.id, kind:'term', content:(p.emoji+' '+p.term), type:'term'});
+    right.push({pairId:p.id, kind:'desc', content:p.desc, type:'desc'});
+  }
+  return { left: shuffle(left), right: shuffle(right) };
+}
+// Randomizer‑Split‑Deck (60% neu, 40% alt)
+function createRandomSplitDeck(){
+  var newPool = SET_NEW.slice();
+  var oldPool = SET_EASY.concat(SET_MEDIUM, SET_HARD).slice();
+  var used = new Set();
+  function takeUnique(pool){
+    if(!pool.length) return null;
+    // Ziehe zufällig, ohne Wiederholung der id
+    for(var safety=0; safety<100; safety++){
+      var idx=Math.floor(Math.random()*pool.length);
+      var p=pool[idx];
+      if(!used.has(p.id)){
+        used.add(p.id);
+        pool.splice(idx,1);
+        return p;
+      }
+    }
+    return null;
+  }
+  var chosen=[];
+  while(chosen.length<12){
+    var pickNew = Math.random() < 0.6; // 60% neue Items
+    var p = pickNew ? takeUnique(newPool) : null;
+    if(!p) p = takeUnique(oldPool);
+    if(!p){ // Fallback: aus dem jeweils anderen Pool
+      p = takeUnique(newPool) || takeUnique(oldPool);
+      if(!p) break;
+    }
+    chosen.push(p);
+  }
+  // Falls Pools leer und noch nicht 12, befülle mit Rest ohne Duplikate
+  var rest = newPool.concat(oldPool);
+  while(chosen.length<12 && rest.length){ var extra = takeUnique(rest); if(extra) chosen.push(extra); else break; }
+
+  var left=[], right=[];
+  for(var i=0;i<chosen.length;i++){
+    var q=chosen[i];
+    left.push({pairId:q.id, kind:'term', content:(q.emoji+' '+q.term), type:'term'});
+    right.push({pairId:q.id, kind:'desc', content:q.desc, type:'desc'});
+  }
+  return { left: shuffle(left), right: shuffle(right) };
+}
+
+// ---- Render ----------------------------------------------------------------
+function renderBoard(){
+  boardEl.innerHTML='';
+  if(state.modeSplit){
+    boardEl.classList.add('split');
+    var leftCol=document.createElement('div'); leftCol.className='col left';
+    var rightCol=document.createElement('div'); rightCol.className='col right';
+    // Links sichtbare Begriffe
+    for(var i=0;i<state.deckLeft.length;i++){
+      (function(idx){
+        var c=state.deckLeft[idx];
+        var el=document.createElement('button'); el.className='card always-front'; el.dataset.index=String(idx);
+        var front=document.createElement('div'); front.className='face front';
+        var wrap=document.createElement('div'); wrap.style.display='flex'; wrap.style.flexDirection='column'; wrap.style.alignItems='center';
+        var em=document.createElement('div'); em.className='emoji'; em.textContent=c.content.split(' ')[0];
+        var lab=document.createElement('div'); lab.className='label'; var parts=c.content.split(' '); parts.shift(); lab.textContent=parts.join(' ');
+        wrap.appendChild(em); wrap.appendChild(lab); front.appendChild(wrap); el.appendChild(front);
+        el.addEventListener('click', onSelectLeft);
+        leftCol.appendChild(el);
+      })(i);
+    }
+    // Rechts verdeckte Beschreibungen
+    for(var j=0;j<state.deckRight.length;j++){
+      (function(idx){
+        var c=state.deckRight[idx];
+        var el=document.createElement('button'); el.className='card'; el.dataset.index=String(idx);
+        var back=document.createElement('div'); back.className='face back'; back.innerHTML='<span class="joker">🃏</span>';
+        var front=document.createElement('div'); front.className='face front'; var d=document.createElement('div'); d.className='desc'; d.textContent=c.content; front.appendChild(d);
+        el.appendChild(front); el.appendChild(back);
+        el.addEventListener('click', onFlipRightSplit);
+        rightCol.appendChild(el);
+      })(j);
+    }
+    boardEl.appendChild(leftCol); boardEl.appendChild(rightCol);
+    // Start: Auto‑Auswahl freigeben und setzen
+    state.autoSelectPermit = true;
+    autoSelectLeftIfNone();
+  } else {
+    boardEl.classList.remove('split');
+    for(var k=0;k<state.deck.length;k++){
+      (function(idx){
+        var c=state.deck[idx];
+        var el=document.createElement('button'); el.className='card'; el.dataset.index=String(idx); el.setAttribute('aria-label','Karte verdeckt');
+        var back=document.createElement('div'); back.className='face back'; back.innerHTML='<span class="joker">🃏</span>';
+        var front=document.createElement('div'); front.className='face front';
+        if(c.type==='term'){
+          var wrap=document.createElement('div'); wrap.style.display='flex'; wrap.style.flexDirection='column'; wrap.style.alignItems='center'; wrap.style.justifyContent='center';
+          var em=document.createElement('div'); em.className='emoji'; em.textContent=c.content.split(' ')[0];
+          var lab=document.createElement('div'); lab.className='label'; var parts=c.content.split(' '); parts.shift(); lab.textContent=parts.join(' ');
+          wrap.appendChild(em); wrap.appendChild(lab); front.appendChild(wrap);
+        } else { var d=document.createElement('div'); d.className='desc'; d.textContent=c.content; front.appendChild(d); }
+        el.appendChild(front); el.appendChild(back);
+        el.addEventListener('click', onFlip);
+        boardEl.appendChild(el);
+      })(k);
+    }
+  }
+}
+
+function setStats(){ pointsEl.textContent=String(state.points); movesEl.textContent=String(state.moves); hitsEl.textContent=String(state.hits); }
+function startTimer(){ state.startTime=performance.now(); state.timer=setInterval(function(){ timeEl.textContent=formatTime(performance.now()-state.startTime); },250); }
+function stopTimer(){ if(state.timer){ clearInterval(state.timer); state.timer=null; } }
+
+// ---- Leaderboard (unverändert) --------------------------------------------
+function getScoresFor(diff){ try{ var arr = JSON.parse(localStorage.getItem('memScores_'+diff)||'[]'); return Array.isArray(arr)?arr:[]; } catch(e){ return []; } }
+function saveScore(entry){ var key='memScores_'+state.difficulty; var list=getScoresFor(state.difficulty); list.unshift(entry); if(list.length>50) list=list.slice(0,50); localStorage.setItem(key, JSON.stringify(list)); }
+function renderScores(){ var el=document.getElementById('scoreList'); if(!el) return; var list=getScoresFor(state.difficulty); if(!list.length){ el.innerHTML='<div style="color:var(--muted);font-size:12px;padding:6px 0">Noch keine Scores gespeichert.</div>'; return;} var html='<table><thead><tr><th>#</th><th>Punkte</th><th>Zeit</th><th>Züge</th><th>Treffer</th><th>Datum</th></tr></thead><tbody>'; for(var i=0;i<list.length;i++){ var s=list[i]; html+='<tr><td>'+(i+1)+'</td><td>'+s.points+'</td><td>'+formatTime(s.time)+'</td><td>'+s.moves+'</td><td>'+s.hits+'</td><td>'+new Date(s.date).toLocaleString()+'</td></tr>'; } html+='</tbody></table>'; el.innerHTML=html; }
+function topN(list,n){ return list.slice().sort(function(a,b){ if(b.points!==a.points) return b.points-a.points; return a.time-b.time; }).slice(0,n); }
+function openLeaderboard(){ var diffs=[{k:'easy',label:'Einfach'},{k:'medium',label:'Mittel'},{k:'hard',label:'Schwer'},{k:'hard_split',label:'Mix (Einfach bis Schwer)'},{k:'random',label:'Randomizer'}]; var html=''; for(var i=0;i<diffs.length;i++){ var d=diffs[i]; var arr=topN(getScoresFor(d.k),3); html += '<h3 style="margin:8px 0">'+d.label+'</h3>'; if(!arr.length){ html+='<div style="color:var(--muted);font-size:12px">Noch keine Daten.</div>'; } else { html+='<div class="scorelist"><table><thead><tr><th>#</th><th>Punkte</th><th>Zeit</th><th>Züge</th><th>Treffer</th><th>Datum</th></tr></thead><tbody>'; for(var j=0;j<arr.length;j++){ var s=arr[j]; html+='<tr><td>'+(j+1)+'</td><td>'+s.points+'</td><td>'+formatTime(s.time)+'</td><td>'+s.moves+'</td><td>'+s.hits+'</td><td>'+new Date(s.date).toLocaleString()+'</td></tr>'; } html+='</tbody></table></div>'; } } if(leaderContent) leaderContent.innerHTML=html; if(leaderModal) leaderModal.classList.add('show'); }
+
+// ---- Punkte & Sterne -------------------------------------------------------
+function diffParams(){
+  if(state.difficulty==='easy') return {max:100, exp:0.30};
+  if(state.difficulty==='medium') return {max:130, exp:0.45};
+  if(state.difficulty==='hard_split') return {max:120, exp:0.50};
+  if(state.difficulty==='random') return {max:125, exp:0.52};
+  return {max:150, exp:0.60}; // hard klassisch
+}
+function recomputePoints(){ var p=diffParams(); var eff = state.moves ? (state.hits / state.moves) : 0; var core = Math.round(p.max * Math.pow(eff, p.exp)); state.points = Math.max(0, core + (state.comboBonus||0)); setStats(); }
+function timeBonus(elapsed){ if(elapsed < 120000) return 10; if(elapsed < 180000) return 0; return -10; }
+
+// ---- Helpers für Spalten‑Modus --------------------------------------------
+function clearAllTargetsLeft(){
+  if(!state.modeSplit) return;
+  var leftCol = boardEl.querySelector('.col.left');
+  if(!leftCol) return;
+  Array.prototype.forEach.call(leftCol.querySelectorAll('.card.target'), function(btn){ btn.classList.remove('target'); });
+}
+function autoSelectLeftIfNone(){
+  if(!state.modeSplit) return;
+  if(!state.autoSelectPermit) return; // nur wenn freigegeben
+  if(state.selectedLeft && !state.selectedLeft.btn.classList.contains('matched')) return;
+  var leftCol = boardEl.querySelector('.col.left'); if(!leftCol) return;
+  var candidates = Array.prototype.filter.call(leftCol.querySelectorAll('.card'), function(btn){ return !btn.classList.contains('matched'); });
+  if(!candidates.length) { state.selectedLeft=null; return; }
+  clearAllTargetsLeft();
+  var btn = candidates[Math.floor(Math.random()*candidates.length)];
+  var idx = Number(btn.dataset.index);
+  var model = state.deckLeft[idx];
+  state.selectedLeft = { idx: idx, model: model, btn: btn };
+  btn.classList.add('target');
+}
+
+// ---- Game Flow -------------------------------------------------------------
+function startGame(){
+  state = resetState();
+  var diff = diffSel && diffSel.value || 'easy';
+  if(['easy','medium','hard','hard_split','random'].indexOf(diff)===-1) diff='easy';
+  state.difficulty = diff; localStorage.setItem('memDifficulty', diff);
+  if(flipSlider){ state.flipDelay=Number(flipSlider.value); localStorage.setItem('memFlipDelay', state.flipDelay); }
+  if(sizeSlider){ state.cardMin=Number(sizeSlider.value); localStorage.setItem('memCardMin', state.cardMin); document.documentElement.style.setProperty('--card-min', state.cardMin+'px'); }
+  if(textSlider){ state.textSize=Number(textSlider.value); localStorage.setItem('memTextSize', state.textSize); document.documentElement.style.setProperty('--card-text', state.textSize+'px'); }
+
+  state.modeSplit = (diff==='hard_split' || diff==='random');
+  if(diff==='hard_split'){ var d1=createSplitDeck(); state.deckLeft=d1.left; state.deckRight=d1.right; state.totalPairs=state.deckLeft.length; }
+  else if(diff==='random'){ var d2=createRandomSplitDeck(); state.deckLeft=d2.left; state.deckRight=d2.right; state.totalPairs=state.deckLeft.length; }
+  else { state.deck=createDeck(diff); state.totalPairs=state.deck.length/2; }
+
+  setStats(); timeEl.textContent='00:00'; state.running=true; state.lock=false; state.flipped=[]; state.selectedLeft=null; renderBoard(); if(startBtn) startBtn.classList.remove('pulse'); startBtn.disabled=true; restartBtn.disabled=false;
+}
+function restartGame(){ startGame(); }
+
+// Klassischer Modus
+function onFlip(e){ if(!state.running||state.lock||state.modeSplit) return; var btn=e.currentTarget; var idx=Number(btn.dataset.index); var model=state.deck[idx]; if(!state.startTime) startTimer(); if(btn.classList.contains('flipped')||btn.classList.contains('matched')) return; btn.classList.add('flipped'); state.flipped.push({idx:idx, model:model, btn:btn}); if(state.flipped.length===2){ state.moves++; var a=state.flipped[0], b=state.flipped[1]; var isMatch=(a.model.pairId===b.model.pairId && a.idx!==b.idx && a.model.kind!==b.model.kind); if(isMatch){ a.btn.classList.add('matched'); b.btn.classList.add('matched'); state.hits++; state.combo = (state.combo||0) + 1; if(state.combo>=2){ state.comboBonus = (state.comboBonus||0) + 3*(state.combo-1); } if(state.combo > (state.maxCombo||0)) state.maxCombo = state.combo; recomputePoints(); state.flipped=[]; if(state.hits===state.totalPairs){ stopTimer(); setTimeout(showSummary, 350); } } else { state.combo = 0; state.lock=true; a.btn.classList.add('shake'); b.btn.classList.add('shake'); setTimeout(function(){ a.btn.classList.remove('flipped','shake'); b.btn.classList.remove('flipped','shake'); state.flipped=[]; state.lock=false; }, state.flipDelay); } } }
+
+// Spalten‑Interaktionen
+function onSelectLeft(e){
+  if(!state.running||!state.modeSplit) return;
+  var btn=e.currentTarget; if(btn.classList.contains('matched')) return;
+  var idx=Number(btn.dataset.index); var model=state.deckLeft[idx];
+  if(state.selectedLeft && state.selectedLeft.btn===btn) return; // gleicher Klick: ignorieren
+  clearAllTargetsLeft();
+  state.selectedLeft={idx:idx, model:model, btn:btn};
+  btn.classList.add('target');
+  state.autoSelectPermit = false; // Benutzerwahl sperrt Auto‑Auswahl bis Treffer
+}
+function onFlipRightSplit(e){
+  if(!state.running||state.lock||!state.modeSplit) return;
+  if(!state.selectedLeft) return;
+  var btn=e.currentTarget; var idx=Number(btn.dataset.index); var model=state.deckRight[idx];
+  if(!state.startTime) startTimer();
+  if(btn.classList.contains('flipped')||btn.classList.contains('matched')) return;
+  btn.classList.add('flipped'); state.moves++;
+  var isMatch=(model.pairId===state.selectedLeft.model.pairId);
+  if(isMatch){
+    btn.classList.add('matched');
+    state.selectedLeft.btn.classList.add('matched');
+    state.selectedLeft.btn.classList.remove('target');
+    state.hits++;
+    state.combo = (state.combo||0) + 1; if(state.combo>=2){ state.comboBonus = (state.comboBonus||0) + 3*(state.combo-1); }
+    if(state.combo > (state.maxCombo||0)) state.maxCombo = state.combo;
+    recomputePoints();
+    state.selectedLeft=null;
+    // NUR nach Treffer automatisch neue linke Karte
+    state.autoSelectPermit = true;
+    if(state.hits===state.totalPairs){ stopTimer(); setTimeout(showSummary,350); }
+    else { autoSelectLeftIfNone(); }
+  } else {
+    state.combo=0; state.lock=true; state.autoSelectPermit = false; // keine Autoauswahl nach Fehlversuch
+    btn.classList.add('shake');
+    setTimeout(function(){ btn.classList.remove('flipped','shake'); state.lock=false; }, state.flipDelay);
+  }
+}
+
+function showSummary(){
+  var elapsed = state.startTime ? (performance.now() - state.startTime) : 0;
+  var bonus = timeBonus(elapsed); var finalPoints = Math.max(0, state.points + bonus); state.points = finalPoints;
+  var tp = state.totalPairs || 1; var ratio = state.moves / tp; var t2, t3, timeReq;
+  if(state.difficulty==='easy'){ t3 = 2.2; t2 = 3.5; timeReq = 150000; }
+  else if(state.difficulty==='medium'){ t3 = 2.0; t2 = 3.0; timeReq = 180000; }
+  else if(state.difficulty==='hard_split' || state.difficulty==='random'){ t3 = 1.6; t2 = 2.2; timeReq = 180000; }
+  else { t3 = 1.8; t2 = 2.6; timeReq = 210000; }
+  var stars = 1; if(ratio <= t2) stars = 2; if(ratio <= t3 && elapsed <= timeReq) stars = 3; var starStr = new Array(stars+1).join('★') + new Array(3-stars+1).join('☆');
+  var diffName = (state.difficulty==='easy'?'Einfach': state.difficulty==='medium'?'Mittel': state.difficulty==='hard_split'?'Schwer (Spalten)': state.difficulty==='random'?'Randomizer':'Schwer');
+  var effNow = state.moves ? (state.hits/state.moves) : 0;
+  var msg = 'Modus: ' + diffName + ' · Zeit: ' + formatTime(elapsed) + ' · Züge: ' + state.moves + ' · Treffer: ' + state.hits + ' · Effizienz: ' + Math.round(effNow*100) + '%' + ' · Punkte: ' + state.points + ' · Zeitbonus: ' + (bonus>0?('+'+bonus):String(bonus)) + ' · Combo-Bonus: ' + (state.comboBonus||0);
+  summaryEl.textContent = msg; starsEl.textContent = starStr;
+  var bestKey = 'memHigh_' + state.difficulty; var prev = null; try{ prev = JSON.parse(localStorage.getItem(bestKey)||'null'); }catch(_){ }
+  var current = {points: state.points, time: elapsed, moves: state.moves, hits: state.hits, bonus: bonus, comboBonus: (state.comboBonus||0), maxCombo: (state.maxCombo||0), date: (new Date()).toISOString()};
+  var better=false; if(!prev) better=true; else { if(current.points>prev.points) better=true; else if(current.points===prev.points && current.time<prev.time) better=true; }
+  if(better) localStorage.setItem(bestKey, JSON.stringify(current));
+  saveScore(current); renderScores(); modalEl.classList.add('show');
+}
+
+// ---- Events ----------------------------------------------------------------
+if(startBtn) startBtn.addEventListener('click', startGame);
+if(restartBtn) restartBtn.addEventListener('click', restartGame);
+if(diffSel) diffSel.addEventListener('change', function(){ if(state.running) restartGame(); });
+if(againBtn) againBtn.addEventListener('click', function(){ modalEl.classList.remove('show'); restartGame(); });
+if(changeBtn) changeBtn.addEventListener('click', function(){ modalEl.classList.remove('show'); startBtn.disabled=false; if(startBtn) startBtn.classList.add('pulse'); state.running=false; stopTimer(); });
+if(leaderBtn) leaderBtn.addEventListener('click', openLeaderboard);
+if(closeLeader) closeLeader.addEventListener('click', function(){ if(leaderModal) leaderModal.classList.remove('show'); });
+
+// ---- Init ------------------------------------------------------------------
+(function init(){ try{
+  var saved = localStorage.getItem('memDifficulty')||'easy'; if(diffSel){ diffSel.value = (['easy','medium','hard','hard_split','random'].indexOf(saved)>-1)?saved:'easy'; }
+  document.documentElement.style.setProperty('--card-min', (state.cardMin||170)+'px'); document.documentElement.style.setProperty('--card-text', (state.textSize||12)+'px');
+  if(flipSlider){ flipSlider.value = state.flipDelay; flipVal.textContent = (state.flipDelay/1000).toFixed(1)+'s'; flipSlider.addEventListener('input', function(){ state.flipDelay = Number(flipSlider.value); flipVal.textContent = (state.flipDelay/1000).toFixed(1)+'s'; localStorage.setItem('memFlipDelay', state.flipDelay); }); }
+  if(sizeSlider){ sizeSlider.value = state.cardMin; sizeVal.textContent = state.cardMin+'px'; document.documentElement.style.setProperty('--card-min', state.cardMin+'px'); sizeSlider.addEventListener('input', function(){ state.cardMin = Number(sizeSlider.value); sizeVal.textContent = state.cardMin+'px'; document.documentElement.style.setProperty('--card-min', state.cardMin+'px'); localStorage.setItem('memCardMin', state.cardMin); }); }
+  if(textSlider){ textSlider.value = state.textSize; textSizeVal.textContent = state.textSize+'px'; document.documentElement.style.setProperty('--card-text', state.textSize+'px'); textSlider.addEventListener('input', function(){ state.textSize = Number(textSlider.value); textSizeVal.textContent = state.textSize+'px'; document.documentElement.style.setProperty('--card-text', state.textSize+'px'); localStorage.setItem('memTextSize', state.textSize); }); }
+  boardEl.innerHTML = '<div style="grid-column:1/-1; text-align:center; color:var(--muted); padding:24px 0">Modus wählen und <b>Start</b> klicken. Neu: <b>Randomizer</b> (60% neu / 40% bekannt) im Spaltenmodus.</div>'; if(startBtn){ startBtn.classList.add('pulse'); }
+} catch(e){ console.error(e); } })();
+  </script>
+
+</body></html>

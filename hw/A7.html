@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="de" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A7: TROUBLESHOOTER • Arbeitsblatt</title>
+    <script src="assets/js/tailwind.min.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        slate: {
+                            50: '#fafafa', 100: '#f5f5f5', 200: '#e5e5e5', 300: '#d4d4d4',
+                            400: '#b4bdca', 500: '#a3a3a3', 600: '#616161', 700: '#404040',
+                            800: '#303846', 900: '#1a1f26', 950: '#111418'
+                        },
+                        onedrive: {
+                            50: '#eff6ff', 100: '#dbeafe', 400: '#66a1ff', 500: '#0078d4',
+                            600: '#106ebe', 700: '#005a9e', 800: '#004578',
+                            900: '#00335c', 950: '#001f3f'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Segoe UI', 'Inter', 'system-ui', '-apple-system', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="assets/css/fontawesome.min.css">
+<link rel="stylesheet" href="assets/css/worksheet-common.css">
+    <style>
+        @import url('assets/fonts/inter.css');
+        * { transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(156, 163, 175, 0.5); border-radius: 4px; }
+    
+        .premium-progress{position:relative;overflow:hidden;background:linear-gradient(90deg,#0078d4 0%,#7c3aed 38%,#10b981 68%,#0078d4 100%);background-size:240% 100%;box-shadow:0 0 12px rgba(0,120,212,.34);animation:premiumProgressFlow 3.4s linear infinite}
+        .premium-progress::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 20%,rgba(255,255,255,.72) 48%,transparent 76%);transform:translateX(-130%);animation:premiumProgressShine 2.3s ease-in-out infinite}
+        @keyframes premiumProgressFlow{to{background-position:240% 0}}
+        @keyframes premiumProgressShine{0%,35%{transform:translateX(-130%)}75%,100%{transform:translateX(130%)}}
+        @media(prefers-reduced-motion:reduce){.premium-progress,.premium-progress::after,.premium-card,.scene-device,.scene-device::after,.status-light,.scan-beam,.scene-tool,.mission-card,.mission-card>div>i,.launch-btn::before,.launch-btn i{animation:none!important}}
+
+        /* Premium troubleshooter gateway */
+        body{background-image:radial-gradient(circle at 14% 10%,rgba(0,120,212,.11),transparent 30%),radial-gradient(circle at 88% 20%,rgba(124,58,237,.09),transparent 32%)}
+        .premium-card{position:relative;overflow:hidden;isolation:isolate;background:linear-gradient(145deg,rgba(255,255,255,.96),rgba(248,250,252,.9));border-radius:1.75rem!important;box-shadow:0 26px 64px rgba(15,23,42,.11)!important;animation:gatewayIn .55s cubic-bezier(.2,.9,.2,1)}
+        .premium-card::before,.premium-card::after{content:"";position:absolute;border-radius:50%;z-index:-1;filter:blur(3px)}.premium-card::before{width:240px;height:240px;right:-100px;top:-110px;background:rgba(0,120,212,.10)}.premium-card::after{width:200px;height:200px;left:-90px;bottom:-100px;background:rgba(124,58,237,.08)}
+        .dark .premium-card{background:linear-gradient(145deg,rgba(30,41,59,.95),rgba(15,23,42,.97));box-shadow:0 28px 68px rgba(0,0,0,.33)!important}
+        .troubleshooter-scene{position:relative;width:min(100%,460px);height:210px;margin:0 auto;border-radius:1.5rem;overflow:hidden;background:linear-gradient(145deg,#e0f2fe,#eef2ff 55%,#ede9fe);border:1px solid rgba(191,219,254,.9);box-shadow:inset 0 1px 0 rgba(255,255,255,.9)}
+        .dark .troubleshooter-scene{background:linear-gradient(145deg,#172554,#1e293b 55%,#2e1065);border-color:#334155}
+        .scene-grid{position:absolute;inset:0;opacity:.16;background-image:linear-gradient(rgba(37,99,235,.4) 1px,transparent 1px),linear-gradient(90deg,rgba(37,99,235,.4) 1px,transparent 1px);background-size:24px 24px;mask-image:linear-gradient(to bottom,black,transparent)}
+        .scene-device{position:absolute;left:50%;top:50%;width:126px;height:88px;transform:translate(-50%,-48%);border-radius:1.15rem;background:linear-gradient(145deg,#0f172a,#334155);color:#fff;display:flex;align-items:center;justify-content:center;font-size:2.75rem;box-shadow:0 22px 34px rgba(15,23,42,.28);animation:deviceHover 3s ease-in-out infinite}
+        .scene-device::after{content:"";position:absolute;width:150px;height:8px;left:50%;bottom:-23px;transform:translateX(-50%);border-radius:50%;background:rgba(15,23,42,.16);filter:blur(4px);animation:deviceShadow 3s ease-in-out infinite}
+        .status-light{position:absolute;right:12px;top:12px;width:10px;height:10px;border-radius:50%;background:#22c55e;box-shadow:0 0 0 5px rgba(34,197,94,.15),0 0 14px #22c55e;animation:statusPulse 1.7s ease-in-out infinite}
+        .scan-beam{position:absolute;left:8%;right:8%;height:3px;top:28%;border-radius:999px;background:linear-gradient(90deg,transparent,#38bdf8 25%,#7c3aed 75%,transparent);box-shadow:0 0 13px rgba(56,189,248,.75);animation:scanBeam 2.6s ease-in-out infinite}
+        .scene-tool{position:absolute;width:46px;height:46px;border-radius:1rem;display:flex;align-items:center;justify-content:center;color:white;box-shadow:0 12px 24px rgba(15,23,42,.18);animation:toolOrbit 4s ease-in-out infinite}.scene-tool.one{left:14%;top:24%;background:linear-gradient(135deg,#0078d4,#38bdf8)}.scene-tool.two{right:14%;bottom:19%;background:linear-gradient(135deg,#7c3aed,#c084fc);animation-delay:-2s}
+        .mission-card{position:relative;overflow:hidden;background:linear-gradient(135deg,#fffbeb,#fff7ed)!important;box-shadow:0 14px 32px rgba(245,158,11,.10);animation:missionGlow 3s ease-in-out infinite}.dark .mission-card{background:linear-gradient(135deg,rgba(120,53,15,.22),rgba(69,26,3,.18))!important}
+        .mission-card>div>i{animation:medalFloat 2.4s ease-in-out infinite}
+        .launch-btn{position:relative;overflow:hidden;isolation:isolate;box-shadow:0 17px 36px rgba(0,120,212,.25)!important}.launch-btn::before{content:"";position:absolute;inset:0;background:linear-gradient(105deg,transparent 20%,rgba(255,255,255,.35) 48%,transparent 75%);transform:translateX(-130%);animation:buttonShine 2.8s ease-in-out infinite;z-index:-1}.launch-btn i{animation:arrowNudge 1.5s ease-in-out infinite}
+        .completion-panel{border-radius:1.15rem;transition:background .3s ease,border-color .3s ease,box-shadow .3s ease}.completion-panel.is-complete{background:rgba(236,253,245,.85);border-color:#86efac!important;box-shadow:0 0 0 5px rgba(34,197,94,.08)}.dark .completion-panel.is-complete{background:rgba(6,78,59,.20);border-color:#166534!important}
+        .premium-card.is-complete{border-color:#86efac!important}
+        @keyframes gatewayIn{from{opacity:0;transform:translateY(18px) scale(.985)}to{opacity:1;transform:none}}
+        @keyframes deviceHover{0%,100%{transform:translate(-50%,-48%) rotate(-1deg)}50%{transform:translate(-50%,calc(-48% - 8px)) rotate(1deg)}}
+        @keyframes deviceShadow{0%,100%{transform:translateX(-50%) scaleX(.86);opacity:.12}50%{transform:translateX(-50%) scaleX(1.06);opacity:.2}}
+        @keyframes statusPulse{0%,100%{opacity:.55;transform:scale(.85)}50%{opacity:1;transform:scale(1.15)}}
+        @keyframes scanBeam{0%,100%{transform:translateY(-42px);opacity:.3}50%{transform:translateY(92px);opacity:1}}
+        @keyframes toolOrbit{0%,100%{transform:translate(0,0) rotate(-7deg)}50%{transform:translate(10px,-12px) rotate(7deg)}}
+        @keyframes missionGlow{0%,100%{box-shadow:0 14px 32px rgba(245,158,11,.08)}50%{box-shadow:0 17px 38px rgba(245,158,11,.18)}}
+        @keyframes medalFloat{0%,100%{transform:translateY(0) rotate(-5deg)}50%{transform:translateY(-5px) rotate(5deg)}}
+        @keyframes buttonShine{0%,35%{transform:translateX(-130%)}75%,100%{transform:translateX(130%)}}
+        @keyframes arrowNudge{0%,100%{transform:translateX(0)}50%{transform:translateX(5px)}}
+
+</style>
+</head>
+<body class="bg-slate-100 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-full flex flex-col font-sans antialiased">
+
+    <!-- Header -->
+    <header class="sticky top-0 z-40 worksheet-header">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-lg bg-onedrive-500 text-white flex items-center justify-center font-bold shadow-md shadow-onedrive-500/20 shrink-0">
+                    <i class="fa-solid fa-screwdrivers-wrench text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-base font-bold text-slate-900 dark:text-slate-100">A7: TROUBLESHOOTER</h1>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Informatische Bildung • IT-Hardware • A7</p>
+                </div>
+            </div>
+
+            <div class="hidden ml-auto w-28 sm:w-44" aria-label="Fortschritt">
+                <div class="flex items-center justify-between gap-2 mb-1">
+                    <span class="text-[10px] uppercase tracking-wider font-bold text-slate-400">Fortschritt</span>
+                    <span id="headerPercentText" class="text-xs font-extrabold text-onedrive-600 dark:text-onedrive-400">0%</span>
+                </div>
+                <div class="h-1.5 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden">
+                    <div id="progressBar" class="premium-progress h-full rounded-full transition-all duration-500" style="width:0%"></div>
+                </div>
+            </div>
+
+            <button onclick="toggleDarkMode()" title="Dunkelmodus umschalten" class="p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
+                <i id="themeIcon" class="fa-solid fa-moon text-sm"></i>
+            </button>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto w-full px-4 sm:px-6 py-10 space-y-6 flex-grow flex flex-col justify-center">
+
+        <!-- Card -->
+        <div id="heroCard" class="premium-card bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 text-center">
+            
+            <div class="troubleshooter-scene" aria-hidden="true">
+                <div class="scene-grid"></div>
+                <div class="scan-beam"></div>
+                <div class="scene-tool one"><i class="fa-solid fa-screwdriver-wrench"></i></div>
+                <div class="scene-tool two"><i class="fa-solid fa-microchip"></i></div>
+                <div class="scene-device"><i class="fa-solid fa-desktop"></i><span class="status-light"></span></div>
+            </div>
+
+            <div class="max-w-xl mx-auto space-y-2">
+                <h2 class="text-2xl font-bold text-slate-900 dark:text-slate-100">A7: TROUBLESHOOTER</h2>
+                <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed pt-2">
+                    Öffne den Troubleshooter und bearbeite die 7 Fälle.
+                </p>
+            </div>
+
+            <div class="hidden mission-card max-w-xl mx-auto rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/60 px-4 py-3 text-left">
+                <div class="flex items-start gap-3">
+                    <i class="fa-solid fa-medal text-amber-600 dark:text-amber-400 mt-0.5"></i>
+                    <div>
+                        <p class="text-sm font-bold text-slate-900 dark:text-slate-100">Mindestziel: 7 von 7 Fällen abgeschlossen</p>
+                        <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">Für jeden Fall muss in der Ergebnisübersicht mindestens <strong>Bronze</strong> stehen. Silber und Gold zählen selbstverständlich ebenfalls.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-4">
+                <a href="https://ib-ts.vercel.app" target="_blank" rel="noopener" class="launch-btn inline-flex items-center gap-3 px-8 py-4 rounded-xl bg-onedrive-500 hover:bg-onedrive-600 text-white font-bold text-base transition shadow-lg shadow-onedrive-500/25">
+                    <span>Troubleshooter öffnen</span>
+                    <i class="fa-solid fa-arrow-right text-lg"></i>
+                </a>
+                <p class="text-xs text-slate-400 dark:text-slate-500 mt-3">
+                    Öffnet <strong>ib-ts.vercel.app</strong> in einem neuen Tab
+                </p>
+            </div>
+
+            <!-- MANUAL DONE CHECKBOX -->
+            <div id="completionPanel" class="completion-panel mt-8 p-4 border border-slate-200 dark:border-slate-800 flex items-center justify-center gap-3">
+                <input type="checkbox" id="manualDoneA7" class="w-5 h-5 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer">
+                <label for="manualDoneA7" class="text-sm font-semibold text-slate-700 dark:text-slate-300 cursor-pointer select-none">
+                    <span>Als erledigt markieren</span>
+                </label>
+            </div>
+
+        </div>
+
+        <!-- Abgabe Info Card -->
+        <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 space-y-4">
+            <div class="flex items-center gap-3 text-onedrive-600 dark:text-onedrive-400 font-bold text-base border-b border-slate-100 dark:border-slate-800 pb-3">
+                <div class="w-8 h-8 rounded-lg bg-onedrive-50 dark:bg-onedrive-950 flex items-center justify-center text-onedrive-500">
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                </div>
+                <span>Abgabe A7</span>
+            </div>
+
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                Bearbeite <strong>alle 7 Fälle</strong> und erreiche in jedem Fall mindestens <strong>Bronze</strong>. Öffne danach im Troubleshooter die <strong>Ergebnisübersicht</strong>. Der Screenshot muss alle sieben Fälle mit einem Rang (Bronze, Silber oder Gold) zeigen. Lade diesen einen Screenshot anschließend in deinen Ordner hoch. Gültige Dateinamen für die Abgabe:
+            </p>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                <!-- Option 1: PNG -->
+                <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold text-base shrink-0 mt-0.5">
+                        <i class="fa-solid fa-file-image"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-bold text-slate-900 dark:text-slate-100 uppercase tracking-wider mb-0.5">Option 1: Direktes Bild (PNG)</h4>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Speichere die Ergebnisübersicht als Bilddatei ab: <code class="bg-slate-200 dark:bg-slate-700 px-1.5 py-0.5 rounded font-mono text-slate-800 dark:text-slate-200 font-semibold">A7.png</code></p>
+                    </div>
+                </div>
+
+                <!-- Option 2: PDF -->
+                <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-rose-500/10 text-rose-600 dark:text-rose-400 flex items-center justify-center font-bold text-base shrink-0 mt-0.5">
+                        <i class="fa-solid fa-file-pdf"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-bold text-slate-900 dark:text-slate-100 uppercase tracking-wider mb-0.5">Option 2: PDF mit Screenshot</h4>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Füge die Ergebnisübersicht in eine Seite ein und exportiere als: <code class="bg-slate-200 dark:bg-slate-700 px-1.5 py-0.5 rounded font-mono text-slate-800 dark:text-slate-200 font-semibold">A7.pdf</code></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            setupManualDoneCheckbox();
+            initManualProgress();
+        });
+
+
+        function initManualProgress() {
+            var box = document.getElementById('manualDoneA7');
+            var bar = document.getElementById('progressBar');
+            var text = document.getElementById('headerPercentText');
+            if (!box || !bar || !text) return;
+            function syncProgress() {
+                var percent = box.checked ? 100 : 0;
+                bar.style.width = percent + '%';
+                text.textContent = percent + '%';
+                text.classList.toggle('text-emerald-600', percent === 100);
+                text.classList.toggle('dark:text-emerald-400', percent === 100);
+                var panel = document.getElementById('completionPanel');
+                var hero = document.getElementById('heroCard');
+                var status = document.getElementById('completionStatus');
+                if (panel) panel.classList.toggle('is-complete', percent === 100);
+                if (hero) hero.classList.toggle('is-complete', percent === 100);
+                if (status) status.textContent = percent === 100
+                    ? 'Erledigt: 7 von 7 Fällen mit mindestens Bronze bestätigt'
+                    : 'Ich habe alle 7 Fälle mit mindestens Bronze abgeschlossen und den Screenshot der Ergebnisübersicht gespeichert';
+            }
+            syncProgress();
+            box.addEventListener('change', syncProgress);
+        }
+
+        /* Persist the "erledigt" checkbox under hw_autosave_A7.html, matching
+           the same pattern A6 uses so index.html can mark the tile done. */
+        function setupManualDoneCheckbox() {
+            var pageKey = 'hw_autosave_' + location.pathname.split('/').pop();
+            var box = document.getElementById('manualDoneA7');
+            if (!box) return;
+
+            try {
+                var saved = localStorage.getItem(pageKey);
+                if (saved) {
+                    var data = JSON.parse(saved);
+                    box.checked = !!data.manualDoneA7;
+                }
+            } catch (e) {}
+
+            box.addEventListener('change', function () {
+                localStorage.setItem(pageKey, JSON.stringify({ manualDoneA7: box.checked }));
+            });
+        }
+
+    </script>
+
+    <!-- Global Unified Student Vorname Sync & First-Time Prompt -->
+    <script>
+      (function() {
+        function getSavedVorname() {
+          return localStorage.getItem('studentVorname') || localStorage.getItem('student_vorname') || '';
+        }
+
+        function setSavedVorname(name) {
+          if (name && name.trim()) {
+            var clean = name.trim();
+            localStorage.setItem('studentVorname', clean);
+            localStorage.setItem('student_vorname', clean);
+            syncVornameInputs(clean);
+          }
+        }
+
+        function syncVornameInputs(name) {
+          var el = document.getElementById('studentName');
+          if (el && name) {
+            el.value = name;
+          }
+        }
+
+        function checkAndPromptVorname() {
+          var name = getSavedVorname();
+          var el = document.getElementById('studentName');
+          if (el && el.value && el.value.trim()) {
+            name = el.value.trim();
+            setSavedVorname(name);
+          }
+          if (!name) {
+            setTimeout(function() {
+              var entered = prompt("Willkommen! Wie lautet dein Vorname?");
+              if (entered && entered.trim()) {
+                setSavedVorname(entered);
+              }
+            }, 300);
+          } else {
+            syncVornameInputs(name);
+          }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+          var el = document.getElementById('studentName');
+          if (el) {
+            var existing = getSavedVorname();
+            if (existing) el.value = existing;
+            el.addEventListener('input', function() {
+              setSavedVorname(el.value);
+            });
+            el.addEventListener('change', function() {
+              setSavedVorname(el.value);
+            });
+          }
+          checkAndPromptVorname();
+        });
+
+        window.addEventListener('storage', function(e) {
+          if (e.key === 'studentVorname' || e.key === 'student_vorname') {
+            if (e.newValue) syncVornameInputs(e.newValue);
+          }
+        });
+      })();
+    </script><!-- Global Unified Theme & Font Size Storage & Sync -->
+    <script>
+      (function() {
+        const THEME_KEY = 'ib-theme';
+        const FONT_KEY = 'ib-font-size';
+
+        // 1. Theme Management
+        function applyTheme(theme) {
+          const isDark = (theme === 'dark');
+          if (isDark) {
+            document.documentElement.classList.add('dark');
+            document.body.setAttribute('data-theme', 'dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+            document.body.setAttribute('data-theme', 'light');
+          }
+          const themeToggle = document.getElementById('themeToggle');
+          if (themeToggle) themeToggle.checked = isDark;
+          const themeIcon = document.getElementById('themeIcon');
+          if (themeIcon) themeIcon.className = isDark ? 'fa-solid fa-sun text-amber-400 text-sm' : 'fa-solid fa-moon text-sm';
+        }
+
+        function saveTheme(theme) {
+          localStorage.setItem(THEME_KEY, theme);
+          applyTheme(theme);
+        }
+
+        function initTheme() {
+          const saved = localStorage.getItem(THEME_KEY);
+          if (saved) {
+            applyTheme(saved);
+          } else {
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            applyTheme(prefersDark ? 'dark' : 'light');
+          }
+        }
+
+        // 2. Font Size Management
+        function applyFontSize(sizeVal) {
+          const val = Number(sizeVal) || 100;
+          const scale = val / 100;
+          document.documentElement.style.setProperty('--font-scale', scale);
+          document.documentElement.style.fontSize = val + '%';
+          const slider = document.getElementById('fontSizeRange');
+          if (slider) slider.value = val;
+        }
+
+        function saveFontSize(sizeVal) {
+          const val = Number(sizeVal) || 100;
+          localStorage.setItem(FONT_KEY, val);
+          localStorage.setItem('onedrive_font_size', val);
+          applyFontSize(val);
+        }
+
+        function initFontSize() {
+          const saved = localStorage.getItem(FONT_KEY) || localStorage.getItem('onedrive_font_size') || 100;
+          applyFontSize(saved);
+        }
+
+        window.toggleDarkMode = function() {
+          const isCurrentlyDark = document.documentElement.classList.contains('dark') || document.body.getAttribute('data-theme') === 'dark';
+          saveTheme(isCurrentlyDark ? 'light' : 'dark');
+        };
+
+        window.setTheme = function(theme) {
+          saveTheme(theme);
+        };
+
+        window.setFontSize = function(val) {
+          saveFontSize(val);
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+          initTheme();
+          initFontSize();
+          
+          const themeToggle = document.getElementById('themeToggle');
+          if (themeToggle) {
+            themeToggle.addEventListener('change', function() {
+              saveTheme(themeToggle.checked ? 'dark' : 'light');
+            });
+          }
+
+          const fontSlider = document.getElementById('fontSizeRange');
+          if (fontSlider) {
+            fontSlider.addEventListener('input', function() {
+              saveFontSize(fontSlider.value);
+            });
+          }
+        });
+
+        window.addEventListener('storage', function(e) {
+          if (e.key === THEME_KEY) {
+            if (e.newValue) applyTheme(e.newValue);
+          }
+          if (e.key === FONT_KEY || e.key === 'onedrive_font_size') {
+            if (e.newValue) applyFontSize(e.newValue);
+          }
+        });
+      })();
+    </script>
+
+
+    <!-- Readonly Date Enforcer -->
+    <script>
+      (function enforceMobileReadonlyDate() {
+        function setToday() {
+          var el = document.getElementById('studentDate');
+          if (el) {
+            var d = new Date();
+            var dd = String(d.getDate()).padStart(2, '0');
+            var mm = String(d.getMonth() + 1).padStart(2, '0');
+            var yyyy = d.getFullYear();
+            var formattedDate = dd + '.' + mm + '.' + yyyy;
+            el.value = formattedDate;
+            el.readOnly = true;
+            el.setAttribute('tabindex', '-1');
+            el.style.pointerEvents = 'none';
+          }
+        }
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', setToday);
+        } else {
+          setToday();
+        }
+      })();
+    </script>
+
+</body>
+</html>

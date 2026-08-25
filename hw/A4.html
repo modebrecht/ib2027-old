@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="de" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A4: Kabel & Anschlüsse • Arbeitsblatt</title>
+    <script src="assets/js/tailwind.min.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        slate: {
+                            50: '#fafafa', 100: '#f5f5f5', 200: '#e5e5e5', 300: '#d4d4d4',
+                            400: '#b4bdca', 500: '#a3a3a3', 600: '#616161', 700: '#404040',
+                            800: '#303846', 900: '#1a1f26', 950: '#111418'
+                        },
+                        onedrive: {
+                            50: '#eff6ff', 100: '#dbeafe', 400: '#66a1ff', 500: '#0078d4',
+                            600: '#106ebe', 700: '#005a9e', 800: '#004578',
+                            900: '#00335c', 950: '#001f3f'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Segoe UI', 'Inter', 'system-ui', '-apple-system', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="assets/css/fontawesome.min.css">
+<link rel="stylesheet" href="assets/css/worksheet-common.css">
+    <style>
+        @import url('assets/fonts/inter.css');
+        * { transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease; -webkit-tap-highlight-color: transparent; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(156, 163, 175, 0.5); border-radius: 4px; }
+        
+        .perspective { perspective: 1000px; }
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+        .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+        .flip-card-back { transform: rotateY(180deg); }
+        
+        .wiggle { animation: wiggle 0.4s ease-in-out; }
+        @keyframes wiggle { 
+            0%, 100% {transform: translateX(0);} 
+            25% {transform: translateX(-5px);} 
+            75% {transform: translateX(5px);} 
+        }
+
+        .pop-success { animation: popSuccess 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, pulseGlow 1.8s infinite ease-in-out; }
+        @keyframes popSuccess { 
+            0% { transform: scale(0.95); } 
+            50% { transform: scale(1.03); } 
+            100% { transform: scale(1); } 
+        }
+        @keyframes pulseGlow { 
+            0%, 100% { box-shadow: 0 0 12px rgba(16, 185, 129, 0.4); } 
+            50% { box-shadow: 0 0 24px rgba(16, 185, 129, 0.8); } 
+        }
+
+        @keyframes bounceShort {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        .animate-bounce-short { animation: bounceShort 0.6s ease-in-out 2; }
+
+        @keyframes timerBar {
+            0% { width: 100%; }
+            100% { width: 0%; }
+        }
+    
+        .premium-progress{position:relative;overflow:hidden;background:linear-gradient(90deg,#0078d4 0%,#7c3aed 38%,#10b981 68%,#0078d4 100%);background-size:240% 100%;box-shadow:0 0 12px rgba(0,120,212,.34);animation:premiumProgressFlow 3.4s linear infinite}
+        .premium-progress::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 20%,rgba(255,255,255,.72) 48%,transparent 76%);transform:translateX(-130%);animation:premiumProgressShine 2.3s ease-in-out infinite}
+        @keyframes premiumProgressFlow{to{background-position:240% 0}}
+        @keyframes premiumProgressShine{0%,35%{transform:translateX(-130%)}75%,100%{transform:translateX(130%)}}
+        @media(prefers-reduced-motion:reduce){.premium-progress,.premium-progress::after{animation:none!important}}
+</style>
+</head>
+<body class="bg-slate-100 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-full flex flex-col font-sans antialiased">
+
+    <!-- Global Header -->
+    <header class="sticky top-0 z-40 worksheet-header no-print">
+        <div class="max-w-[1920px] w-full mx-auto px-4 sm:px-8 py-2.5 flex items-center justify-between gap-4">
+            <div class="flex items-center gap-3 min-w-0">
+                <div class="w-9 h-9 rounded-lg bg-onedrive-500 text-white flex items-center justify-center font-bold shadow-md shadow-onedrive-500/20 shrink-0">
+                    <i class="fa-solid fa-plug text-lg"></i>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div>
+                        <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Fortschritt</span>
+                        <span id="headerPercentText" class="text-sm font-extrabold text-onedrive-600 dark:text-onedrive-400">0 / 16 richtig</span>
+                    </div>
+                    <div class="relative w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center font-bold text-[10px] sm:text-xs text-slate-700 dark:text-slate-200 shrink-0 ml-1">
+                        <svg class="absolute inset-0 w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+                            <circle cx="18" cy="18" r="16" fill="none" class="stroke-slate-200 dark:stroke-slate-800" stroke-width="4"></circle>
+                            <circle id="headerSvgCircle" cx="18" cy="18" r="16" fill="none" class="stroke-emerald-500 transition-all duration-500 ease-out" stroke-width="4" stroke-dasharray="100.53" stroke-dashoffset="100.53" stroke-linecap="round"></circle>
+                        </svg>
+                        <span id="headerPercentNumber" class="relative z-10">0%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2 shrink-0">
+                <button onclick="toggleDarkMode()" title="Dunkelmodus umschalten" class="p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
+                    <i id="themeIcon" class="fa-solid fa-moon text-sm"></i>
+                </button>
+                <button id="hdrPdfBtn" onclick="handleDownloadPdf()" class="p-2 rounded-lg bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-500 transition border border-slate-200 dark:border-slate-700 opacity-60 cursor-not-allowed" title="Mindestens 13 von 16 Fragen müssen richtig beantwortet werden">
+                    <i class="fa-solid fa-file-pdf text-sm"></i>
+                </button>
+                <button onclick="confirmReset()" title="Zurücksetzen" class="p-2 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/50 rounded-lg border border-rose-200 dark:border-rose-900/50">
+                    <i class="fa-solid fa-rotate-right text-sm"></i>
+                </button>
+            </div>
+        </div>
+        <div class="w-full bg-slate-200 dark:bg-slate-800 h-1">
+            <div id="progressBar" class="premium-progress h-1 transition-all duration-500" style="width: 0%"></div>
+        </div>
+    </header>
+
+    <main class="max-w-[1920px] w-full mx-auto px-2 sm:px-6 py-4 space-y-4 flex-grow relative">
+
+        <!-- Title & Metadata Card -->
+        <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 p-3 sm:p-4 print-card">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-xl bg-onedrive-50 dark:bg-onedrive-900/40 text-onedrive-600 dark:text-onedrive-400 flex items-center justify-center text-xl font-bold border border-onedrive-100 dark:border-onedrive-800/50">
+                        <i class="fa-solid fa-plug"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900 dark:text-slate-100">A4: Kabel & Anschlüsse</h2>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Informatische Bildung • IT-Hardware • A4</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Student Metadata -->
+            <div class="hidden sm:grid sm:grid-cols-3 gap-4 mt-4 no-print">
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-500 dark:text-slate-400 mb-1">
+                        <i class="fa-solid fa-user mr-1 text-onedrive-500"></i> Vorname
+                    </label>
+                    <input type="text" id="studentName" readonly tabindex="-1" style="pointer-events: none;" class="w-full px-3.5 py-2 text-sm bg-slate-100 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl font-medium text-slate-500 dark:text-slate-400 opacity-90 cursor-not-allowed" value="Gast">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-500 dark:text-slate-400 mb-1">
+                        <i class="fa-solid fa-users mr-1 text-onedrive-500"></i> Klasse
+                    </label>
+                    <input type="text" id="studentClass" readonly tabindex="-1" style="pointer-events: none;" class="w-full px-3.5 py-2 text-sm bg-slate-100 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl font-medium text-slate-500 dark:text-slate-400 opacity-90 cursor-not-allowed" value="B24">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-500 dark:text-slate-400 mb-1">
+                        <i class="fa-solid fa-calendar mr-1 text-onedrive-500"></i> Datum
+                    </label>
+                    <input type="text" id="studentDate" readonly tabindex="-1" style="pointer-events: none;" class="w-full px-3.5 py-2 text-sm bg-slate-100 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl font-medium text-slate-500 dark:text-slate-400 opacity-90 cursor-not-allowed">
+                </div>
+            </div>
+        </div>
+
+        <!-- Controls & Live Stats Card -->
+        <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 p-2 sm:p-3 space-y-2 no-print">
+            <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+                
+                <!-- Action Buttons (Modes) -->
+                <div class="flex flex-wrap items-center justify-center md:justify-start gap-2">
+                    <div class="flex gap-1 p-1 bg-slate-100 dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 shadow-inner overflow-x-auto max-w-full">
+                        <button id="btnStudy" onclick="switchMode('study')" class="whitespace-nowrap px-4 py-2 text-sm font-bold rounded-lg transition-all bg-onedrive-500 text-white shadow-md cursor-default">
+                            <i class="fa-solid fa-book-open mr-1"></i> Lern-Modus
+                        </button>
+                        <button id="btnQuiz" onclick="switchMode('quiz')" class="whitespace-nowrap px-4 py-2 text-sm font-bold rounded-lg transition-all text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer">
+                            <i class="fa-solid fa-play mr-1"></i> Praxis-Test
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Right: Stats Bar -->
+                <div class="grid grid-cols-4 gap-2 text-center flex-grow max-w-lg">
+                    <div class="p-2 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 shadow-xs">
+                        <span class="block text-[9px] font-extrabold uppercase tracking-wider text-slate-400 dark:text-slate-500">Fragen</span>
+                        <span id="statFragen" class="text-sm sm:text-base font-black text-slate-700 dark:text-slate-200">0/16</span>
+                    </div>
+                    <div class="p-2 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 shadow-xs">
+                        <span class="block text-[9px] font-extrabold uppercase tracking-wider text-slate-400 dark:text-slate-500">Fehler</span>
+                        <span id="statFehler" class="text-sm sm:text-base font-black text-red-500">0</span>
+                    </div>
+                    <div class="p-2 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 shadow-xs">
+                        <span class="block text-[9px] font-extrabold uppercase tracking-wider text-slate-400 dark:text-slate-500">Zeit</span>
+                        <span id="statZeit" class="text-sm sm:text-base font-black text-slate-700 dark:text-slate-200 font-mono">00:00</span>
+                    </div>
+                    <div class="p-2 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 shadow-xs">
+                        <span class="block text-[9px] font-extrabold uppercase tracking-wider text-slate-400 dark:text-slate-500">Punkte</span>
+                        <span id="statPunkte" class="text-sm sm:text-base font-black text-onedrive-600 dark:text-onedrive-400">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== STUDY MODE ==================== -->
+        <div id="studyMode" class="flex flex-col gap-6 transition-opacity duration-300">
+            <div id="flashcardGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+
+        <!-- ==================== QUIZ MODE ==================== -->
+        <div id="quizMode" class="hidden flex-col gap-4 transition-opacity duration-300">
+            <div class="flex flex-col lg:flex-row items-start gap-6 lg:gap-8 w-full max-w-7xl mx-auto">
+                
+                <!-- Left: Quiz Scenario Image & Title -->
+                <div class="w-full lg:w-1/2 shrink-0 flex flex-col gap-4 sticky top-24">
+                    <h2 id="scenarioTitle" class="text-xl md:text-2xl font-bold text-left text-onedrive-600 dark:text-onedrive-400 leading-snug">Szenario wird geladen...</h2>
+                    <div class="w-full aspect-video rounded-2xl overflow-hidden shadow-lg">
+                        <img id="quizImageEl" src="" alt="Szenario Bild" class="w-full h-full object-cover">
+                    </div>
+                </div>
+
+                <!-- Right: Quiz Options -->
+                <div id="quizOptions" class="w-full lg:w-1/2 grid grid-cols-2 gap-4">
+                    <!-- Buttons injected via JS -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Success Modal -->
+    <div id="modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 max-w-md w-full p-6 space-y-4 text-center">
+            
+            <div id="modalIconWrapper" class="w-16 h-16 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-3xl font-bold mx-auto mb-2 shadow-inner">
+                <i id="modalIcon" class="fa-solid fa-award"></i>
+            </div>
+            
+            <h3 id="modalTitle" class="text-2xl font-extrabold text-slate-900 dark:text-slate-100">Test bestanden! 🎉</h3>
+            <p id="modalSubtitle" class="text-sm text-slate-500 dark:text-slate-400">Du hast den Praxis-Test erfolgreich absolviert.</p>
+            
+            <div class="grid grid-cols-3 gap-2 mt-4 text-left bg-slate-50 dark:bg-slate-800 p-4 rounded-xl border border-slate-100 dark:border-slate-700">
+                <div>
+                    <span class="block text-[10px] uppercase font-bold text-slate-400">Punkte</span>
+                    <span id="modalPoints" class="text-lg font-black text-onedrive-600">0</span>
+                </div>
+                <div>
+                    <span class="block text-[10px] uppercase font-bold text-slate-400">Fehler</span>
+                    <span id="modalErrors" class="text-lg font-black text-red-500">0</span>
+                </div>
+                <div>
+                    <span class="block text-[10px] uppercase font-bold text-slate-400">Zeit</span>
+                    <span id="modalTime" class="text-lg font-black text-slate-700 dark:text-slate-200">00:00</span>
+                </div>
+            </div>
+
+            <!-- Error List Container -->
+            <div id="modalErrorList" class="text-left text-xs text-slate-600 dark:text-slate-400 max-h-32 overflow-y-auto space-y-1 bg-rose-50 dark:bg-rose-950/30 p-3 rounded-lg border border-rose-100 dark:border-rose-900/50 mt-4 hidden">
+                <!-- Errors injected via JS -->
+            </div>
+
+            <div class="flex gap-2 pt-4 justify-center">
+                <button id="modalPdfBtn" onclick="handleDownloadPdf()" class="px-5 py-3 text-sm font-bold rounded-xl bg-onedrive-500 text-white hover:bg-onedrive-600 transition shadow-md w-full">
+                    📄 PDF Zertifikat
+                </button>
+            </div>
+            <div class="flex gap-2 pt-1">
+                <button onclick="document.getElementById('modal').classList.add('hidden'); switchMode('study')" class="flex-1 py-3 text-sm font-semibold rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition">
+                    Lernen
+                </button>
+                <button onclick="document.getElementById('modal').classList.add('hidden'); startQuiz()" class="flex-1 py-3 text-sm font-semibold rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition">
+                    Nochmal Testen
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const IODATA = [
+            { id: 'usb-a', name: 'USB-A', desc: 'Universelle, rechteckige Schnittstelle für Maus, Tastatur, Sticks.', img: 'assets/usb_a_cable_1786198032413.webp', scenarioText: 'Du möchtest eine externe Festplatte an deinen PC anschließen und Daten übertragen.', scenarioImg: 'assets/scenario_usb_a_1786199030831.webp' },
+            { id: 'usb-c', name: 'USB-C', desc: 'Moderner, kompakter Anschluss. Beidseitig steckbar (für Daten/Strom).', img: 'assets/usb_c_cable_1786198043571.webp', scenarioText: 'Du möchtest dein aktuelles Smartphone aufladen.', scenarioImg: 'assets/scenario_usb_c_1786222003950.jpg' },
+            { id: 'hdmi', name: 'HDMI', desc: 'Weit verbreiteter digitaler Anschluss für Monitor & Fernseher (Bild & Ton).', img: 'assets/hdmi_cable_1786198053921.webp', scenarioText: 'Du möchtest deine Spielekonsole mit dem Fernseher verbinden und Bild sowie Ton übertragen.', scenarioImg: 'assets/hq-hdmi-tv.webp' },
+            { id: 'dp', name: 'DisplayPort', desc: 'Moderne Monitor-Schnittstelle, besonders oft im PC-Gaming genutzt.', img: 'assets/dp_cable_1786198067133.webp', scenarioText: 'Der HDMI-Anschluss deines Desktop-PCs ist bereits belegt. Du möchtest einen zweiten modernen Monitor digital anschließen.', scenarioImg: 'assets/scenario_dp_1786222022031.jpg' },
+            { id: 'rj45', name: 'LAN (RJ45)', desc: 'Netzwerkanschluss für das kabelgebundene Internet/Intranet. Hat meist einen kleinen Clip.', img: 'assets/lan_cable_1786198076546.webp', scenarioText: 'Das WLAN ist zu langsam. Du möchtest deinen PC per Kabel an den Router anschließen.', scenarioImg: 'assets/scenario_lan_1786222030696.jpg' },
+            { id: 'audio', name: 'Audio (3.5mm)', desc: 'Runder analoger Klinkenanschluss für Lautsprecher oder Kopfhörer.', img: 'assets/audio_cable_1786198086224.webp', scenarioText: 'Du möchtest deine kabelgebundenen PC-Lautsprecher anschließen.', scenarioImg: 'assets/scenario_audio_1786222040958.jpg' },
+            { id: 'vga', name: 'VGA', desc: 'Alter, analoger Videoanschluss (blau) mit 15 kleinen Pins und Schrauben.', img: 'assets/vga_cable_1786198097423.webp', scenarioText: 'Du sollst ein Referat halten, aber in der Schule steht nur ein alter blauer Beamer-Anschluss zur Verfügung.', scenarioImg: 'assets/scenario_vga_1786199021345.webp' },
+            { id: 'dvi', name: 'DVI', desc: 'Älterer digitaler Bildanschluss (meist weiß), Vorgänger von HDMI.', img: 'assets/dvi_cable_1786198107586.webp', scenarioText: 'Du möchtest einen älteren Flachbildschirm mit einem breiten weißen Anschluss verbinden.', scenarioImg: 'assets/hq-dvi.webp' },
+            { id: 'bt-dongle', name: 'Bluetooth Dongle', desc: 'Ein winziger USB-Empfänger für kabellose Geräte.', img: 'assets/bluetooth_dongle_1786198654619.webp', scenarioText: 'Du möchtest eine Bluetooth-Maus verwenden, aber dein Desktop-PC hat kein eingebautes Bluetooth.', scenarioImg: 'assets/scenario_bt_dongle_1786222064317.jpg' },
+            { id: 'power', name: 'Stromkabel (C13)', desc: 'Verbindet das PC-Netzteil mit der Steckdose.', img: 'assets/power_cable_1786198664189.webp', scenarioText: 'Dein PC ist fertig aufgebaut, aber das Netzteil ist noch nicht mit der Steckdose verbunden.', scenarioImg: 'assets/scenario_power_1786222072812.jpg' },
+            { id: 'usb-b', name: 'USB-B (Drucker)', desc: 'Ein quadratischer USB-Anschluss, häufig für Drucker.', img: 'assets/usb_b_cable_1786198671715.webp', scenarioText: 'Du möchtest einen Drucker direkt per USB-Kabel mit dem PC verbinden.', scenarioImg: 'assets/hq-usb-b.webp' },
+            { id: 'micro-usb', name: 'Micro-USB', desc: 'Älterer USB-Anschluss, typisch für Powerbanks, E-Reader und ältere Smartphones.', img: 'assets/img_micro_usb_1786222089308.jpg', scenarioText: 'Du möchtest deine ältere Powerbank aufladen.', scenarioImg: 'assets/Micro-usb-pb.jpg' },
+            { id: 'lightning', name: 'Apple Lightning', desc: 'Proprietärer Anschluss von Apple für ältere iPhones und iPads.', img: 'assets/img_lightning_1786222112950.jpg', scenarioText: 'Du musst dein iPhone 13 (oder älter) aufladen.', scenarioImg: 'assets/scenario_lightning_1786222121910.jpg' },
+            { id: 'sd-card', name: 'SD-Karte', desc: 'Ein Speichermedium, das oft in digitalen Kameras verwendet wird.', img: 'assets/sd_card_item.jpg', scenarioText: 'Du nimmst die Speicherkarte aus deiner Digitalkamera und möchtest die Fotos auf den PC übertragen.', scenarioImg: 'assets/sd_card_scenario.jpg' },
+            { id: 'wlan-antenne', name: 'WLAN Antenne', desc: 'Wird oft hinten an den PC geschraubt, um WLAN-Empfang zu ermöglichen.', img: 'assets/wlan_antenna_item.jpg', scenarioText: 'Dein Desktop-PC hat WLAN eingebaut, aber die Verbindung ist sehr schwach. Du möchtest den WLAN-Empfang verbessern.', scenarioImg: 'assets/wlan_antenna_scenario.jpg' },
+            { id: 'usb-hub', name: 'USB-Hub', desc: 'Ein Verteiler, der aus einem USB-Anschluss mehrere macht.', img: 'assets/usb_hub_item.jpg', scenarioText: 'Dein Laptop hat nur einen freien USB-Anschluss, aber du möchtest drei USB-Geräte gleichzeitig anschließen.', scenarioImg: 'assets/usb_hub_scenario.jpg' }
+        ];
+
+        const DISTRACTORS = {
+            'usb-a': ['hdmi', 'rj45', 'audio'],
+            'usb-c': ['power', 'sd-card', 'audio'],
+            'hdmi': ['dp', 'vga', 'rj45'],
+            'dp': ['vga', 'audio', 'rj45'],
+            'rj45': ['wlan-antenne', 'usb-a', 'hdmi'],
+            'audio': ['hdmi', 'bt-dongle', 'rj45'],
+            'vga': ['dvi', 'hdmi', 'dp'],
+            'dvi': ['vga', 'hdmi', 'dp'],
+            'bt-dongle': ['wlan-antenne', 'usb-hub', 'rj45'],
+            'power': ['rj45', 'usb-b', 'hdmi'],
+            'usb-b': ['hdmi', 'dp', 'audio'],
+            'micro-usb': ['lightning', 'usb-b', 'audio'],
+            'lightning': ['usb-c', 'micro-usb', 'audio'],
+            'sd-card': ['hdmi', 'audio', 'wlan-antenne'],
+            'wlan-antenne': ['bt-dongle', 'rj45', 'usb-hub'],
+            'usb-hub': ['usb-a', 'bt-dongle', 'rj45']
+        };
+
+        const TOTAL_QUESTIONS = 16;
+        const MIN_CORRECT_TO_PASS = 13; // von 16 (max. 3 Fehler erlaubt)
+
+        let timerInterval, startTime;
+        let quizQueue = [];
+        let currentQuestion = null;
+        let errorCount = 0;
+        let correctCount = 0;
+        let errorDetails = [];
+        let quizActive = false;
+        let finalScore = 0;
+        let hasPassed = localStorage.getItem('a4_passed') === 'true';
+
+        // Dark Mode
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.setItem('ib-theme', isDark ? 'dark' : 'light');
+            document.getElementById('themeIcon').className = isDark ? 'fa-solid fa-sun text-amber-400 text-sm' : 'fa-solid fa-moon text-sm';
+        }
+
+        // Student Data Sync
+        function syncInputs(){
+            const sName = localStorage.getItem('studentVorname') || localStorage.getItem('student_vorname') || '';
+
+            document.getElementById('studentName').value = sName || 'Gast';
+            document.getElementById('studentClass').value = 'B24';
+            document.getElementById('studentDate').value = new Date().toLocaleDateString('de-CH');
+
+            // Anders als bei den anderen Arbeitsblättern fehlte hier bisher der Erstbesuch-Prompt:
+            // ohne gespeicherten Vornamen blieb das Feld für immer auf "Gast" stehen.
+            if (!sName) {
+                setTimeout(() => {
+                    const entered = prompt("Willkommen! Wie lautet dein Vorname?");
+                    if (entered && entered.trim()) {
+                        const clean = entered.trim();
+                        localStorage.setItem('studentVorname', clean);
+                        localStorage.setItem('student_vorname', clean);
+                        document.getElementById('studentName').value = clean;
+                    }
+                }, 300);
+            }
+        }
+
+        // Utility
+        function formatTime(ms) {
+            let s = Math.floor(ms / 1000);
+            return (s < 10 ? '0' : '') + s + 's';
+        }
+        function shuffle(a) {
+            for (let i = a.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [a[i], a[j]] = [a[j], a[i]];
+            }
+            return a;
+        }
+
+        function updateProgress() {
+            const percent = Math.round((correctCount / TOTAL_QUESTIONS) * 100);
+            document.getElementById('headerPercentText').textContent = `${correctCount} / ${TOTAL_QUESTIONS} richtig`;
+            document.getElementById('headerPercentNumber').textContent = `${percent}%`;
+            document.getElementById('headerSvgCircle').style.strokeDashoffset = String(100.53 * (1 - percent / 100));
+            document.getElementById('progressBar').style.width = `${percent}%`;
+
+            if(hasPassed) {
+                const pdfBtn = document.getElementById('hdrPdfBtn');
+                pdfBtn.classList.remove('opacity-60', 'cursor-not-allowed', 'text-slate-400');
+                pdfBtn.classList.add('text-onedrive-500', 'border-onedrive-500', 'bg-onedrive-50', 'hover:bg-onedrive-100');
+                pdfBtn.title = "PDF Zertifikat generieren";
+            }
+        }
+
+        // Modes
+        function switchMode(mode) {
+            const btnS = document.getElementById('btnStudy');
+            const btnQ = document.getElementById('btnQuiz');
+            const pnlS = document.getElementById('studyMode');
+            const pnlQ = document.getElementById('quizMode');
+
+            if(mode === 'study') {
+                quizActive = false;
+                clearInterval(timerInterval);
+                btnS.className = 'whitespace-nowrap px-4 py-2 text-sm font-bold rounded-lg transition-all bg-onedrive-500 text-white shadow-md cursor-default';
+                btnQ.className = 'whitespace-nowrap px-4 py-2 text-sm font-bold rounded-lg transition-all text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer';
+                pnlQ.classList.add('hidden');
+                pnlS.classList.remove('hidden');
+            } else {
+                btnQ.className = 'whitespace-nowrap px-4 py-2 text-sm font-bold rounded-lg transition-all bg-onedrive-500 text-white shadow-md cursor-default';
+                btnS.className = 'whitespace-nowrap px-4 py-2 text-sm font-bold rounded-lg transition-all text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer';
+                pnlS.classList.add('hidden');
+                pnlQ.classList.remove('hidden');
+                startQuiz();
+            }
+        }
+
+        function renderStudyMode() {
+            const grid = document.getElementById('flashcardGrid');
+            grid.innerHTML = '';
+            IODATA.forEach((item, index) => {
+                grid.innerHTML += `
+                    <div class="perspective h-64 cursor-pointer group" onclick="this.querySelector('.flip-card').classList.toggle('flipped')">
+                        <div class="flip-card w-full h-full">
+                            <div class="flip-card-inner rounded-2xl shadow-md border border-slate-200 dark:border-slate-700 group-hover:shadow-xl transition-shadow">
+                                <div class="flip-card-front bg-white dark:bg-slate-800 rounded-2xl overflow-hidden flex flex-col absolute inset-0 border-4 border-white dark:border-slate-800">
+                                    <img src="${item.img}" class="w-full h-full object-cover rounded-xl">
+                                    <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-900/80 to-transparent p-4 flex justify-end items-end rounded-b-xl">
+                                        <i class="fa-solid fa-rotate text-white/70"></i>
+                                    </div>
+                                </div>
+                                <div class="flip-card-back bg-onedrive-600 dark:bg-onedrive-700 text-white rounded-2xl p-6 flex flex-col justify-center items-center text-center absolute inset-0 overflow-hidden">
+                                    <div class="absolute top-4 right-4"><i class="fa-solid fa-rotate text-white/50"></i></div>
+                                    <h3 class="text-2xl font-black mb-3">${item.name}</h3>
+                                    <p class="text-sm text-onedrive-100">${item.desc}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>`;
+            });
+        }
+
+        function startQuiz() {
+            quizActive = true;
+            errorCount = 0;
+            correctCount = 0;
+            errorDetails = [];
+            quizQueue = shuffle([...IODATA]);
+            
+            document.getElementById('statFragen').textContent = '0/16';
+            document.getElementById('statFehler').textContent = 0;
+            document.getElementById('statPunkte').textContent = 0;
+            updateProgress();
+            
+            clearInterval(timerInterval);
+            startTime = performance.now();
+            timerInterval = setInterval(() => {
+                if(quizActive) {
+                    document.getElementById('statZeit').textContent = formatTime(performance.now() - startTime);
+                }
+            }, 250);
+            
+            nextQuestion();
+        }
+
+        function nextQuestion() {
+            if(quizQueue.length === 0) {
+                endQuiz();
+                return;
+            }
+            
+            currentQuestion = quizQueue.shift();
+            const currentNum = IODATA.length - quizQueue.length;
+            document.getElementById('statFragen').textContent = `${currentNum}/16`;
+            
+            document.getElementById('scenarioTitle').textContent = currentQuestion.scenarioText;
+            document.getElementById('quizImageEl').src = currentQuestion.scenarioImg;
+            
+            const distractorIds = DISTRACTORS[currentQuestion.id] || [];
+            const wrongOptions = distractorIds
+                .map(id => IODATA.find(item => item.id === id))
+                .filter(Boolean);
+            const allOptions = shuffle([currentQuestion, ...wrongOptions]);
+            
+            const optionsContainer = document.getElementById('quizOptions');
+            optionsContainer.innerHTML = '';
+            
+            allOptions.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'relative w-full aspect-[4/3] rounded-2xl overflow-hidden shadow-sm border-4 border-white dark:border-slate-800 hover:border-onedrive-500 dark:hover:border-onedrive-500 hover:shadow-lg transition-all group';
+                btn.dataset.id = opt.id;
+                btn.innerHTML = `
+                    <img src="${opt.img}" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent p-3 sm:p-4 flex justify-center items-end h-2/3 opacity-90 group-hover:opacity-100 transition-opacity">
+                        <span class="text-white font-bold text-base sm:text-lg drop-shadow-md text-center leading-tight">${opt.name}</span>
+                    </div>
+                `;
+                btn.onclick = () => handleAnswer(btn, opt.id === currentQuestion.id, opt.name);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function handleAnswer(btnElement, isCorrect, clickedName) {
+            const allBtns = document.getElementById('quizOptions').querySelectorAll('button');
+            allBtns.forEach(b => {
+                b.disabled = true;
+                b.style.pointerEvents = 'none';
+            });
+
+            if(isCorrect) {
+                correctCount++;
+                updateProgress();
+                btnElement.classList.add('border-emerald-500', 'ring-4', 'ring-emerald-500/50', 'pop-success', 'z-10');
+                
+                const checkOverlay = document.createElement('div');
+                checkOverlay.className = 'absolute inset-0 bg-emerald-950/60 backdrop-blur-[2px] flex flex-col items-center justify-center gap-2.5 z-20 p-2 text-center transition-all duration-300';
+                checkOverlay.innerHTML = `
+                    <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-emerald-500 text-white flex items-center justify-center text-3xl shadow-xl animate-bounce-short">
+                        <i class="fa-solid fa-check"></i>
+                    </div>
+                    <span class="bg-emerald-600 text-white font-black text-xs sm:text-sm px-4 py-1.5 rounded-full shadow-lg border border-emerald-400/40 tracking-wide">
+                        Richtig! ✨
+                    </span>
+                    <div class="w-3/4 h-1.5 bg-emerald-950/80 rounded-full overflow-hidden mt-1 border border-emerald-500/30">
+                        <div class="h-full bg-emerald-400 rounded-full transition-all duration-[2000ms] ease-linear w-full" style="animation: timerBar 2s linear forwards;"></div>
+                    </div>
+                `;
+                btnElement.appendChild(checkOverlay);
+                
+                setTimeout(nextQuestion, 2000);
+            } else {
+                errorCount++;
+                // Track specific error for the modal and PDF
+                errorDetails.push(`<span class="text-[10px] text-slate-500 block uppercase tracking-wider mt-1">Szenario: "${currentQuestion.scenarioText}"</span> Du hast <b>${clickedName}</b> gewählt, gesucht war aber <b>${currentQuestion.name}</b>.`);
+                
+                document.getElementById('statFehler').textContent = errorCount;
+                btnElement.classList.add('border-rose-500', 'ring-4', 'ring-rose-500/50', 'wiggle', 'z-10');
+                
+                const errOverlay = document.createElement('div');
+                errOverlay.className = 'absolute inset-0 bg-rose-950/60 backdrop-blur-[2px] flex flex-col items-center justify-center gap-2 z-20 p-2 text-center';
+                errOverlay.innerHTML = `
+                    <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-rose-600 text-white flex items-center justify-center text-2xl shadow-xl">
+                        <i class="fa-solid fa-xmark"></i>
+                    </div>
+                    <span class="bg-rose-700 text-white font-extrabold text-xs sm:text-sm px-3.5 py-1 rounded-full shadow-md border border-rose-400/30">
+                        Falsch
+                    </span>
+                `;
+                btnElement.appendChild(errOverlay);
+                
+                // Highlight the correct option
+                const correctBtn = Array.from(allBtns).find(b => b.dataset.id === currentQuestion.id);
+                if(correctBtn) {
+                    correctBtn.classList.add('border-emerald-500', 'ring-4', 'ring-emerald-500/50', 'pop-success', 'z-10');
+                    const correctOverlay = document.createElement('div');
+                    correctOverlay.className = 'absolute inset-0 bg-emerald-950/60 backdrop-blur-[2px] flex flex-col items-center justify-center gap-2 z-20 p-2 text-center';
+                    correctOverlay.innerHTML = `
+                        <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-emerald-500 text-white flex items-center justify-center text-2xl shadow-xl">
+                            <i class="fa-solid fa-check"></i>
+                        </div>
+                        <span class="bg-emerald-600 text-white font-extrabold text-xs sm:text-sm px-3.5 py-1 rounded-full shadow-lg border border-emerald-400/40">
+                            Richtiges Kabel ✓
+                        </span>
+                    `;
+                    correctBtn.appendChild(correctOverlay);
+                }
+                
+                setTimeout(nextQuestion, 2000);
+            }
+        }
+
+        function endQuiz() {
+            quizActive = false;
+            clearInterval(timerInterval);
+            const elapsed = performance.now() - startTime;
+            
+            const correctAnswers = correctCount;
+            const passedThisRun = (correctAnswers >= MIN_CORRECT_TO_PASS);
+
+            // Score Logic (Max 1600, -50 per error, -time bonus)
+            let base = 1600;
+            let errPenalty = errorCount * 100;
+            let timePenalty = Math.max(0, Math.floor(elapsed / 1000) - 30) * 5; // Penalty after 30s
+            finalScore = Math.max(0, base - errPenalty - timePenalty);
+
+            document.getElementById('statPunkte').textContent = finalScore;
+
+            if(passedThisRun) {
+                hasPassed = true;
+                localStorage.setItem('a4_passed', 'true');
+                localStorage.setItem('onedrive_a4_worksheet_8sek', JSON.stringify({ percent: 100 }));
+                localStorage.setItem('a4_last_score', finalScore);
+                localStorage.setItem('a4_last_errors', errorCount);
+                localStorage.setItem('a4_last_time', formatTime(elapsed));
+                localStorage.setItem('a4_last_errdetails', JSON.stringify(errorDetails));
+                updateProgress();
+
+                document.getElementById('modalTitle').textContent = errorCount === 0 ? "Test fehlerfrei bestanden! 🎉" : "Test bestanden! 🎉";
+                document.getElementById('modalSubtitle').textContent = `${correctAnswers} von ${TOTAL_QUESTIONS} Fragen richtig beantwortet.`;
+                document.getElementById('modalIcon').className = "fa-solid fa-award";
+                document.getElementById('modalIconWrapper').className = "w-16 h-16 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-3xl font-bold mx-auto mb-2 shadow-inner";
+                document.getElementById('modalPdfBtn').classList.remove('hidden');
+            } else {
+                document.getElementById('modalTitle').textContent = "Nicht bestanden";
+                document.getElementById('modalSubtitle').textContent = `Für das Zertifikat müssen mindestens ${MIN_CORRECT_TO_PASS} von ${TOTAL_QUESTIONS} Fragen richtig beantwortet werden (Du hattest ${errorCount} Fehler, nur ${correctAnswers} richtig).`;
+                document.getElementById('modalIcon').className = "fa-solid fa-xmark";
+                document.getElementById('modalIconWrapper').className = "w-16 h-16 rounded-full bg-rose-100 dark:bg-rose-950 text-rose-600 dark:text-rose-400 flex items-center justify-center text-3xl font-bold mx-auto mb-2 shadow-inner";
+                document.getElementById('modalPdfBtn').classList.add('hidden');
+            }
+
+            document.getElementById('modalPoints').textContent = finalScore;
+            document.getElementById('modalErrors').textContent = errorCount;
+            document.getElementById('modalTime').textContent = formatTime(elapsed);
+            
+            // Populate Error List in Modal
+            const errorListEl = document.getElementById('modalErrorList');
+            if(errorDetails.length > 0) {
+                errorListEl.classList.remove('hidden');
+                errorListEl.innerHTML = '<div class="font-bold text-rose-600 dark:text-rose-400 mb-2">Deine Fehler:</div>' + 
+                                        errorDetails.map(e => `<div class="mb-3 border-l-2 border-rose-300 dark:border-rose-700 pl-2">❌ ${e}</div>`).join('');
+            } else {
+                errorListEl.classList.add('hidden');
+            }
+
+            document.getElementById('modal').classList.remove('hidden');
+        }
+
+        function confirmReset() {
+            if(confirm('Möchtest du deinen Fortschritt für A4 zurücksetzen?')) {
+                localStorage.removeItem('a4_passed');
+                localStorage.removeItem('onedrive_a4_worksheet_8sek');
+                localStorage.removeItem('a4_last_score');
+                localStorage.removeItem('a4_last_errors');
+                localStorage.removeItem('a4_last_time');
+                localStorage.removeItem('a4_last_errdetails');
+                location.reload();
+            }
+        }
+
+        function handleDownloadPdf() {
+            if(!hasPassed) {
+                alert(`Bitte schließe zuerst den Praxis-Test mit mindestens ${MIN_CORRECT_TO_PASS} von ${TOTAL_QUESTIONS} richtigen Antworten ab.`);
+                return;
+            }
+
+            // Load from storage if available, else use current vars (if they just finished)
+            const savedScore = localStorage.getItem('a4_last_score') || finalScore;
+            const savedErrors = localStorage.getItem('a4_last_errors') || errorCount;
+            const savedTime = localStorage.getItem('a4_last_time') || document.getElementById('statZeit').textContent;
+            let details = errorDetails;
+            if (localStorage.getItem('a4_last_errdetails')) {
+                try { details = JSON.parse(localStorage.getItem('a4_last_errdetails')); } catch(e) {}
+            }
+
+            const savedCorrect = TOTAL_QUESTIONS - savedErrors;
+
+            const blocks = [
+                {
+                    type: 'stats',
+                    items: [
+                        { label: 'Richtige Antworten', value: savedCorrect + ' / ' + TOTAL_QUESTIONS, color: '#059669' },
+                        { label: 'Benötigte Zeit', value: savedTime },
+                        { label: 'Punkte', value: String(savedScore) }
+                    ]
+                }
+            ];
+
+            if (details.length > 0) {
+                blocks.push({
+                    type: 'text',
+                    heading: '🔍 Fehleranalyse',
+                    lines: details.map(e => e.replace(/<[^>]+>/g, '')) // HTML-Tags aus den Fehlertexten entfernen
+                });
+            } else {
+                blocks.push({
+                    type: 'summary',
+                    label: '⭐ Fehlerfreie Leistung!',
+                    note: 'Es wurden alle Kabel auf Anhieb korrekt zugeordnet.',
+                    value: ''
+                });
+            }
+
+            document.getElementById('modal').classList.add('hidden');
+
+            downloadCertificatePDF({
+                icon: '🔌',
+                title: 'Leistungsnachweis A4 • Kabel & Anschlüsse',
+                subtitle: 'Informatische Bildung • IT-Hardware • A4',
+                badge: '✅ Praxis-Test bestanden (' + savedCorrect + '/' + TOTAL_QUESTIONS + ')',
+                badgeOk: true,
+                filenamePrefix: 'A4_Kabel_Anschluesse',
+                blocks: blocks
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('ib-theme') || 'light';
+            if (savedTheme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('themeIcon').className = 'fa-solid fa-sun text-amber-400 text-sm';
+            }
+
+            if (hasPassed) {
+                const savedErrors = Number.parseInt(localStorage.getItem('a4_last_errors'), 10);
+                correctCount = Number.isInteger(savedErrors)
+                    ? Math.max(0, Math.min(TOTAL_QUESTIONS, TOTAL_QUESTIONS - savedErrors))
+                    : TOTAL_QUESTIONS;
+            }
+
+            syncInputs();
+            updateProgress();
+            renderStudyMode();
+        });
+    </script>
+    <script src="assets/js/pdf-engine.js"></script>
+</body>
+</html>
+
+<!-- 
+TODO: Generate 19 missing images for A4 scenarios and new cables once quota resets.
+
+Prompt for AI Assistant:
+"Please search A4.html for all 'placehold.co' URLs and replace them with real AI-generated images using the generate_image tool. 
+There are 5 main item images (Micro-USB, Lightning, SD-Karte, WLAN-Antenne, USB-Hub) and 14 scenario background images.
+- For the items: Generate clean, studio-lit macro photography on a white background.
+- For the scenarios: Generate realistic, high-quality, modern office/home tech environments matching the scenario text exactly."
+-->

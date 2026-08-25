@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="de" class="h-full">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>A5: Schnittstellen & PC-Kabel</title>
+<script src="assets/js/tailwind.min.js"></script>
+<script>
+tailwind.config={darkMode:'class',theme:{extend:{colors:{onedrive:{500:'#0078d4',600:'#106ebe',700:'#005a9e'}},fontFamily:{sans:['Segoe UI','Inter','system-ui','sans-serif']}}}};
+</script>
+<link rel="stylesheet" href="assets/css/fontawesome.min.css">
+<link rel="stylesheet" href="assets/css/worksheet-common.css">
+<style>
+@import url('assets/fonts/inter.css');
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{font-family:'Segoe UI','Inter',system-ui,sans-serif}
+.card{background:white;border:1px solid #e2e8f0;border-radius:1rem}
+.dark .card{background:#0f172a;border-color:#334155}
+.field{width:100%;border:1px solid #cbd5e1;border-radius:.75rem;padding:.65rem .75rem;background:#fff}
+.dark .field{background:#1e293b;border-color:#475569;color:#f8fafc}
+.btn{border-radius:.75rem;padding:.6rem .85rem;font-weight:700}
+@media(max-width:640px){.mobile-stack{grid-template-columns:1fr!important}}
+
+        .premium-progress{position:relative;overflow:hidden;background:linear-gradient(90deg,#0078d4 0%,#7c3aed 38%,#10b981 68%,#0078d4 100%);background-size:240% 100%;box-shadow:0 0 12px rgba(0,120,212,.34);animation:premiumProgressFlow 3.4s linear infinite}
+        .premium-progress::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 20%,rgba(255,255,255,.72) 48%,transparent 76%);transform:translateX(-130%);animation:premiumProgressShine 2.3s ease-in-out infinite}
+        @keyframes premiumProgressFlow{to{background-position:240% 0}}
+        @keyframes premiumProgressShine{0%,35%{transform:translateX(-130%)}75%,100%{transform:translateX(130%)}}
+        @media(prefers-reduced-motion:reduce){.premium-progress,.premium-progress::after,.connector-card,.connector-image,.intro-hero-icon,.connector-visual::before,.connector-visual::after,.carousel-nav{animation:none!important}}
+
+/* Premium carousel */
+body{background-image:radial-gradient(circle at 12% 8%,rgba(0,120,212,.10),transparent 28%),radial-gradient(circle at 88% 18%,rgba(124,58,237,.08),transparent 30%)}
+.card{position:relative;background:linear-gradient(145deg,rgba(255,255,255,.96),rgba(248,250,252,.9));border:1px solid rgba(226,232,240,.95);border-radius:1.5rem;box-shadow:0 24px 60px rgba(15,23,42,.10);backdrop-filter:blur(14px)}
+.dark .card{background:linear-gradient(145deg,rgba(30,41,59,.94),rgba(15,23,42,.96));border-color:rgba(51,65,85,.92);box-shadow:0 26px 64px rgba(0,0,0,.30)}
+.connector-card{transform-origin:50% 45%;will-change:transform,opacity}
+.connector-card.card-enter-next{animation:cardEnterNext .48s cubic-bezier(.2,.9,.2,1)}
+.connector-card.card-enter-prev{animation:cardEnterPrev .48s cubic-bezier(.2,.9,.2,1)}
+.connector-visual{position:relative;isolation:isolate;overflow:hidden;background:linear-gradient(145deg,#f8fafc,#e0f2fe 58%,#ede9fe)}
+.dark .connector-visual{background:linear-gradient(145deg,#1e293b,#172554 58%,#2e1065)}
+.connector-visual::before{content:"";position:absolute;width:220px;height:220px;border-radius:50%;left:8%;top:-55%;background:rgba(56,189,248,.18);filter:blur(4px);animation:visualOrbit 7s ease-in-out infinite alternate;z-index:-1}
+.connector-visual::after{content:"";position:absolute;width:190px;height:190px;border-radius:50%;right:5%;bottom:-55%;background:rgba(139,92,246,.16);filter:blur(5px);animation:visualOrbit 8s ease-in-out -2s infinite alternate-reverse;z-index:-1}
+.connector-image{filter:drop-shadow(0 18px 18px rgba(15,23,42,.20));animation:connectorFloat 3.6s ease-in-out infinite;transition:filter .3s ease,transform .3s ease}
+.connector-visual:hover .connector-image{filter:drop-shadow(0 23px 22px rgba(15,23,42,.28))}
+.intro-hero-icon{animation:introIcon 3s ease-in-out infinite;box-shadow:0 16px 34px rgba(0,120,212,.28)}
+.carousel-nav{padding:.8rem 1rem;border:1px solid rgba(226,232,240,.92);background:rgba(255,255,255,.78);box-shadow:0 14px 34px rgba(15,23,42,.07);backdrop-filter:blur(14px);animation:navRise .5s ease both}
+.dark .carousel-nav{background:rgba(15,23,42,.82);border-color:#334155}
+.field{transition:border-color .22s ease,box-shadow .22s ease,background .22s ease,transform .22s ease}
+.field:focus{outline:none;border-color:#0078d4;box-shadow:0 0 0 4px rgba(0,120,212,.12);transform:translateY(-1px)}
+.field.has-value{border-color:#34d399;background:linear-gradient(145deg,#fff,#ecfdf5)}
+.dark .field.has-value{border-color:#059669;background:linear-gradient(145deg,#1e293b,rgba(6,78,59,.22))}
+@keyframes cardEnterNext{from{opacity:0;transform:translateX(34px) scale(.985)}to{opacity:1;transform:none}}
+@keyframes cardEnterPrev{from{opacity:0;transform:translateX(-34px) scale(.985)}to{opacity:1;transform:none}}
+@keyframes connectorFloat{0%,100%{transform:translateY(0) rotate(-.6deg)}50%{transform:translateY(-8px) rotate(.6deg)}}
+@keyframes visualOrbit{from{transform:translate(-12px,-6px) scale(.9)}to{transform:translate(18px,12px) scale(1.12)}}
+@keyframes introIcon{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-7px) rotate(2deg)}}
+@keyframes navRise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+.carousel-center{min-width:0;flex:1}
+.carousel-dots{display:flex;align-items:center;justify-content:center;gap:.38rem;max-width:520px;margin:.45rem auto 0;padding:.25rem .15rem;overflow-x:auto;scrollbar-width:none}.carousel-dots::-webkit-scrollbar{display:none}
+.carousel-dot{flex:0 0 auto;width:.58rem;height:.58rem;border-radius:999px;background:#cbd5e1;transition:width .22s ease,transform .22s ease,background .22s ease,box-shadow .22s ease;color:white;display:flex;align-items:center;justify-content:center;font-size:.55rem}
+.dark .carousel-dot{background:#475569}.carousel-dot:hover{transform:scale(1.2);background:#94a3b8}.carousel-dot.active{width:1.7rem;background:#0078d4;box-shadow:0 0 0 3px rgba(0,120,212,.13),0 5px 12px rgba(0,120,212,.25)}.carousel-dot.complete{width:1.08rem;height:1.08rem;background:#10b981;box-shadow:0 4px 10px rgba(16,185,129,.22)}.carousel-dot.complete.active{width:1.75rem;background:linear-gradient(90deg,#0078d4,#10b981)}
+.carousel-nav .btn{flex:0 0 auto}.carousel-hint{display:none}@media(min-width:700px){.carousel-hint{display:block}}
+@media(max-width:520px){.carousel-nav{padding:.7rem .65rem}.carousel-nav .btn{padding:.58rem .7rem}.carousel-dots{justify-content:flex-start;max-width:180px}}
+
+
+</style>
+</head>
+<body class="min-h-full bg-slate-100 dark:bg-slate-950 text-slate-800 dark:text-slate-100">
+<header class="sticky top-0 z-40 worksheet-header">
+  <div class="max-w-[1500px] mx-auto px-3 sm:px-6 py-2.5 flex items-center justify-between gap-3">
+    <div class="flex items-center gap-3"><div class="w-9 h-9 rounded-lg bg-onedrive-500 text-white flex items-center justify-center"><i class="fa-solid fa-plug"></i></div>
+      <div><div class="text-[10px] uppercase font-bold text-slate-400">Fortschritt</div><div id="headerPercentText" class="text-sm font-extrabold text-onedrive-600 dark:text-blue-400">0% erledigt</div></div>
+    </div>
+    <div class="flex gap-2">
+      <button class="btn border border-slate-300 dark:border-slate-700" onclick="toggleDarkMode()" title="Dunkelmodus"><i id="themeIcon" class="fa-solid fa-moon"></i></button>
+      <button id="pdfBtn" class="btn bg-slate-200 dark:bg-slate-800 text-slate-400 opacity-60" onclick="downloadPdf()" title="Erst bei 100%"><i class="fa-solid fa-file-pdf"></i></button>
+      <button class="btn border border-rose-300 text-rose-600" onclick="resetA5()" title="Zurücksetzen"><i class="fa-solid fa-rotate-right"></i></button>
+    </div>
+  </div>
+  <div class="h-1 bg-slate-200 dark:bg-slate-800"><div id="progressBar" class="premium-progress h-1 transition-all duration-500" style="width:0%"></div></div>
+</header>
+
+<main class="max-w-[1500px] mx-auto px-3 sm:px-6 py-5 space-y-4">
+  <section class="max-w-4xl mx-auto">
+    <div id="connectorGrid"></div>
+    <nav class="carousel-nav mt-4 flex items-center justify-between gap-3 rounded-2xl" aria-label="Anschlusskarten">
+      <button id="prevCardBtn" type="button" class="btn border border-slate-300 dark:border-slate-700 disabled:opacity-40 disabled:cursor-not-allowed" onclick="changeCard(-1)">
+        <i class="fa-solid fa-arrow-left mr-1"></i> Zurück
+      </button>
+      <div class="carousel-center text-center">
+        <div class="flex items-center justify-center gap-2">
+          <div id="cardCounter" class="text-sm font-black text-onedrive-600 dark:text-blue-400">Info</div>
+          <span class="carousel-hint text-[10px] font-bold text-slate-400"><i class="fa-solid fa-keyboard mr-1"></i>← / →</span>
+        </div>
+        <div id="cardCounterLabel" class="text-[10px] uppercase font-bold tracking-wider text-slate-400">Information</div>
+        <div id="carouselDots" class="carousel-dots" aria-label="Direkt zu einer Karte springen"></div>
+      </div>
+      <button id="nextCardBtn" type="button" class="btn bg-onedrive-500 hover:bg-onedrive-600 text-white disabled:opacity-40 disabled:cursor-not-allowed" onclick="changeCard(1)">
+        Weiter <i class="fa-solid fa-arrow-right ml-1"></i>
+      </button>
+    </nav>
+  </section>
+</main>
+
+<div id="toast" class="fixed bottom-5 left-1/2 -translate-x-1/2 translate-y-8 opacity-0 transition-all bg-slate-900 text-white px-4 py-3 rounded-xl text-sm font-bold z-50"></div>
+
+<script src="assets/js/worksheet-common.js"></script>
+<script src="assets/js/pdf-engine.js"></script>
+<script>
+const STORAGE_KEY='onedrive_a5_worksheet_8sek';
+const LEGACY_AUTOSAVE_KEY='hw_autosave_A5.html';
+const CONNECTORS=[{"id": "usb-a", "name": "USB-A", "desc": "Breiter, flacher, rechteckiger Stecker; nur in einer Richtung einsteckbar.", "img": "assets/usb_a_cable_1786198032413.webp", "category": "daten"}, {"id": "usb-c", "name": "USB-C", "desc": "Kleiner ovaler, symmetrischer Stecker; beidseitig einsteckbar.", "img": "assets/usb_c_cable_1786198043571.webp", "category": "daten"}, {"id": "hdmi", "name": "HDMI", "desc": "Flacher, trapezähnlicher Stecker mit abgeschrägten unteren Ecken.", "img": "assets/hdmi_cable_1786198053921.webp", "category": "video_audio"}, {"id": "dp", "name": "DisplayPort", "desc": "Fast rechteckig; meist ist eine Ecke abgeschrägt, teilweise mit Rastmechanismus.", "img": "assets/dp_cable_1786198067133.webp", "category": "video_audio"}, {"id": "rj45", "name": "LAN (RJ45)", "desc": "Breiter Kunststoffstecker mit acht Kontakten und einem gut sichtbaren Rastclip.", "img": "assets/lan_cable_1786198076546.webp", "category": "netz_strom"}, {"id": "audio", "name": "Audio (3,5 mm)", "desc": "Schmaler runder Metallstecker mit mehreren dunklen Isolierringen.", "img": "assets/audio_cable_1786198086224.webp", "category": "video_audio"}, {"id": "vga", "name": "VGA", "desc": "Breiter D-förmiger Stecker mit 15 Pins in drei Reihen und zwei Schrauben.", "img": "assets/vga_cable_1786198097423.webp", "category": "video_audio"}, {"id": "dvi", "name": "DVI", "desc": "Breiter rechteckiger Stecker mit dichtem Pin-Raster und zwei seitlichen Schrauben.", "img": "assets/dvi_cable_1786198107586.webp", "category": "video_audio"}, {"id": "bt-dongle", "name": "Bluetooth-Dongle", "desc": "Sehr kleiner USB-Stecker mit kurzem, kompaktem Gehäuse.", "img": "assets/bluetooth_dongle_1786198654619.webp", "category": "daten"}, {"id": "power", "name": "Stromkabel (C13)", "desc": "Kräftiger Stecker mit dreipoliger, annähernd rechteckiger Buchsenform.", "img": "assets/power_cable_1786198664189.webp", "category": "netz_strom"}, {"id": "usb-b", "name": "USB-B (Drucker)", "desc": "Nahezu quadratischer Stecker mit zwei abgeschrägten oberen Ecken.", "img": "assets/usb_b_cable_1786198671715.webp", "category": "daten"}, {"id": "micro-usb", "name": "Micro-USB", "desc": "Sehr kleiner, flacher und asymmetrischer Stecker.", "img": "assets/img_micro_usb_1786222089308.jpg", "category": "daten"}, {"id": "lightning", "name": "Apple Lightning", "desc": "Sehr schmaler, flacher, symmetrischer Metallstecker mit sichtbaren Kontakten.", "img": "assets/img_lightning_1786222112950.jpg", "category": "daten"}, {"id": "sd-card", "name": "SD-Karte", "desc": "Flache rechteckige Karte mit einer abgeschrägten Ecke und Kontaktflächen auf der Rückseite.", "img": "assets/sd_card_item.jpg", "category": "daten"}, {"id": "wlan-antenne", "name": "WLAN-Antenne", "desc": "Schmale stabförmige Antenne mit Schraubanschluss am Fuß.", "img": "assets/wlan_antenna_item.jpg", "category": "netz_strom"}, {"id": "usb-hub", "name": "USB-Hub", "desc": "Kleines Gehäuse mit mehreren gleichartigen USB-Buchsen an einer Seite.", "img": "assets/usb_hub_item.jpg", "category": "daten"}];
+let currentPercentage=0, saveTimer=null, currentCardIndex=0;
+
+function renderCards(){
+  const grid=document.getElementById('connectorGrid');
+  const introCard=`<article class="connector-card card overflow-hidden" data-index="0">
+    <div class="p-5 sm:p-8">
+      <div class="flex flex-col sm:flex-row sm:items-start gap-5">
+        <div class="intro-hero-icon w-14 h-14 rounded-2xl bg-onedrive-500 text-white flex items-center justify-center text-2xl shadow-lg shrink-0">
+          <i class="fa-solid fa-plug"></i>
+        </div>
+        <div class="flex-1">
+          <div class="text-xs font-bold uppercase tracking-wider text-onedrive-600">IT-Hardware · A5</div>
+          <h1 class="text-2xl sm:text-3xl font-black mt-1">Schnittstellen & PC-Kabel</h1>
+          <p class="text-sm text-slate-500 dark:text-slate-400 mt-2">Die 16 Anschlüsse und Geräte aus A4: Beschreibe jeweils kurz, wofür sie verwendet werden.</p>
+        </div>
+      </div>
+      <div class="grid grid-cols-3 gap-2 mt-6 text-xs">
+        <div class="rounded-xl bg-slate-50 dark:bg-slate-800 p-3"><span class="block text-[9px] uppercase text-slate-400 font-bold">Vorname</span><span id="metaName">–</span></div>
+        <div class="rounded-xl bg-slate-50 dark:bg-slate-800 p-3"><span class="block text-[9px] uppercase text-slate-400 font-bold">Klasse</span><span id="metaClass">B24</span></div>
+        <div class="rounded-xl bg-slate-50 dark:bg-slate-800 p-3"><span class="block text-[9px] uppercase text-slate-400 font-bold">Datum</span><span id="metaDate">–</span></div>
+      </div>
+      <div class="hidden">
+        <input id="studentName" type="text" readonly><input id="studentClass" type="text" readonly value="B24"><input id="studentDate" type="text" readonly>
+      </div>
+    </div>
+  </article>`;
+  const connectorCards=CONNECTORS.map((c,i)=>`<article class="connector-card card overflow-hidden hidden" data-index="${i+1}">
+    <div class="connector-visual h-64 sm:h-80 flex items-center justify-center p-4">
+      <img src="${c.img}" alt="${c.name}" class="connector-image max-h-full max-w-full object-contain" loading="lazy">
+    </div>
+    <div class="p-4 sm:p-6">
+      <div class="text-[10px] font-bold uppercase tracking-wider text-onedrive-600">${i+1} / ${CONNECTORS.length}</div>
+      <h2 class="font-black text-xl mt-0.5">${c.name}</h2>
+      <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">${c.desc}</p>
+      <label class="block text-sm font-bold mt-5 mb-1.5" for="use_${c.id}">Wofür wird es verwendet?</label>
+      <textarea id="use_${c.id}" class="field text-sm" rows="4" placeholder="Typische Geräte oder Einsatz beschreiben …"></textarea>
+    </div>
+  </article>`).join('');
+  grid.innerHTML=introCard+connectorCards;
+  initCarouselDots();
+  showCard(0);
+}
+
+function initCarouselDots(){
+  const wrap=document.getElementById('carouselDots');
+  if(!wrap||wrap.children.length)return;
+  for(let i=0;i<=CONNECTORS.length;i++){
+    const dot=document.createElement('button');
+    dot.type='button';
+    dot.className='carousel-dot';
+    dot.dataset.index=String(i);
+    dot.setAttribute('aria-label',i===0?'Zur Information':`Zu Anschluss ${i}: ${CONNECTORS[i-1].name}`);
+    dot.addEventListener('click',()=>showCard(i,i<currentCardIndex?-1:1));
+    wrap.appendChild(dot);
+  }
+}
+function isCardCompleted(index){
+  if(index===0)return true;
+  const connector=CONNECTORS[index-1];
+  const field=connector&&document.getElementById('use_'+connector.id);
+  return !!(field&&field.value.trim());
+}
+function updateCarouselUi(){
+  const isIntro=currentCardIndex===0;
+  const isLast=currentCardIndex===CONNECTORS.length;
+  document.getElementById('cardCounter').textContent=isIntro?'Info':currentCardIndex+' / '+CONNECTORS.length;
+  document.getElementById('cardCounterLabel').textContent=isIntro?'Information':'Anschluss';
+  document.getElementById('prevCardBtn').disabled=isIntro;
+  const next=document.getElementById('nextCardBtn');
+  if(isLast){
+    const ready=currentPercentage===100;
+    next.disabled=!ready;
+    next.innerHTML=ready?'PDF erzeugen <i class="fa-solid fa-file-pdf ml-1"></i>':'Alle Felder <i class="fa-solid fa-triangle-exclamation ml-1"></i>';
+    next.classList.toggle('bg-emerald-600',ready);
+    next.classList.toggle('hover:bg-emerald-700',ready);
+    next.classList.toggle('bg-onedrive-500',!ready);
+    next.classList.toggle('hover:bg-onedrive-600',!ready);
+  }else{
+    next.disabled=false;
+    next.innerHTML='Weiter <i class="fa-solid fa-arrow-right ml-1"></i>';
+    next.classList.remove('bg-emerald-600','hover:bg-emerald-700');
+    next.classList.add('bg-onedrive-500','hover:bg-onedrive-600');
+  }
+  document.querySelectorAll('.carousel-dot').forEach((dot,i)=>{
+    const active=i===currentCardIndex,complete=isCardCompleted(i);
+    dot.classList.toggle('active',active);
+    dot.classList.toggle('complete',complete);
+    dot.innerHTML=complete?'<i class="fa-solid fa-check"></i>':'';
+    dot.title=i===0?'Information':`${CONNECTORS[i-1].name}${complete?' · ausgefüllt':' · noch offen'}`;
+    if(active)dot.scrollIntoView({behavior:'smooth',block:'nearest',inline:'nearest'});
+  });
+}
+function showCard(index,direction=1){
+  currentCardIndex=Math.max(0,Math.min(CONNECTORS.length,index));
+  const cards=[...document.querySelectorAll('.connector-card')];
+  cards.forEach((card,i)=>{
+    card.classList.toggle('hidden',i!==currentCardIndex);
+    card.classList.remove('card-enter-next','card-enter-prev');
+  });
+  const active=cards[currentCardIndex];
+  if(active){
+    void active.offsetWidth;
+    active.classList.add(direction<0?'card-enter-prev':'card-enter-next');
+  }
+  updateCarouselUi();
+}
+function changeCard(step){
+  if(step>0&&currentCardIndex===CONNECTORS.length){
+    if(currentPercentage===100)downloadPdf();
+    return;
+  }
+  showCard(currentCardIndex+step,step);
+  document.getElementById('connectorGrid').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function fieldIds(){
+  return CONNECTORS.map(c=>'use_'+c.id);
+}
+function collect(){
+  const answers={}; fieldIds().forEach(id=>answers[id]=document.getElementById(id)?.value||'');
+  return {version:4,answers,percent:currentPercentage,updatedAt:new Date().toISOString()};
+}
+function load(){
+  try{
+    const raw=localStorage.getItem(STORAGE_KEY); if(!raw)return;
+    const d=JSON.parse(raw); const answers=d.answers||d.form||{};
+    Object.entries(answers).forEach(([id,v])=>{const el=document.getElementById(id);if(el&&v!=null)el.value=v;});
+  }catch(e){console.warn('A5 Speicherstand konnte nicht geladen werden',e);}
+}
+function updateProgress(){
+  const ids=fieldIds();
+  ids.forEach(id=>{const field=document.getElementById(id);if(field)field.classList.toggle('has-value',!!field.value.trim());});
+  const done=ids.filter(id=>(document.getElementById(id)?.value||'').trim()).length;
+  currentPercentage=Math.round(done/ids.length*100);
+  document.getElementById('headerPercentText').textContent=currentPercentage+'% erledigt';
+  document.getElementById('progressBar').style.width=currentPercentage+'%';
+  const b=document.getElementById('pdfBtn');
+  if(currentPercentage===100){b.className='btn bg-emerald-600 hover:bg-emerald-700 text-white';b.title='PDF herunterladen';}
+  else{b.className='btn bg-slate-200 dark:bg-slate-800 text-slate-400 opacity-60';b.title='Erst bei 100%';}
+  updateCarouselUi();
+}
+function scheduleSave(){clearTimeout(saveTimer);saveTimer=setTimeout(()=>localStorage.setItem(STORAGE_KEY,JSON.stringify(collect())),120);}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.remove('translate-y-8','opacity-0');clearTimeout(showToast.t);showToast.t=setTimeout(()=>t.classList.add('translate-y-8','opacity-0'),2200);}
+function resetA5(){
+  if(!confirm('Alle Eingaben von A5 zurücksetzen?'))return;
+  localStorage.removeItem(STORAGE_KEY); localStorage.removeItem(LEGACY_AUTOSAVE_KEY);
+  fieldIds().forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  updateProgress(); scheduleSave(); showToast('A5 wurde zurückgesetzt.');
+}
+function downloadPdf(){
+  if(currentPercentage<100){showToast('PDF erst bei 100%');return;}
+  if(typeof downloadTextWorksheetPDF!=='function'){showToast('PDF-Modul nicht geladen');return;}
+  const sections=CONNECTORS.map((c,i)=>({heading:`${i+1}. ${c.name}`,fields:[
+    {label:'Verwendung',value:document.getElementById('use_'+c.id).value}
+  ]}));
+  downloadTextWorksheetPDF({title:'A5 · Schnittstellen & PC-Kabel',filenamePrefix:'A5_Schnittstellen_PC-Kabel',sections});
+}
+function syncMeta(){
+  [['studentName','metaName'],['studentClass','metaClass'],['studentDate','metaDate']].forEach(([a,b])=>{const s=document.getElementById(a),d=document.getElementById(b);if(s&&d)d.textContent=s.value||'–';});
+}
+
+document.addEventListener('keydown',e=>{
+  if(e.target&&['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName))return;
+  if(e.key==='ArrowLeft'){e.preventDefault();changeCard(-1);}
+  if(e.key==='ArrowRight'){e.preventDefault();changeCard(1);}
+});
+
+document.addEventListener('DOMContentLoaded',()=>{
+  renderCards();
+  const grid=document.getElementById('connectorGrid');
+  let touchStartX=0;
+  grid.addEventListener('touchstart',e=>{touchStartX=e.changedTouches[0].clientX;},{passive:true});
+  grid.addEventListener('touchend',e=>{
+    if(e.target.closest('textarea,input,button'))return;
+    const delta=e.changedTouches[0].clientX-touchStartX;
+    if(Math.abs(delta)>55)changeCard(delta<0?1:-1);
+  },{passive:true});
+  if(typeof applyDefaultClassAndDate==='function')applyDefaultClassAndDate();
+  load();
+  fieldIds().forEach(id=>{const e=document.getElementById(id);e.addEventListener('input',()=>{updateProgress();scheduleSave();});});
+  updateProgress(); syncMeta();
+  setTimeout(()=>{syncMeta();updateProgress();scheduleSave();},400);
+});
+</script>
+</body></html>

@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informatik – Klasse B25</title>
+    <link rel="stylesheet" href="vendor/fonts.css">
+    <link rel="stylesheet" href="shared.css">
+    <style>
+        :root {
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --evaE: #f59e0b;
+            --evaV: #06b6d4;
+            --evaA: #10b981;
+        }
+
+        html {
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+        }
+
+        body {
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        /* Section Container */
+        .section {
+            height: 100vh;
+            width: 100vw;
+            padding: 1.5rem 1.5rem 6rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            scroll-snap-align: start;
+            scroll-snap-stop: always;
+            background-size: cover;
+            background-position: center;
+        }
+
+        /* Ambient Glow Effect */
+        .glow {
+            position: absolute;
+            width: 450px;
+            height: 450px;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.25;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .section-content {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.2rem;
+        }
+
+        /* Typography */
+        .badge {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--border-color);
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--accent-cyan);
+            backdrop-filter: blur(8px);
+        }
+
+        h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(3rem, 7vw, 5.5rem);
+            font-weight: 800;
+            line-height: 1.1;
+            background: linear-gradient(135deg, #ffffff 0%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(2.6rem, 5.5vw, 4rem);
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        p.description {
+            font-size: clamp(1.3rem, 2.4vw, 1.7rem);
+            color: var(--text-muted);
+            max-width: 800px;
+            line-height: 1.6;
+        }
+
+        /* Interactive / Graphic Cards */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 1.8rem;
+            width: 100%;
+            max-width: 780px;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            margin-top: 0.5rem;
+        }
+
+        /* Binary Demo Component */
+        .binary-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1.2rem;
+            margin: 1rem 0;
+            flex-wrap: wrap;
+        }
+
+        .bit-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .bit-label {
+            font-size: 1rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .bit-btn {
+            width: 78px;
+            height: 88px;
+            background: #0f172a;
+            border: 2px solid var(--accent-blue);
+            border-radius: 14px;
+            color: white;
+            font-size: 2.5rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+            font-family: 'Space Grotesk', monospace;
+        }
+
+        .bit-btn.active {
+            background: var(--accent-blue);
+            border-color: #60a5fa;
+            box-shadow: 0 0 25px rgba(59, 130, 246, 0.6);
+            transform: translateY(-4px);
+        }
+
+        .binary-result {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-top: 0.8rem;
+            color: #e2e8f0;
+        }
+
+        .binary-result span {
+            color: var(--accent-amber);
+            font-size: 2.3rem;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            padding: 18px 40px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 1rem;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(59, 130, 246, 0.6);
+            background: linear-gradient(135deg, #60a5fa 0%, #2563eb 100%);
+        }
+
+        .btn-primary:active, .nav-arrow-btn:active {
+            transform: translateY(3px) scale(0.97) !important;
+            box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.4) !important;
+            transition: transform 0.05s ease, box-shadow 0.05s ease !important;
+        }
+
+        .btn-green {
+            background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);
+        }
+        .btn-green:hover {
+            background: linear-gradient(135deg, #34d399 0%, #059669 100%);
+            box-shadow: 0 15px 30px rgba(16, 185, 129, 0.6);
+        }
+
+        /* Flowchart / Step-by-Step Graphic */
+        .flow-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin: 1rem 0;
+        }
+
+        .flow-step {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid var(--border-color);
+            padding: 14px 22px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1.2rem;
+            color: #cbd5e1;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .flow-arrow {
+            color: var(--accent-amber);
+            font-size: 1.6rem;
+            font-weight: bold;
+        }
+
+        /* Algorithm Examples (click-to-reveal) */
+        .algo-examples {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+            margin-top: 0.8rem;
+            opacity: 0;
+            transform: translateY(14px) scale(0.96);
+            pointer-events: none;
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .algo-examples.revealed {
+            opacity: 1;
+            transform: none;
+            pointer-events: auto;
+        }
+
+        .algo-chip {
+            background: rgba(251, 191, 36, 0.1);
+            border: 2px solid rgba(251, 191, 36, 0.4);
+            color: #fbbf24;
+            padding: 10px 22px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.05rem;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .algo-chip:hover {
+            background: rgba(251, 191, 36, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .algo-chip.active {
+            background: #fbbf24;
+            color: #1e1305;
+            box-shadow: 0 0 22px rgba(251, 191, 36, 0.55);
+        }
+
+        .algo-reveal {
+            min-height: 3.4rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 0 0.5rem;
+            margin-top: 0.4rem;
+        }
+
+        .algo-reveal p {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            opacity: 0;
+            transform: translateY(6px);
+            transition: all 0.3s ease;
+        }
+
+        .algo-reveal p.show {
+            opacity: 1;
+            transform: none;
+        }
+
+        /* Hardware Software Grid */
+        .hw-sw-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.2rem;
+            width: 100%;
+            text-align: left;
+        }
+
+        .hw-sw-card {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border-color);
+            padding: 1.2rem;
+            border-radius: 14px;
+        }
+
+        .hw-sw-card h4 {
+            font-size: 1.4rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* EVA Animation (ported from hw/A2.html) */
+        .eva-card {
+            max-width: 900px;
+            padding: 1rem 1.8rem;
+        }
+
+        .eva-pipeline {
+            position: relative;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 1.2rem;
+            width: 100%;
+        }
+
+        .eva-col {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.8rem;
+            position: relative;
+            z-index: 2;
+            min-width: 0;
+        }
+
+        .eva-title {
+            border: 2px solid;
+            border-radius: 12px;
+            padding: 10px 14px;
+            font-weight: 800;
+            font-size: 1.15rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.4s ease;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+            white-space: nowrap;
+        }
+
+        .eva-title-e { border-color: rgba(245, 158, 11, 0.5); background: rgba(245, 158, 11, 0.1); color: var(--evaE); }
+        .eva-title-v { border-color: rgba(6, 182, 212, 0.5); background: rgba(6, 182, 212, 0.1); color: var(--evaV); }
+        .eva-title-a { border-color: rgba(16, 185, 129, 0.5); background: rgba(16, 185, 129, 0.1); color: var(--evaA); }
+
+        .eva-title.active { transform: scale(1.08); }
+        .eva-title-e.active { box-shadow: 0 0 30px rgba(245, 158, 11, 0.6); border-color: rgba(245, 158, 11, 0.9); }
+        .eva-title-v.active { box-shadow: 0 0 30px rgba(6, 182, 212, 0.6); border-color: rgba(6, 182, 212, 0.9); }
+        .eva-title-a.active { box-shadow: 0 0 30px rgba(16, 185, 129, 0.6); border-color: rgba(16, 185, 129, 0.9); }
+
+        .eva-node {
+            width: 66px;
+            height: 66px;
+            border-radius: 50%;
+            background: #0f172a;
+            border: 2px solid #1e293b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+        }
+
+        .eva-node.glow-e { border-color: var(--evaE); color: var(--evaE); box-shadow: 0 0 30px rgba(245, 158, 11, 0.6), inset 0 0 15px rgba(245, 158, 11, 0.3); transform: scale(1.15); }
+        .eva-node.glow-v { border-color: var(--evaV); color: var(--evaV); box-shadow: 0 0 30px rgba(6, 182, 212, 0.6), inset 0 0 15px rgba(6, 182, 212, 0.3); transform: scale(1.15); }
+        .eva-node.glow-a { border-color: var(--evaA); color: var(--evaA); box-shadow: 0 0 30px rgba(16, 185, 129, 0.6), inset 0 0 15px rgba(16, 185, 129, 0.3); transform: scale(1.15); }
+        .eva-node.cpu-working { animation: evaCpuWork 0.12s infinite; }
+
+        @keyframes evaCpuWork {
+            0% { transform: scale(1.15) translate(1px, 1px); }
+            25% { transform: scale(1.15) translate(-2px, 0px); }
+            50% { transform: scale(1.15) translate(2px, -1px); }
+            75% { transform: scale(1.15) translate(-1px, 2px); }
+            100% { transform: scale(1.15) translate(1px, -1px); }
+        }
+
+        .eva-monitor-text {
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .eva-track {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            z-index: 1;
+        }
+
+        .eva-progress {
+            position: absolute;
+            background: linear-gradient(90deg, var(--evaE), var(--evaV), var(--evaA));
+            border-radius: 4px;
+            z-index: 1;
+            width: 0;
+        }
+
+        .eva-particle {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #fff;
+            box-shadow: 0 0 20px #fff, 0 0 40px #fff;
+            opacity: 0;
+            transform: translate(-50%, -50%);
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        .eva-particle.processing { animation: evaParticlePulse 0.5s ease-in-out infinite alternate; }
+
+        @keyframes evaParticlePulse {
+            0% { transform: scale(1) translate(-50%, -50%); box-shadow: 0 0 20px var(--evaV), 0 0 40px var(--evaV); background: var(--evaV); }
+            100% { transform: scale(1.5) translate(-33%, -33%); box-shadow: 0 0 40px var(--evaV), 0 0 80px var(--evaV); background: #fff; }
+        }
+
+        .eva-popup {
+            background: linear-gradient(180deg, rgba(15, 23, 42, 0.95) 0%, rgba(5, 9, 20, 0.98) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-top: 2px solid;
+            border-radius: 16px;
+            padding: 0.7rem 0.8rem;
+            width: 100%;
+            min-height: 60px;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(20px) scale(0.95);
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .eva-popup.show { opacity: 1; transform: none; }
+
+        .eva-popup-e { border-top-color: var(--evaE); }
+        .eva-popup-v { border-top-color: var(--evaV); }
+        .eva-popup-a { border-top-color: var(--evaA); }
+
+        .eva-typewriter {
+            font-family: 'Space Grotesk', monospace;
+            font-weight: 700;
+            font-size: 1.15rem;
+            color: #fff;
+            line-height: 1.4;
+        }
+
+        .eva-neon-e { text-shadow: 0 0 10px rgba(245, 158, 11, 0.8), 0 0 25px rgba(245, 158, 11, 0.4); }
+        .eva-neon-v { text-shadow: 0 0 10px rgba(6, 182, 212, 0.8), 0 0 25px rgba(6, 182, 212, 0.4); }
+        .eva-neon-a { text-shadow: 0 0 10px rgba(16, 185, 129, 0.8), 0 0 25px rgba(16, 185, 129, 0.4); }
+
+        .eva-cursor::after { content: '|'; animation: evaBlink 1s step-end infinite; }
+        @keyframes evaBlink { 50% { opacity: 0; } }
+
+        .eva-play-btn {
+            font-size: 1.15rem;
+            padding: 14px 32px;
+            animation: evaBtnPulse 2s ease-in-out infinite;
+        }
+
+        .eva-play-btn:disabled {
+            opacity: 0.5;
+            cursor: wait;
+            animation: none;
+            transform: none;
+        }
+
+        @keyframes evaBtnPulse {
+            0%, 100% { box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4); }
+            50% { box-shadow: 0 10px 34px rgba(59, 130, 246, 0.7); }
+        }
+
+        /* Fixed Navigation Dots & Controls */
+        .nav-controls {
+            position: fixed;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            z-index: 100;
+            background: rgba(15, 23, 42, 0.75);
+            padding: 10px 22px;
+            border-radius: 50px;
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .nav-dots {
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-dot {
+            width: 12px;
+            height: 12px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-dot.active {
+            background-color: var(--accent-blue);
+            transform: scale(1.3);
+            box-shadow: 0 0 12px var(--accent-blue);
+        }
+
+        .nav-arrow-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.4rem;
+            cursor: pointer;
+            transition: color 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2px 6px;
+        }
+
+        .nav-arrow-btn:hover {
+            color: white;
+        }
+
+        .kbd-hint {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border-color);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            backdrop-filter: blur(8px);
+        }
+
+        kbd {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-family: monospace;
+            color: #f1f5f9;
+        }
+
+        @media (max-width: 768px) {
+            .hw-sw-grid { grid-template-columns: 1fr; }
+            .section { padding: 1.5rem 1rem; }
+            .card { padding: 1.2rem; }
+            .kbd-hint { display: none; }
+            .eva-pipeline { flex-direction: column; align-items: center; }
+            .eva-col { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="kbd-hint">
+        Tastatur: Nutze <kbd>↑</kbd> <kbd>↓</kbd> oder <kbd>Leertaste</kbd>
+    </div>
+
+    <!-- 1. STARTSEITE -->
+    <div id="section1" class="section">
+        <div class="glow" style="background: var(--accent-blue); top: 20%; left: 30%;"></div>
+        <div class="section-content">
+            <span class="badge">Informatik B25</span>
+            <h1>Willkommen zur Informatik!</h1>
+            <p class="description">
+                Wir schauen uns an, wie Computer wirklich funktionieren: Daten, Algorithmen und die Systeme, die wir jeden Tag nutzen.
+            </p>
+            <button class="btn-primary" onclick="scrollToSection(2)">
+                Los geht's ➔
+            </button>
+        </div>
+    </div>
+
+    <!-- 2. WAS IST INFORMATIK? -->
+    <div id="section2" class="section">
+        <div class="glow" style="background: var(--accent-purple); top: 30%; right: 20%;"></div>
+        <div class="section-content">
+            <span class="badge" style="color: var(--accent-purple);">Grundbegriff</span>
+            <h2 style="color: #c084fc;">Was ist Informatik?</h2>
+            <p class="description">
+                Informatik ist mehr als nur am Computer zu sitzen – es ist die Wissenschaft der automatischen Informationsverarbeitung und Problemlösung.
+            </p>
+        </div>
+    </div>
+
+    <!-- 3. DAS EVA-PRINZIP -->
+    <div id="section3" class="section">
+        <div class="glow" style="background: var(--accent-purple); top: 30%; left: 20%;"></div>
+        <div class="section-content">
+            <span class="badge" style="color: var(--accent-purple);">Funktionsprinzip</span>
+            <h2 style="color: #c084fc;">Das EVA-Prinzip</h2>
+            <p class="description">
+                Jeder Computer verarbeitet Daten nach genau diesem Muster: Eingabe, Verarbeitung, Ausgabe.
+            </p>
+            <div class="card eva-card">
+                <div class="eva-pipeline" id="eva-pipeline">
+                    <div class="eva-track" id="eva-track"></div>
+                    <div class="eva-progress" id="eva-progress"></div>
+                    <div class="eva-particle" id="eva-particle"></div>
+
+                    <div class="eva-col">
+                        <div class="eva-title eva-title-e" id="eva-card-e">Eingabe</div>
+                        <div class="eva-node" id="eva-node-e">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2" ry="2"/><path d="M6 8h.001M10 8h.001M14 8h.001M18 8h.001M8 12h.001M12 12h.001M16 12h.001M7 16h10"/></svg>
+                        </div>
+                        <div class="eva-popup eva-popup-e" id="eva-math-e">
+                            <div class="eva-typewriter eva-neon-e" id="eva-type-e"></div>
+                        </div>
+                    </div>
+
+                    <div class="eva-col">
+                        <div class="eva-title eva-title-v" id="eva-card-v">Verarbeitung</div>
+                        <div class="eva-node" id="eva-node-v">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
+                        </div>
+                        <div class="eva-popup eva-popup-v" id="eva-math-v">
+                            <div class="eva-typewriter eva-neon-v" id="eva-type-v"></div>
+                        </div>
+                    </div>
+
+                    <div class="eva-col">
+                        <div class="eva-title eva-title-a" id="eva-card-a">Ausgabe</div>
+                        <div class="eva-node" id="eva-node-a">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/>
+                                <text class="eva-monitor-text" id="eva-monitor-text" x="12" y="10.5" font-size="10" font-family="monospace" font-weight="900" text-anchor="middle" dominant-baseline="middle" stroke="none" fill="currentColor">8</text>
+                            </svg>
+                        </div>
+                        <div class="eva-popup eva-popup-a" id="eva-math-a">
+                            <div class="eva-typewriter eva-neon-a" id="eva-type-a"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn-primary eva-play-btn" id="eva-play-btn" onclick="startEvaAnimation()">
+                    ▶ System starten
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. BITS & BYTES -->
+    <div id="section4" class="section">
+        <div class="glow" style="background: var(--accent-cyan); top: 15%; left: 20%;"></div>
+        <div class="section-content">
+            <span class="badge" style="color: var(--accent-cyan);">Daten & Binärcode</span>
+            <h2 style="color: #38bdf8;">Bits & Bytes</h2>
+            <p class="description">
+                Ein Computer kennt nur zwei Zustände: <strong>Strom an (1)</strong> oder <strong>Strom aus (0)</strong>. 
+                Jedes Zeichen besteht aus diesen Bits. 8 Bits = 1 Byte!
+            </p>
+            <div class="card">
+                <div style="font-size: 1.2rem; color: var(--text-muted); margin-bottom: 0.5rem;">
+                    💡 Klicke auf die Bits, um die Schalter umzulegen:
+                </div>
+                <div class="binary-container">
+                    <div class="bit-box">
+                        <span class="bit-label">Wert: 8</span>
+                        <button class="bit-btn" id="bit-8" onclick="toggleBit(8)">0</button>
+                    </div>
+                    <div class="bit-box">
+                        <span class="bit-label">Wert: 4</span>
+                        <button class="bit-btn active" id="bit-4" onclick="toggleBit(4)">1</button>
+                    </div>
+                    <div class="bit-box">
+                        <span class="bit-label">Wert: 2</span>
+                        <button class="bit-btn" id="bit-2" onclick="toggleBit(2)">0</button>
+                    </div>
+                    <div class="bit-box">
+                        <span class="bit-label">Wert: 1</span>
+                        <button class="bit-btn active" id="bit-1" onclick="toggleBit(1)">1</button>
+                    </div>
+                </div>
+                <div class="binary-result">
+                    Binärcode <code style="color: var(--accent-cyan); background: rgba(0,0,0,0.4); padding: 2px 8px; border-radius: 6px;" id="binary-str">0101</code> = Zahl <span id="decimal-val">5</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. ALGORITHMEN -->
+    <div id="section5" class="section">
+        <div class="glow" style="background: var(--accent-amber); top: 40%; left: 35%;"></div>
+        <div class="section-content">
+            <span class="badge" style="color: var(--accent-amber);">Logik & Abläufe</span>
+            <h2 style="color: #fbbf24;">Algorithmen</h2>
+            <p class="description">
+                Ein Algorithmus ist eine eindeutige Schritt-für-Schritt-Anleitung zur Lösung eines Problems, wie ein genaues Kochrezept.
+            </p>
+            <div class="card">
+                <div class="flow-container">
+                    <div class="flow-step" style="border-color: #fbbf24;">Start / Problem</div>
+                    <div class="flow-arrow">➔</div>
+                    <div class="flow-step" style="border-color: #fbbf24;">Schritt-für-Schritt Befehle</div>
+                    <div class="flow-arrow">➔</div>
+                    <div class="flow-step" style="border-color: #fbbf24;">Ergebnis / Ziel</div>
+                </div>
+
+                <div style="font-size: 1.15rem; color: var(--text-muted); margin-top: 1.2rem;" id="algo-hint">
+                    Klicke irgendwo auf diese Folie (oder ➔ weiter), um Beispiele zu zeigen …
+                </div>
+                <div class="algo-examples" id="algo-examples">
+                    <button class="algo-chip" data-key="tiktok" onclick="toggleAlgoExample(this)">📱 TikTok</button>
+                    <button class="algo-chip" data-key="navi" onclick="toggleAlgoExample(this)">🧭 Navi</button>
+                    <button class="algo-chip" data-key="google" onclick="toggleAlgoExample(this)">🔍 Google-Suche</button>
+                </div>
+                <div class="algo-reveal">
+                    <p id="algo-reveal-text"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 6. HARDWARE & SOFTWARE -->
+    <div id="section6" class="section">
+        <div class="glow" style="background: var(--accent-green); bottom: 20%; right: 25%;"></div>
+        <div class="section-content">
+            <span class="badge" style="color: var(--accent-green);">Das Gesamtsystem</span>
+            <h2 style="color: #34d399;">Hardware & Software</h2>
+            <p class="description">
+                Erst das perfekte Zusammenspiel von physischen Teilen und digitalen Programmen macht den Computer nutzbar.
+            </p>
+            <div class="card">
+                <div class="hw-sw-grid">
+                    <div class="hw-sw-card">
+                        <h4 style="color: #60a5fa;">🖥️ Hardware</h4>
+                        <p style="font-size: 1.15rem; color: var(--text-muted);">
+                            Alles, was du anfassen kannst: Prozessor (CPU), Arbeitsspeicher (RAM), Tastatur, Monitor, Festplatte.
+                        </p>
+                    </div>
+                    <div class="hw-sw-card">
+                        <h4 style="color: #f472b6;">💿 Software</h4>
+                        <p style="font-size: 1.15rem; color: var(--text-muted);">
+                            Programme & Daten: Betriebssystem (Windows, macOS), Webbrowser, Spiele, Apps, Code.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 7. DAS INTERNET -->
+    <div id="section7" class="section">
+        <div class="glow" style="background: var(--accent-blue); top: 25%; left: 30%;"></div>
+        <div class="section-content">
+            <span class="badge" style="color: var(--accent-blue);">Vernetzung</span>
+            <h2 style="color: #60a5fa;">Das Internet & Sicherheit</h2>
+            <p class="description">
+                Ein weltweites Netz von Milliarden Computern, die rund um die Uhr Daten austauschen.
+            </p>
+            <div class="card">
+                <div style="font-size: 1.3rem; font-weight: 600; color: #f8fafc; margin-bottom: 0.5rem;">
+                    🌐 Informationsfreiheit vs. Sicherheit
+                </div>
+                <p style="font-size: 1.15rem; color: var(--text-muted); line-height: 1.5;">
+                    Im Internet übertragen wir Daten in Sekundenschnelle. Deshalb sind Passwortschutz, Verschlüsselung und Datenschutz zentrale Themen der Informatik.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 8. ÜBERGANG ZU A1 -->
+    <div id="section8" class="section">
+        <div class="glow" style="background: var(--accent-green); top: 30%; right: 30%;"></div>
+        <div class="section-content">
+            <span class="badge" style="color: var(--accent-green);">Bereit für die Praxis?</span>
+            <h2 style="color: #34d399;">Vom Verstehen zum Tun!</h2>
+            <p class="description">
+                Jetzt kennst du die Grundlagen. Bevor wir am PC richtig loslegen, lernen wir zuerst unseren Arbeitsplatz und die Tastatur kennen.
+            </p>
+            <a href="index.html" class="btn-primary btn-green">
+                Zur Kurs-Übersicht ➔
+            </a>
+        </div>
+    </div>
+
+    <!-- Fixed Bottom Controls -->
+    <div class="nav-controls">
+        <button class="nav-arrow-btn" onclick="navigateSection(-1)" title="Vorherige Folie">▲</button>
+        <div class="nav-dots" id="navigationDots"></div>
+        <button class="nav-arrow-btn" onclick="navigateSection(1)" title="Nächste Folie">▼</button>
+    </div>
+
+    <script>
+        const sections = document.querySelectorAll('.section');
+        const navDotsContainer = document.getElementById('navigationDots');
+        let currentSectionIndex = 0;
+
+        // Create Nav Dots
+        sections.forEach((_, index) => {
+            const dot = document.createElement('div');
+            dot.classList.add('nav-dot');
+            dot.setAttribute('title', `Folie ${index + 1}`);
+            dot.onclick = () => scrollToSection(index + 1);
+            navDotsContainer.appendChild(dot);
+        });
+
+        // Scroll Function
+        function scrollToSection(sectionNumber) {
+            const targetSection = document.getElementById('section' + sectionNumber);
+            if (targetSection) {
+                targetSection.scrollIntoView({ behavior: 'smooth' });
+                currentSectionIndex = sectionNumber - 1;
+                updateNavDots();
+            }
+        }
+
+        function navigateSection(direction) {
+            if (direction === 1 && !algoRevealed && sections[currentSectionIndex] && sections[currentSectionIndex].id === 'section5') {
+                revealAlgoExamples();
+                return;
+            }
+            let nextIndex = currentSectionIndex + direction;
+            if (nextIndex >= 0 && nextIndex < sections.length) {
+                scrollToSection(nextIndex + 1);
+            }
+        }
+
+        // Update Dots Active State
+        function updateNavDots() {
+            const dots = document.querySelectorAll('.nav-dot');
+            dots.forEach((dot, index) => {
+                if (index === currentSectionIndex) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+        }
+
+        // Observer for Scrolling
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    currentSectionIndex = parseInt(id.replace('section', '')) - 1;
+                    updateNavDots();
+                }
+            });
+        }, {
+            threshold: 0.6
+        });
+
+        sections.forEach(section => {
+            observer.observe(section);
+        });
+
+        // Keyboard Navigation (Arrow Keys / Space)
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') {
+                e.preventDefault();
+                navigateSection(1);
+            } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+                e.preventDefault();
+                navigateSection(-1);
+            }
+        });
+
+        // Interactive Binary Demo Logic
+        let bits = { 8: 0, 4: 1, 2: 0, 1: 1 };
+
+        function toggleBit(val) {
+            bits[val] = bits[val] === 1 ? 0 : 1;
+            const btn = document.getElementById('bit-' + val);
+            btn.innerText = bits[val];
+            if (bits[val] === 1) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+
+            // Calculate Decimal
+            let dec = (bits[8] * 8) + (bits[4] * 4) + (bits[2] * 2) + (bits[1] * 1);
+            let binStr = `${bits[8]}${bits[4]}${bits[2]}${bits[1]}`;
+
+            document.getElementById('binary-str').innerText = binStr;
+            document.getElementById('decimal-val').innerText = dec;
+        }
+
+        // Algorithm Examples (hidden until the slide/next-arrow is clicked)
+        const algoExamples = {
+            tiktok: 'Ein Algorithmus wertet aus, was du anschaust und wie lange – und schlägt dir passende Videos vor.',
+            navi: 'Ein Algorithmus berechnet aus allen möglichen Strecken automatisch die schnellste Route.',
+            google: 'Ein Algorithmus sortiert Millionen Webseiten in Sekunden nach Relevanz für deine Suchanfrage.'
+        };
+
+        let algoRevealed = false;
+
+        function revealAlgoExamples() {
+            if (algoRevealed) return;
+            algoRevealed = true;
+            document.getElementById('algo-examples').classList.add('revealed');
+            document.getElementById('algo-hint').textContent = 'Wo im Alltag stecken Algorithmen? Klick auf ein Beispiel:';
+        }
+
+        document.getElementById('section5').addEventListener('click', () => {
+            if (!algoRevealed) revealAlgoExamples();
+        });
+
+        function toggleAlgoExample(btn) {
+            const textEl = document.getElementById('algo-reveal-text');
+            const wasActive = btn.classList.contains('active');
+
+            document.querySelectorAll('.algo-chip').forEach(chip => chip.classList.remove('active'));
+            textEl.classList.remove('show');
+
+            if (wasActive) {
+                textEl.textContent = '';
+                return;
+            }
+
+            btn.classList.add('active');
+            textEl.textContent = algoExamples[btn.dataset.key];
+            requestAnimationFrame(() => textEl.classList.add('show'));
+        }
+
+        // EVA Animation (ported from hw/A2.html)
+        let evaPipeline, evaCardE, evaCardV, evaCardA, evaNodeE, evaNodeV, evaNodeA;
+        let evaMathE, evaMathV, evaMathA, evaTypeE, evaTypeV, evaTypeA;
+        let evaParticle, evaTrack, evaProgress, evaPlayBtn, evaMonitorText;
+        let isAnimatingEva = false;
+
+        evaPipeline = document.getElementById('eva-pipeline');
+        evaCardE = document.getElementById('eva-card-e');
+        evaCardV = document.getElementById('eva-card-v');
+        evaCardA = document.getElementById('eva-card-a');
+        evaNodeE = document.getElementById('eva-node-e');
+        evaNodeV = document.getElementById('eva-node-v');
+        evaNodeA = document.getElementById('eva-node-a');
+        evaMathE = document.getElementById('eva-math-e');
+        evaMathV = document.getElementById('eva-math-v');
+        evaMathA = document.getElementById('eva-math-a');
+        evaTypeE = document.getElementById('eva-type-e');
+        evaTypeV = document.getElementById('eva-type-v');
+        evaTypeA = document.getElementById('eva-type-a');
+        evaParticle = document.getElementById('eva-particle');
+        evaTrack = document.getElementById('eva-track');
+        evaProgress = document.getElementById('eva-progress');
+        evaPlayBtn = document.getElementById('eva-play-btn');
+        evaMonitorText = document.getElementById('eva-monitor-text');
+
+        function evaIsMobile() {
+            return window.innerWidth < 769;
+        }
+
+        function evaGetCenterRel(el) {
+            const rect = el.getBoundingClientRect();
+            const contRect = evaPipeline.getBoundingClientRect();
+            return {
+                x: rect.left - contRect.left + rect.width / 2,
+                y: rect.top - contRect.top + rect.height / 2
+            };
+        }
+
+        function evaUpdateTrack() {
+            if (!evaPipeline) return;
+            const cE = evaGetCenterRel(evaNodeE);
+            const cA = evaGetCenterRel(evaNodeA);
+
+            if (!evaIsMobile()) {
+                evaTrack.style.top = (cE.y - 2) + 'px';
+                evaTrack.style.left = cE.x + 'px';
+                evaTrack.style.width = (cA.x - cE.x) + 'px';
+                evaTrack.style.height = '4px';
+                evaProgress.style.top = (cE.y - 2) + 'px';
+                evaProgress.style.left = cE.x + 'px';
+                evaProgress.style.height = '4px';
+            } else {
+                evaTrack.style.left = (cE.x - 2) + 'px';
+                evaTrack.style.top = cE.y + 'px';
+                evaTrack.style.height = (cA.y - cE.y) + 'px';
+                evaTrack.style.width = '4px';
+                evaProgress.style.left = (cE.x - 2) + 'px';
+                evaProgress.style.top = cE.y + 'px';
+                evaProgress.style.width = '4px';
+            }
+        }
+
+        function evaSleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        async function evaTypeWriter(el, text, speed = 60) {
+            let html = '';
+            for (let i = 0; i < text.length; i++) {
+                html += text.charAt(i) === '\n' ? '<br>' : text.charAt(i);
+                el.innerHTML = html + '<span class="eva-cursor"></span>';
+                await evaSleep(speed);
+            }
+            await evaSleep(400);
+            el.innerHTML = html;
+        }
+
+        function evaResetState() {
+            [evaCardE, evaCardV, evaCardA].forEach(el => el.classList.remove('active'));
+            [evaNodeE, evaNodeV, evaNodeA].forEach(el => el.classList.remove('glow-e', 'glow-v', 'glow-a', 'cpu-working'));
+            [evaMathE, evaMathV, evaMathA].forEach(el => el.classList.remove('show'));
+
+            evaTypeE.innerHTML = '';
+            evaTypeV.innerHTML = '';
+            evaTypeA.innerHTML = '';
+
+            evaParticle.classList.remove('processing');
+            evaParticle.style.transition = 'none';
+            evaParticle.style.opacity = '0';
+            evaParticle.style.transform = 'scale(1) translate(-50%, -50%)';
+
+            if (evaMonitorText) evaMonitorText.style.opacity = '0';
+
+            evaProgress.style.transition = 'none';
+            if (!evaIsMobile()) evaProgress.style.width = '0'; else evaProgress.style.height = '0';
+
+            void evaParticle.offsetWidth;
+            void evaProgress.offsetWidth;
+
+            evaParticle.style.transition = 'left 1.5s cubic-bezier(0.4, 0, 0.2, 1), top 1.5s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s, opacity 0.3s';
+            evaProgress.style.transition = 'all 1.5s ease-in-out';
+        }
+
+        async function startEvaAnimation() {
+            if (isAnimatingEva) return;
+            isAnimatingEva = true;
+
+            evaPlayBtn.disabled = true;
+            evaPlayBtn.innerHTML = 'System läuft ...';
+
+            evaResetState();
+            evaUpdateTrack();
+            await evaSleep(400);
+
+            const cE = evaGetCenterRel(evaNodeE);
+            const cV = evaGetCenterRel(evaNodeV);
+            const cA = evaGetCenterRel(evaNodeA);
+
+            // PHASE 1: EINGABE
+            evaCardE.classList.add('active');
+            evaNodeE.classList.add('glow-e');
+            evaMathE.classList.add('show');
+
+            evaParticle.style.left = cE.x + 'px';
+            evaParticle.style.top = cE.y + 'px';
+            evaParticle.style.opacity = '0';
+
+            await evaTypeWriter(evaTypeE, 'Benutzer tippt ...\n5 + 3', 70);
+            await evaSleep(300);
+
+            evaParticle.style.opacity = '1';
+            await evaSleep(800);
+
+            evaParticle.style.left = cV.x + 'px';
+            evaParticle.style.top = cV.y + 'px';
+
+            if (!evaIsMobile()) evaProgress.style.width = (cV.x - cE.x) + 'px';
+            else evaProgress.style.height = (cV.y - cE.y) + 'px';
+
+            await evaSleep(1500);
+
+            evaCardE.classList.remove('active');
+            evaNodeE.classList.remove('glow-e');
+
+            // PHASE 2: VERARBEITUNG
+            evaCardV.classList.add('active');
+            evaNodeV.classList.add('glow-v', 'cpu-working');
+            evaMathV.classList.add('show');
+
+            evaParticle.classList.add('processing');
+
+            await evaTypeWriter(evaTypeV, 'Prozessor berechnet\n5 + 3 = 8', 60);
+            await evaSleep(1000);
+
+            evaParticle.classList.remove('processing');
+            evaNodeV.classList.remove('cpu-working');
+
+            await evaSleep(400);
+
+            evaParticle.style.left = cA.x + 'px';
+            evaParticle.style.top = cA.y + 'px';
+
+            if (!evaIsMobile()) evaProgress.style.width = (cA.x - cE.x) + 'px';
+            else evaProgress.style.height = (cA.y - cE.y) + 'px';
+
+            evaCardV.classList.remove('active');
+            evaNodeV.classList.remove('glow-v');
+
+            await evaSleep(1500);
+
+            // PHASE 3: AUSGABE
+            evaCardA.classList.add('active');
+            evaNodeA.classList.add('glow-a');
+            evaMathA.classList.add('show');
+
+            evaParticle.style.opacity = '0';
+            evaParticle.style.transform = 'scale(0) translate(-50%, -50%)';
+            await evaSleep(500);
+
+            await evaTypeWriter(evaTypeA, 'Monitor zeigt Ergebnis: 8', 70);
+
+            if (evaMonitorText) evaMonitorText.style.opacity = '1';
+
+            await evaSleep(2000);
+
+            evaCardA.classList.remove('active');
+            evaNodeA.classList.remove('glow-a');
+
+            isAnimatingEva = false;
+            evaPlayBtn.disabled = false;
+            evaPlayBtn.innerHTML = '↻ Nochmal abspielen';
+        }
+
+        window.addEventListener('resize', () => {
+            if (isAnimatingEva) return;
+            evaUpdateTrack();
+        });
+
+        if (evaPipeline) evaUpdateTrack();
+
+        // Init
+        updateNavDots();
+    </script>
+</body>
+</html>

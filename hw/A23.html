@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="de" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A9: Grüne IT & Nachhaltigkeit • Arbeitsblatt</title>
+    <script src="assets/js/tailwind.min.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        slate: {
+                            50: '#fafafa', 100: '#f5f5f5', 200: '#e5e5e5', 300: '#d4d4d4',
+                            400: '#b4bdca', 500: '#a3a3a3', 600: '#616161', 700: '#404040',
+                            800: '#303846', 900: '#1a1f26', 950: '#111418'
+                        },
+                        onedrive: {
+                            50: '#eff6ff', 100: '#dbeafe', 400: '#66a1ff', 500: '#0078d4',
+                            600: '#106ebe', 700: '#005a9e', 800: '#004578',
+                            900: '#00335c', 950: '#001f3f'
+                        },
+                        eco: {
+                            50: '#f0fdf4', 100: '#dcfce7', 200: '#bbf7d0', 300: '#86efac', 400: '#4ade80',
+                            500: '#22c55e', 600: '#16a34a', 700: '#15803d', 800: '#166534', 900: '#14532d', 950: '#052e16'
+                        },
+                        amber: {
+                            50: '#fffbeb', 100: '#fef3c7', 200: '#fde68a', 500: '#f59e0b', 600: '#d97706', 700: '#b45309'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Segoe UI', 'Inter', 'system-ui', '-apple-system', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="assets/css/fontawesome.min.css">
+    <style>
+        @import url('assets/fonts/inter.css');
+        * { transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(156, 163, 175, 0.5); border-radius: 4px; }
+        
+        .eco-rank-bounce { animation: bounce 1.5s infinite; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+
+        .chip-draggable { cursor: grab; user-select: none; touch-action: manipulation; }
+        .chip-draggable:active { cursor: grabbing; }
+
+        @media print {
+            .no-print { display: none !important; }
+            html, body { height: auto !important; min-height: auto !important; margin: 0 !important; padding: 0 !important; }
+            body { background: white !important; color: black !important; font-size: 11pt; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .print-card { border: 1px solid #cbd5e1 !important; box-shadow: none !important; break-inside: avoid; page-break-inside: avoid; }
+            input, textarea, select { border: 1px solid #94a3b8 !important; background: #fff !important; color: #000 !important; }
+            .dark, .dark * { background-color: #fff !important; color: #000 !important; border-color: #cbd5e1 !important; }
+        }
+    </style>
+</head>
+<body class="bg-slate-100 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-full flex flex-col font-sans antialiased">
+
+    <!-- Sticky Header Bar -->
+    <header class="sticky top-0 z-50 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 shadow-sm no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-2.5 flex items-center justify-between gap-4">
+            <div class="flex items-center gap-3 min-w-0">
+                <div class="w-9 h-9 rounded-lg bg-eco-600 text-white flex items-center justify-center font-bold shadow-md shadow-eco-600/20 shrink-0">
+                    <i class="fa-solid fa-leaf text-lg"></i>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div>
+                        <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Fortschritt</span>
+                        <span id="headerPercentText" class="text-sm font-extrabold text-eco-600 dark:text-eco-400">0% erledigt</span>
+                    </div>
+                    <div class="relative w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center font-bold text-[10px] sm:text-xs text-slate-700 dark:text-slate-200 shrink-0 ml-1">
+                        <svg class="absolute inset-0 w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+                            <circle cx="18" cy="18" r="16" fill="none" class="stroke-slate-200 dark:stroke-slate-800" stroke-width="4"></circle>
+                            <circle id="headerSvgCircle" cx="18" cy="18" r="16" fill="none" class="stroke-eco-500 transition-all duration-500 ease-out" stroke-width="4" stroke-dasharray="100.53" stroke-dashoffset="100.53" stroke-linecap="round"></circle>
+                        </svg>
+                        <span id="headerPercentNumber" class="relative z-10">0%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2 shrink-0">
+                <button onclick="toggleDarkMode()" title="Dunkelmodus umschalten" class="p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
+                    <i id="themeIcon" class="fa-solid fa-moon text-sm"></i>
+                </button>
+                <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase">Eco-Score:</span>
+                    <span id="headerScore" class="text-xs font-black text-eco-600 dark:text-eco-400">0</span>
+                </div>
+                <button id="hdrPdfBtn" onclick="handlePrint()" class="p-2 rounded-lg bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-500 transition border border-slate-200 dark:border-slate-700 opacity-60 cursor-not-allowed" title="Erst bei 100% Ausfüllung möglich">
+                    <i id="printIcon" class="fa-solid fa-file-pdf text-sm"></i>
+                </button>
+                <button onclick="confirmReset()" title="Zurücksetzen" class="p-2 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/50 rounded-lg border border-rose-200 dark:border-rose-900/50">
+                    <i class="fa-solid fa-rotate-right text-sm"></i>
+                </button>
+            </div>
+        </div>
+        <div class="w-full bg-slate-200 dark:bg-slate-800 h-1">
+            <div id="progressBar" class="bg-eco-500 h-1 transition-all duration-300" style="width: 0%"></div>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto w-full px-4 sm:px-6 py-6 space-y-8 flex-grow">
+
+        <!-- Title & Metadata (AUTOFILL) -->
+        <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 print-card">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-100 dark:border-slate-800">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-eco-500 to-eco-700 flex items-center justify-center text-[22px] font-black border border-eco-600 shadow-sm text-white">
+                        <i class="fa-solid fa-leaf"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900 dark:text-slate-100">A9: Grüne IT & Nachhaltigkeit</h2>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Informatische Bildung • IT-Hardware, Ökologie & Verantwortung • A9</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Student Metadata (AUTOFILL SYNCED WITH WORKSHEET-COMMON.JS) -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-500 dark:text-slate-400 mb-1">
+                        <i class="fa-solid fa-user mr-1 text-eco-500"></i> Vorname
+                    </label>
+                    <input type="text" id="studentName" readonly tabindex="-1" style="pointer-events: none;" class="w-full px-3.5 py-2 text-sm bg-slate-100 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl font-medium text-slate-500 dark:text-slate-400 opacity-90 cursor-not-allowed">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-500 dark:text-slate-400 mb-1">
+                        <i class="fa-solid fa-users mr-1 text-eco-500"></i> Klasse
+                    </label>
+                    <input type="text" id="studentClass" readonly tabindex="-1" style="pointer-events: none;" class="w-full px-3.5 py-2 text-sm bg-slate-100 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl font-medium text-slate-500 dark:text-slate-400 opacity-90 cursor-not-allowed" value="B24">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-500 dark:text-slate-400 mb-1">
+                        <i class="fa-solid fa-calendar mr-1 text-eco-500"></i> Datum
+                    </label>
+                    <input type="text" id="studentDate" readonly tabindex="-1" style="pointer-events: none;" class="w-full px-3.5 py-2 text-sm bg-slate-100 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl font-medium text-slate-500 dark:text-slate-400 opacity-90 cursor-not-allowed">
+                </div>
+            </div>
+        </div>
+
+        <!-- Educational Hero Section -->
+        <div class="bg-slate-900 text-white rounded-2xl p-6 sm:p-8 shadow-md relative overflow-hidden print-card">
+            <div class="relative z-10 space-y-3">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-eco-500/20 text-eco-400 text-xs font-bold uppercase tracking-wider border border-eco-500/30">
+                    <i class="fa-solid fa-earth-americas"></i> Ökologische Verantwortung in der Informatik
+                </div>
+                <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Nachhaltigkeit & Ressourcenbewusstsein in der IT</h1>
+                <p class="text-slate-300 text-sm leading-relaxed max-w-3xl">
+                    Smartphones, Laptops und Serverfarmen sind Meisterwerke der Ingenieurskunst. Doch Herstellung, Betrieb und Entsorgung erfordern enorme Mengen Energie, Wasser und seltene Rohstoffe. Analysiere den ökologischen Rucksack digitaler Geräte und entdecke Handlungsoptionen für nachhaltige IT.
+                </p>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
+                    <div class="px-3 py-2 bg-white/10 backdrop-blur-md rounded-xl border border-white/15 text-xs font-semibold text-center">
+                        <i class="fa-solid fa-mountain text-amber-400 block text-lg mb-1"></i> 70 kg Abraum / Handy
+                    </div>
+                    <div class="px-3 py-2 bg-white/10 backdrop-blur-md rounded-xl border border-white/15 text-xs font-semibold text-center">
+                        <i class="fa-solid fa-industry text-eco-400 block text-lg mb-1"></i> 80% Herstellungs-CO₂
+                    </div>
+                    <div class="px-3 py-2 bg-white/10 backdrop-blur-md rounded-xl border border-white/15 text-xs font-semibold text-center">
+                        <i class="fa-solid fa-droplet text-blue-400 block text-lg mb-1"></i> 900 Liter Wasser / Chip
+                    </div>
+                    <div class="px-3 py-2 bg-white/10 backdrop-blur-md rounded-xl border border-white/15 text-xs font-semibold text-center">
+                        <i class="fa-solid fa-box-archive text-purple-400 block text-lg mb-1"></i> ~200 Mio. Alt-Handys
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Auftrag 1: Interaktive Lebenszyklus-Zuordnung (Drag & Drop) -->
+        <section class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 print-card space-y-6">
+            <div class="border-b border-slate-200 dark:border-slate-800 pb-4">
+                <div class="inline-flex items-center gap-1.5 bg-eco-50 dark:bg-eco-950 text-eco-700 dark:text-eco-300 text-xs font-bold px-3 py-1 rounded-full border border-eco-200 dark:border-eco-800 uppercase mb-2">
+                    <i class="fa-solid fa-arrows-spin"></i> Auftrag 1
+                </div>
+                <h3 class="text-xl font-bold text-slate-900 dark:text-slate-100">Der Lebenszyklus eines IT-Geräts (Drag & Drop)</h3>
+                <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">
+                    Ein digitales Gerät durchläuft 5 Hauptphasen. Ziehe die untenstehenden Merkmale und Kennzahlen per <strong>Drag & Drop</strong> (oder tippe sie an) in die jeweils richtige Phase des Lebenszyklus.
+                </p>
+            </div>
+
+            <!-- Item Bank -->
+            <div class="space-y-3">
+                <div id="lifecycleBank" class="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 min-h-[90px]" data-dropzone="bank">
+                    <span class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block mb-2 flex items-center justify-between">
+                        <span><i class="fa-solid fa-hand-pointer mr-1"></i> Merkmal-Vorrat (Ziehen oder Tippen):</span>
+                        <span class="text-[10px] text-eco-600 dark:text-eco-400 font-normal"><i class="fa-solid fa-mobile-screen mr-1"></i> Mobile & Desktop</span>
+                    </span>
+                    <div id="lifecycleChipsContainer" class="flex flex-wrap gap-2">
+                        <!-- Dynamic Chips populated by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dropzones Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-3">
+                <!-- Phase 1: Rohstoffe -->
+                <div class="bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col justify-between" data-dropzone="phase1">
+                    <div class="text-center pb-2 border-b border-slate-200 dark:border-slate-700">
+                        <span class="text-[10px] font-black uppercase text-amber-600 dark:text-amber-400">1. Phase</span>
+                        <h4 class="text-xs font-bold text-slate-900 dark:text-slate-100">Rohstoffabbau</h4>
+                    </div>
+                    <div id="dropzone_phase1" class="min-h-[100px] p-2 space-y-2 flex flex-col justify-start"></div>
+                </div>
+
+                <!-- Phase 2: Fertigung -->
+                <div class="bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col justify-between" data-dropzone="phase2">
+                    <div class="text-center pb-2 border-b border-slate-200 dark:border-slate-700">
+                        <span class="text-[10px] font-black uppercase text-eco-600 dark:text-eco-400">2. Phase</span>
+                        <h4 class="text-xs font-bold text-slate-900 dark:text-slate-100">Fertigung & Bau</h4>
+                    </div>
+                    <div id="dropzone_phase2" class="min-h-[100px] p-2 space-y-2 flex flex-col justify-start"></div>
+                </div>
+
+                <!-- Phase 3: Transport -->
+                <div class="bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col justify-between" data-dropzone="phase3">
+                    <div class="text-center pb-2 border-b border-slate-200 dark:border-slate-700">
+                        <span class="text-[10px] font-black uppercase text-onedrive-600 dark:text-onedrive-400">3. Phase</span>
+                        <h4 class="text-xs font-bold text-slate-900 dark:text-slate-100">Transport & Handel</h4>
+                    </div>
+                    <div id="dropzone_phase3" class="min-h-[100px] p-2 space-y-2 flex flex-col justify-start"></div>
+                </div>
+
+                <!-- Phase 4: Nutzung -->
+                <div class="bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col justify-between" data-dropzone="phase4">
+                    <div class="text-center pb-2 border-b border-slate-200 dark:border-slate-700">
+                        <span class="text-[10px] font-black uppercase text-purple-600 dark:text-purple-400">4. Phase</span>
+                        <h4 class="text-xs font-bold text-slate-900 dark:text-slate-100">Nutzungsphase</h4>
+                    </div>
+                    <div id="dropzone_phase4" class="min-h-[100px] p-2 space-y-2 flex flex-col justify-start"></div>
+                </div>
+
+                <!-- Phase 5: Recycling -->
+                <div class="bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col justify-between" data-dropzone="phase5">
+                    <div class="text-center pb-2 border-b border-slate-200 dark:border-slate-700">
+                        <span class="text-[10px] font-black uppercase text-rose-600 dark:text-rose-400">5. Phase</span>
+                        <h4 class="text-xs font-bold text-slate-900 dark:text-slate-100">Entsorgung & Recycling</h4>
+                    </div>
+                    <div id="dropzone_phase5" class="min-h-[100px] p-2 space-y-2 flex flex-col justify-start"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Auftrag 2: Rohstoffe & Konflikte in der IT -->
+        <section class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 print-card space-y-6">
+            <div class="border-b border-slate-200 dark:border-slate-800 pb-4">
+                <div class="inline-flex items-center gap-1.5 bg-eco-50 dark:bg-eco-950 text-eco-700 dark:text-eco-300 text-xs font-bold px-3 py-1 rounded-full border border-eco-200 dark:border-eco-800 uppercase mb-2">
+                    <i class="fa-solid fa-cubes-stacked"></i> Auftrag 2
+                </div>
+                <h3 class="text-xl font-bold text-slate-900 dark:text-slate-100">Kritische Rohstoffe & Globale Verantwortung</h3>
+                <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">
+                    In einer einzigen Smartphone-Platine stecken über 60 verschiedene Elemente. Weise den Rohstoffen ihre Hauptfunktion und ökologische Herausforderung zu.
+                </p>
+            </div>
+
+            <!-- Component / Raw Material Matching Table -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- Kobalt -->
+                <div class="p-4 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700 space-y-2">
+                    <div class="flex justify-between items-center">
+                        <span class="font-bold text-xs text-slate-900 dark:text-slate-100"><i class="fa-solid fa-battery-full text-eco-600 mr-1"></i> Kobalt</span>
+                        <span class="text-[10px] bg-slate-200 dark:bg-slate-700 px-2 py-0.5 rounded font-bold">Akkus</span>
+                    </div>
+                    <label for="raw_cobalt_match" class="block text-[11px] text-slate-500 dark:text-slate-400">Hauptvorkommen & Challenge:</label>
+                    <select id="raw_cobalt_match" onchange="updateProgress()" class="w-full p-2 text-xs bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg font-medium outline-none focus:border-eco-500 dark:text-white">
+                        <option value="">-- Bitte wählen --</option>
+                        <option value="correct">Kongo: Minenabbau unter schweren Schutzbedingungen</option>
+                        <option value="w1">Chile: Enormer Süßwasserverbrauch in Wüstenregionen</option>
+                        <option value="w2">China: Aufwändige Trennung schwerlöslicher Mineralien</option>
+                    </select>
+                </div>
+
+                <!-- Lithium -->
+                <div class="p-4 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700 space-y-2">
+                    <div class="flex justify-between items-center">
+                        <span class="font-bold text-xs text-slate-900 dark:text-slate-100"><i class="fa-solid fa-bolt text-amber-500 mr-1"></i> Lithium</span>
+                        <span class="text-[10px] bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300 px-2 py-0.5 rounded font-bold">Energiespeicher</span>
+                    </div>
+                    <label for="raw_lithium_match" class="block text-[11px] text-slate-500 dark:text-slate-400">Hauptvorkommen & Challenge:</label>
+                    <select id="raw_lithium_match" onchange="updateProgress()" class="w-full p-2 text-xs bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg font-medium outline-none focus:border-eco-500 dark:text-white">
+                        <option value="">-- Bitte wählen --</option>
+                        <option value="w1">Südafrika: Hohe Luftverschmutzung durch Schmelzöfen</option>
+                        <option value="correct">Südamerika (Atacama): Hoher Verdunstungs-Wasserverbrauch</option>
+                        <option value="w2">Kanada: Mechanischer Abholzungsschaden</option>
+                    </select>
+                </div>
+
+                <!-- Gold & Seltene Erden -->
+                <div class="p-4 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700 space-y-2">
+                    <div class="flex justify-between items-center">
+                        <span class="font-bold text-xs text-slate-900 dark:text-slate-100"><i class="fa-solid fa-microchip text-onedrive-500 mr-1"></i> Gold & Kontakte</span>
+                        <span class="text-[10px] bg-onedrive-100 dark:bg-onedrive-950 text-onedrive-700 dark:text-onedrive-300 px-2 py-0.5 rounded font-bold">Leiterplatten</span>
+                    </div>
+                    <label for="raw_gold_match" class="block text-[11px] text-slate-500 dark:text-slate-400">Hauptvorkommen & Challenge:</label>
+                    <select id="raw_gold_match" onchange="updateProgress()" class="w-full p-2 text-xs bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg font-medium outline-none focus:border-eco-500 dark:text-white">
+                        <option value="">-- Bitte wählen --</option>
+                        <option value="w1">Verbrennung ohne Abgasfilter</option>
+                        <option value="correct">Verwendung von Quecksilber/Zyanid zur Erz-Lösung</option>
+                        <option value="w2">Reiner Transportaufwand per Flugzeug</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Deep-Dive Textareas -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+                <div class="space-y-2">
+                    <label for="impact_cobalt" class="block text-xs font-bold text-slate-700 dark:text-slate-300">
+                        1. Wer trägt deiner Meinung nach die Hauptverantwortung für nachhaltige Lieferketten (Hersteller, Gesetzgeber oder Konsumenten)? Begründe:
+                    </label>
+                    <textarea id="impact_cobalt" oninput="updateProgress()" rows="3" placeholder="Deine Einschätzung und Begründung..." class="w-full p-3 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-eco-500 dark:text-slate-100 outline-none"></textarea>
+                </div>
+
+                <div class="space-y-2">
+                    <label for="impact_gold" class="block text-xs font-bold text-slate-700 dark:text-slate-300">
+                        2. Recherchiere oder schätze: Wie viel Gold (in Gramm) steckt hochgerechnet in ca. 40 alten Smartphones im Vergleich zu 1 Tonne Erzgestein?
+                    </label>
+                    <input type="text" id="impact_gold" oninput="updateProgress()" placeholder="z. B. ca. 1 Gramm Gold in 40 Handys (~35g pro Tonne Handys vs. 5g pro Tonne Erz)..." class="w-full p-3 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-eco-500 dark:text-slate-100 outline-none">
+                </div>
+            </div>
+        </section>
+
+        <!-- Auftrag 3: Live CO₂- & Energie-Fußabdruck-Rechner -->
+        <section class="bg-slate-900 text-white rounded-2xl p-6 sm:p-8 shadow-md space-y-6 relative overflow-hidden print-card">
+            <div class="border-b border-slate-800 pb-4">
+                <div class="inline-flex items-center gap-1.5 bg-eco-500/20 text-eco-400 text-xs font-bold px-3 py-1 rounded-full border border-eco-500/30 uppercase mb-2">
+                    <i class="fa-solid fa-calculator"></i> Auftrag 3
+                </div>
+                <h3 class="text-xl font-bold text-white">Interaktiver IT-Fußabdruck-Rechner & Rucksack-Modell</h3>
+                <p class="text-slate-400 text-sm mt-1">
+                    Stelle deine tägliche IT-Nutzung ein und berechne deinen jährlichen CO₂-Ausstoß sowie das Einsparpotenzial durch längere Geräte-Nutzung.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white/5 p-5 rounded-xl border border-white/10">
+                <!-- Controls -->
+                <div class="space-y-4">
+                    <div>
+                        <div class="flex justify-between text-xs font-bold mb-1">
+                            <label for="slider_mobile_hours">Tägliche Smartphone-Nutzung:</label>
+                            <span id="val_mobile_hours" class="text-eco-400">3 Std. / Tag</span>
+                        </div>
+                        <input type="range" id="slider_mobile_hours" min="0" max="12" value="3" oninput="calculateFootprint()" class="w-full accent-eco-500 cursor-pointer">
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between text-xs font-bold mb-1">
+                            <label for="slider_pc_hours">Tägliche PC / Console-Nutzung:</label>
+                            <span id="val_pc_hours" class="text-eco-400">2 Std. / Tag</span>
+                        </div>
+                        <input type="range" id="slider_pc_hours" min="0" max="14" value="2" oninput="calculateFootprint()" class="w-full accent-eco-500 cursor-pointer">
+                    </div>
+
+                    <div>
+                        <label for="select_usage_years" class="block text-xs font-bold mb-1">Nutzungsdauer deines Smartphones:</label>
+                        <select id="select_usage_years" onchange="calculateFootprint()" class="w-full p-2 text-xs bg-slate-800 border border-slate-700 rounded-lg text-white font-semibold outline-none focus:border-eco-500">
+                            <option value="1">1 Jahr (Jedes Jahr neues Gerät)</option>
+                            <option value="2" selected>2 Jahre (Standard-Vertrag)</option>
+                            <option value="3">3 Jahre (Nachhaltiger)</option>
+                            <option value="4">4+ Jahre (Maximale Verteilung des Rucksacks)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Calculator Output Display -->
+                <div class="bg-slate-950 p-5 rounded-xl border border-slate-800 flex flex-col justify-between text-center space-y-3">
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Deine geschätzte jährliche IT-Bilanz:</span>
+                    <div>
+                        <span id="calc_co2_kg" class="text-4xl font-black text-eco-400">142</span>
+                        <span class="text-xs font-bold text-slate-400 block mt-1">kg CO₂-Äquivalent / Jahr</span>
+                    </div>
+                    <div class="pt-2 border-t border-slate-800 grid grid-cols-2 gap-2 text-xs">
+                        <div>
+                            <span class="block text-slate-400 text-[10px]">Stromverbrauch:</span>
+                            <span id="calc_kwh" class="font-bold text-white">125 kWh</span>
+                        </div>
+                        <div>
+                            <span class="block text-slate-400 text-[10px]">Bäume zur Kompensation:</span>
+                            <span id="calc_trees" class="font-bold text-eco-400">~12 Bäume</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-3 pt-2">
+                <label for="impact_backpack" class="block text-sm font-bold text-eco-300">
+                    Erkläre anhand deiner Berechnung und des "Rucksack-Modells": Warum halbiert die Verlängerung der Nutzungszeit von 2 auf 4 Jahre den jährlichen Herstellungs-Fußabdruck?
+                </label>
+                <textarea id="impact_backpack" oninput="updateProgress()" rows="3" placeholder="Erkläre die Aufteilung des Herstellungsaufwands (ca. 80kg CO2) auf die Jahre..." class="w-full p-4 bg-white/10 border border-white/20 rounded-xl focus:ring-2 focus:ring-eco-500 outline-none text-sm text-white"></textarea>
+            </div>
+        </section>
+
+        <!-- Auftrag 4: Stromverbrauch von IT-Geräten & KI-Diensten -->
+        <section class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 print-card space-y-6">
+            <div class="border-b border-slate-200 dark:border-slate-800 pb-4">
+                <div class="inline-flex items-center gap-1.5 bg-eco-50 dark:bg-eco-950 text-eco-700 dark:text-eco-300 text-xs font-bold px-3 py-1 rounded-full border border-eco-200 dark:border-eco-800 uppercase mb-2">
+                    <i class="fa-solid fa-server"></i> Auftrag 4
+                </div>
+                <h3 class="text-xl font-bold text-slate-900 dark:text-slate-100">Rechenzentren, Cloud & KI-Energiebedarf</h3>
+                <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">
+                    Nicht nur die Hardware vor unseren Augen verbraucht Strom – ein Großteil der Energie fließt in weltweite Rechenzentren und Datennetze.
+                </p>
+            </div>
+
+            <!-- Comparison Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
+                <div class="p-4 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700">
+                    <div class="text-eco-600 dark:text-eco-400 text-2xl mb-1"><i class="fa-solid fa-magnifying-glass"></i></div>
+                    <h4 class="font-bold text-xs">Google-Suchanfrage</h4>
+                    <span class="text-xl font-black text-slate-900 dark:text-white block my-1">~0,0003 kWh</span>
+                    <p class="text-[10px] text-slate-500">Schneller Datenbank-Indexzugriff</p>
+                </div>
+
+                <div class="p-4 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700">
+                    <div class="text-amber-500 text-2xl mb-1"><i class="fa-solid fa-robot"></i></div>
+                    <h4 class="font-bold text-xs">KI-Anfrage (ChatGPT)</h4>
+                    <span class="text-xl font-black text-slate-900 dark:text-white block my-1">~0,003 kWh</span>
+                    <p class="text-[10px] text-slate-500">10-facher Energiebedarf (GPU-Cluster)</p>
+                </div>
+
+                <div class="p-4 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700">
+                    <div class="text-purple-500 text-2xl mb-1"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                    <h4 class="font-bold text-xs">KI-Bildgenerierung</h4>
+                    <span class="text-xl font-black text-slate-900 dark:text-white block my-1">~0,030 kWh</span>
+                    <p class="text-[10px] text-slate-500">Entspricht 1x Smartphone voll aufladen!</p>
+                </div>
+            </div>
+
+            <div class="space-y-3 pt-1">
+                <label for="ai_energy_reason" class="block text-xs font-bold text-slate-700 dark:text-slate-300">
+                    Aufgabe: Warum benötigt eine generative KI-Anfrage (z. B. Texterzeugung oder Bildgenerierung) ein Vielfaches an elektrischer Energie im Vergleich zu einer einfachen Web-Suche?
+                </label>
+                <textarea id="ai_energy_reason" oninput="updateProgress()" rows="3" placeholder="Erkläre die Rolle von Grafikkarten (GPUs), Rechenleistung und neuronalen Netzen..." class="w-full p-3 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-eco-500 dark:text-slate-100 outline-none"></textarea>
+            </div>
+        </section>
+
+        <!-- Auftrag 5: Urban Mining & Praxis-Kaufberatung für Schulen -->
+        <section class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 print-card space-y-6">
+            <div class="border-b border-slate-200 dark:border-slate-800 pb-4">
+                <div class="inline-flex items-center gap-1.5 bg-eco-50 dark:bg-eco-950 text-eco-700 dark:text-eco-300 text-xs font-bold px-3 py-1 rounded-full border border-eco-200 dark:border-eco-800 uppercase mb-2">
+                    <i class="fa-solid fa-building-columns"></i> Auftrag 5
+                </div>
+                <h3 class="text-xl font-bold text-slate-900 dark:text-slate-100">Urban Mining & Grüne IT-Kaufberatung</h3>
+                <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">
+                    Beim "Urban Mining" werden Wertstoffe aus ausgedienten Elektrogeräten zurückgewonnen. Wie bewertest du das Potenzial und Kriterien für nachhaltige Hardware-Beschaffung?
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Urban Mining Count -->
+                <div class="bg-eco-50 dark:bg-eco-950/40 p-4 rounded-xl border border-eco-200 dark:border-eco-900/50 space-y-3">
+                    <h4 class="font-bold text-xs text-eco-800 dark:text-eco-300 flex items-center gap-2">
+                        <i class="fa-solid fa-box-open text-eco-600"></i> Alt-Geräte in deiner Familie
+                    </h4>
+                    <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                        In deutschen Haushalten liegen ca. 200 Mio. Alt-Handys ungenutzt herum. Wie viele alte Handys, Tablets oder Laptops liegen bei dir zu Hause in Schubladen?
+                    </p>
+                    <div class="flex items-center gap-3">
+                        <input type="number" min="0" max="99" id="impact_mining_count" oninput="updateProgress()" placeholder="0" class="w-24 p-2 text-center text-lg font-black bg-white dark:bg-slate-800 border border-eco-300 dark:border-eco-700 rounded-lg outline-none focus:ring-2 focus:ring-eco-500 dark:text-white">
+                        <span class="text-xs text-slate-500 font-medium">Alt-Geräte ungenutzt</span>
+                    </div>
+                </div>
+
+                <!-- Green IT Criteria -->
+                <div class="space-y-2">
+                    <label for="school_green_criteria" class="block text-xs font-bold text-slate-700 dark:text-slate-300">
+                        Fallbeispiel: Eine Schule möchte 30 neue Laptops beschaffen. Nenne 2 konkrete Kriterien für eine nachhaltige Kaufentscheidung (z. B. Refurbished, Siegel, Reparierbarkeit):
+                    </label>
+                    <textarea id="school_green_criteria" oninput="updateProgress()" rows="4" placeholder="Nenne Kriterien wie TCO Certified, Austauschbare Akkus, Refurbished-Kauf..." class="w-full p-3 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-eco-500 dark:text-slate-100 outline-none"></textarea>
+                </div>
+            </div>
+
+            <!-- Was passiert beim Recycling? (Quiz) -->
+            <div class="space-y-3 pt-2">
+                <h4 class="text-xs font-bold uppercase text-slate-400 dark:text-slate-500">Was passiert mit einem Handy im Recycling?</h4>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                    <!-- Frage 1 -->
+                    <div class="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-xl border border-slate-200 dark:border-slate-700/70 space-y-2">
+                        <p class="font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                            <span class="w-5 h-5 rounded-full bg-eco-500 text-white text-[10px] flex items-center justify-center shrink-0">1</span>
+                            Was passiert mit Kupfer, Gold & Silber?
+                        </p>
+                        <div class="space-y-1.5 text-slate-700 dark:text-slate-300">
+                            <label class="flex items-start gap-2 cursor-pointer hover:text-eco-600 dark:hover:text-eco-400 transition p-1 rounded">
+                                <input type="radio" name="recycle_q1" value="1" onchange="updateProgress()" class="mt-0.5 accent-eco-500"> Werden fachgerecht zurückgewonnen.
+                            </label>
+                            <label class="flex items-start gap-2 cursor-pointer hover:text-eco-600 dark:hover:text-eco-400 transition p-1 rounded">
+                                <input type="radio" name="recycle_q1" value="0" onchange="updateProgress()" class="mt-0.5 accent-eco-500"> Gehen komplett verloren.
+                            </label>
+                            <label class="flex items-start gap-2 cursor-pointer hover:text-eco-600 dark:hover:text-eco-400 transition p-1 rounded">
+                                <input type="radio" name="recycle_q1" value="0" onchange="updateProgress()" class="mt-0.5 accent-eco-500"> Bleiben für immer im Gerät.
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Frage 2 -->
+                    <div class="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-xl border border-slate-200 dark:border-slate-700/70 space-y-2">
+                        <p class="font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                            <span class="w-5 h-5 rounded-full bg-eco-500 text-white text-[10px] flex items-center justify-center shrink-0">2</span>
+                            Können alle Kunststoffe/Klebstoffe recycelt werden?
+                        </p>
+                        <div class="space-y-1.5 text-slate-700 dark:text-slate-300">
+                            <label class="flex items-start gap-2 cursor-pointer hover:text-eco-600 dark:hover:text-eco-400 transition p-1 rounded">
+                                <input type="radio" name="recycle_q2" value="0" onchange="updateProgress()" class="mt-0.5 accent-eco-500"> Ja, zu 100%.
+                            </label>
+                            <label class="flex items-start gap-2 cursor-pointer hover:text-eco-600 dark:hover:text-eco-400 transition p-1 rounded">
+                                <input type="radio" name="recycle_q2" value="1" onchange="updateProgress()" class="mt-0.5 accent-eco-500"> Nein, viele können es NICHT.
+                            </label>
+                            <label class="flex items-start gap-2 cursor-pointer hover:text-eco-600 dark:hover:text-eco-400 transition p-1 rounded">
+                                <input type="radio" name="recycle_q2" value="0" onchange="updateProgress()" class="mt-0.5 accent-eco-500"> Nur bei neuen Geräten.
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Frage 3 -->
+                    <div class="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-xl border border-slate-200 dark:border-slate-700/70 space-y-2">
+                        <p class="font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                            <span class="w-5 h-5 rounded-full bg-eco-500 text-white text-[10px] flex items-center justify-center shrink-0">3</span>
+                            Gold: Tonne Handys vs. Tonne Golderz?
+                        </p>
+                        <div class="space-y-1.5 text-slate-700 dark:text-slate-300">
+                            <label class="flex items-start gap-2 cursor-pointer hover:text-eco-600 dark:hover:text-eco-400 transition p-1 rounded">
+                                <input type="radio" name="recycle_q3" value="0" onchange="updateProgress()" class="mt-0.5 accent-eco-500"> Etwa gleich viel.
+                            </label>
+                            <label class="flex items-start gap-2 cursor-pointer hover:text-eco-600 dark:hover:text-eco-400 transition p-1 rounded">
+                                <input type="radio" name="recycle_q3" value="1" onchange="updateProgress()" class="mt-0.5 accent-eco-500"> Ca. 50x mehr Gold.
+                            </label>
+                            <label class="flex items-start gap-2 cursor-pointer hover:text-eco-600 dark:hover:text-eco-400 transition p-1 rounded">
+                                <input type="radio" name="recycle_q3" value="0" onchange="updateProgress()" class="mt-0.5 accent-eco-500"> Deutlich weniger Gold.
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col items-center gap-2 pt-1">
+                    <button type="button" onclick="checkRecycleQuiz()" class="inline-flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-lg bg-eco-600 hover:bg-eco-700 text-white transition shadow-sm">
+                        <i class="fa-solid fa-check-double"></i> Überprüfen
+                    </button>
+                    <div id="recycleQuizResult" class="hidden p-3 rounded-xl text-center font-bold text-xs shadow-sm w-full"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Auftrag 6: Dein persönlicher IT-Eco-Check -->
+        <section id="ecoSection" class="bg-white dark:bg-slate-900 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-sm text-center space-y-6 print-card">
+            <div class="space-y-1">
+                <div class="inline-flex items-center gap-1.5 bg-eco-50 dark:bg-eco-950 text-eco-700 dark:text-eco-300 text-xs font-bold px-3 py-1 rounded-full border border-eco-200 dark:border-eco-800 uppercase">
+                    <i class="fa-solid fa-square-check"></i> Auftrag 6
+                </div>
+                <h3 class="text-xl font-bold text-slate-900 dark:text-slate-100">Dein persönlicher IT-Eco-Check</h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Bewerte dein persönliches Nutzungs- und Konsumverhalten im Bereich IT-Hardware:</p>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 text-left">
+                <!-- Q1 -->
+                <div class="space-y-1.5 p-3.5 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700/70">
+                    <label for="q1" class="block text-[11px] font-bold uppercase text-slate-700 dark:text-slate-300">1. Refurbished-Kauf</label>
+                    <p class="text-[10px] text-slate-500 dark:text-slate-400 mb-2">Gebrauchtgeräte statt Neuware?</p>
+                    <select id="q1" onchange="updateProgress()" class="w-full p-2 bg-white dark:bg-slate-800 rounded-lg text-xs font-bold outline-none border border-slate-300 dark:border-slate-700 focus:border-eco-500 dark:text-white">
+                        <option value="0">Niemals (nur Neuware)</option>
+                        <option value="10">Unter Umständen</option>
+                        <option value="25">Ja, absolut (Refurbished)</option>
+                    </select>
+                </div>
+
+                <!-- Q2 -->
+                <div class="space-y-1.5 p-3.5 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700/70">
+                    <label for="q2" class="block text-[11px] font-bold uppercase text-slate-700 dark:text-slate-300">2. Reparatur</label>
+                    <p class="text-[10px] text-slate-500 dark:text-slate-400 mb-2">Verhalten bei Defekt?</p>
+                    <select id="q2" onchange="updateProgress()" class="w-full p-2 bg-white dark:bg-slate-800 rounded-lg text-xs font-bold outline-none border border-slate-300 dark:border-slate-700 focus:border-eco-500 dark:text-white">
+                        <option value="0">Sofort neues Gerät kaufen</option>
+                        <option value="15">Reparieren lassen</option>
+                        <option value="25">Selbst reparieren / Ersatzteil</option>
+                    </select>
+                </div>
+
+                <!-- Q3 -->
+                <div class="space-y-1.5 p-3.5 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700/70">
+                    <label for="q3" class="block text-[11px] font-bold uppercase text-slate-700 dark:text-slate-300">3. Recycling</label>
+                    <p class="text-[10px] text-slate-500 dark:text-slate-400 mb-2">Entsorgung von Altgeräten?</p>
+                    <select id="q3" onchange="updateProgress()" class="w-full p-2 bg-white dark:bg-slate-800 rounded-lg text-xs font-bold outline-none border border-slate-300 dark:border-slate-700 focus:border-eco-500 dark:text-white">
+                        <option value="0">Restmüll (Hausmüll)</option>
+                        <option value="10">Ewig in der Schublade</option>
+                        <option value="25">Wertstoffhof / Handel</option>
+                    </select>
+                </div>
+
+                <!-- Q4 -->
+                <div class="space-y-1.5 p-3.5 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700/70">
+                    <label for="q4" class="block text-[11px] font-bold uppercase text-slate-700 dark:text-slate-300">4. Standby-Verhalten</label>
+                    <p class="text-[10px] text-slate-500 dark:text-slate-400 mb-2">Nachts & Urlaub?</p>
+                    <select id="q4" onchange="updateProgress()" class="w-full p-2 bg-white dark:bg-slate-800 rounded-lg text-xs font-bold outline-none border border-slate-300 dark:border-slate-700 focus:border-eco-500 dark:text-white">
+                        <option value="0">Dauerhaft an / Standby</option>
+                        <option value="15">Manchmal komplett aus</option>
+                        <option value="25">Steckerleiste mit Schalter</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="pt-2 flex flex-col items-center justify-center">
+                <div id="rankBox" class="inline-flex items-center gap-2 px-6 py-3 bg-slate-200 dark:bg-slate-800 rounded-xl text-xl font-extrabold text-slate-500 transition-all">
+                    <span>Eco-Starter</span>
+                </div>
+                <div id="scoreDisplay" class="text-3xl font-black mt-2 text-slate-700 dark:text-slate-300">0 / 100 Pkt.</div>
+            </div>
+
+            <!-- Was kannst DU konkret tun? -->
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-800 text-left space-y-3">
+                <h4 class="text-xs font-bold uppercase text-slate-400 dark:text-slate-500 text-center">Zusatz: Was kannst DU konkret tun?</h4>
+                <p class="text-xs text-slate-500 dark:text-slate-400 text-center">Nenne 3 eigene, konkrete Vorsätze für nachhaltigeren Umgang mit IT-Hardware:</p>
+                <div class="space-y-2 max-w-2xl mx-auto">
+                    <div class="flex items-center gap-3">
+                        <span class="w-7 h-7 rounded-full bg-eco-500 text-white flex items-center justify-center font-bold text-xs shrink-0">1</span>
+                        <input type="text" id="action_1" oninput="updateProgress()" placeholder="Erste Möglichkeit..." class="w-full px-4 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-eco-500 dark:text-slate-100 outline-none">
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="w-7 h-7 rounded-full bg-eco-500 text-white flex items-center justify-center font-bold text-xs shrink-0">2</span>
+                        <input type="text" id="action_2" oninput="updateProgress()" placeholder="Zweite Möglichkeit..." class="w-full px-4 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-eco-500 dark:text-slate-100 outline-none">
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="w-7 h-7 rounded-full bg-eco-500 text-white flex items-center justify-center font-bold text-xs shrink-0">3</span>
+                        <input type="text" id="action_3" oninput="updateProgress()" placeholder="Dritte Möglichkeit..." class="w-full px-4 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-eco-500 dark:text-slate-100 outline-none">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="max-w-5xl mx-auto w-full px-6 py-8 text-center space-y-2 no-print">
+        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+            A9 • Grüne IT & Nachhaltigkeit • Informatische Bildung
+        </div>
+        <p class="text-[11px] text-slate-500 dark:text-slate-400 max-w-md mx-auto leading-relaxed">
+            Dieses Arbeitsblatt vermittelt ein fundiertes Verständnis für den ressourcenschonenden und verantwortungsvollen Umgang mit IT-Hardware und digitalen Diensten.
+        </p>
+    </footer>
+
+    <!-- Universal Script Loader -->
+    <script src="assets/js/worksheet-common.js"></script>
+    <script>
+        // Tracked inputs for progress calculation
+        const inputs = [
+            'studentName', 'studentClass', 'studentDate',
+            'raw_cobalt_match', 'raw_lithium_match', 'raw_gold_match',
+            'impact_cobalt', 'impact_gold', 'impact_backpack',
+            'ai_energy_reason', 'impact_mining_count', 'school_green_criteria',
+            'q1', 'q2', 'q3', 'q4',
+            'action_1', 'action_2', 'action_3'
+        ];
+
+        // Drag and drop chips definition for Auftrag 1
+        const lifecycleItems = [
+            { id: 'c1', text: '70 kg Gesteinsabraum & Erzbeschaffung', phase: 'phase1', color: 'bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 border-amber-300' },
+            { id: 'c2', text: 'Hochreines Kobalt & Lithium-Mining', phase: 'phase1', color: 'bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 border-amber-300' },
+            { id: 'c3', text: '900 Liter Wasser für Wafer-Reinräume', phase: 'phase2', color: 'bg-eco-100 dark:bg-eco-950 text-eco-800 dark:text-eco-300 border-eco-300' },
+            { id: 'c4', text: '80% des gesamten CO₂-Fußabdrucks', phase: 'phase2', color: 'bg-eco-100 dark:bg-eco-950 text-eco-800 dark:text-eco-300 border-eco-300' },
+            { id: 'c5', text: 'Globaler Schiffs- & Luftfrachttransport', phase: 'phase3', color: 'bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-300 border-blue-300' },
+            { id: 'c6', text: 'Stromverbrauch durch Akkuladung & Cloud', phase: 'phase4', color: 'bg-purple-100 dark:bg-purple-950 text-purple-800 dark:text-purple-300 border-purple-300' },
+            { id: 'c7', text: 'Verlängerung der Nutzungsdauer auf 4 Jahre', phase: 'phase4', color: 'bg-purple-100 dark:bg-purple-950 text-purple-800 dark:text-purple-300 border-purple-300' },
+            { id: 'c8', text: 'Urban Mining & Rückgabe am Wertstoffhof', phase: 'phase5', color: 'bg-rose-100 dark:bg-rose-950 text-rose-800 dark:text-rose-300 border-rose-300' }
+        ];
+
+        let chipState = {}; // chipId -> zoneId ('bank' or 'phase1'..'phase5')
+        let draggedChipId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setupUniversalAutoSave();
+            initLifecycleChips();
+            calculateFootprint();
+            updateProgress();
+        });
+
+        /* --- Drag & Drop Lifecycle Chips --- */
+        function initLifecycleChips() {
+            // Restore saved state or default to bank
+            const savedState = localStorage.getItem('onedrive_a9_chips');
+            if (savedState) {
+                try { chipState = JSON.parse(savedState); } catch(e) { chipState = {}; }
+            }
+            lifecycleItems.forEach(item => {
+                if (!chipState[item.id]) chipState[item.id] = 'bank';
+            });
+
+            renderLifecycleChips();
+            setupDropzones();
+        }
+
+        function renderLifecycleChips() {
+            // Clear containers
+            const bankContainer = document.getElementById('lifecycleChipsContainer');
+            if (bankContainer) bankContainer.innerHTML = '';
+            for (let i = 1; i <= 5; i++) {
+                const zone = document.getElementById('dropzone_phase' + i);
+                if (zone) zone.innerHTML = '';
+            }
+
+            // Render chips into target zones
+            lifecycleItems.forEach(item => {
+                const targetZoneId = chipState[item.id] === 'bank' ? 'lifecycleChipsContainer' : 'dropzone_' + chipState[item.id];
+                const container = document.getElementById(targetZoneId);
+                if (!container) return;
+
+                const chip = document.createElement('div');
+                chip.id = 'chip_' + item.id;
+                chip.className = `chip-draggable px-2.5 py-1.5 rounded-lg text-xs font-semibold border shadow-sm flex items-center justify-between gap-1.5 transition-transform hover:scale-105 ${item.color}`;
+                chip.draggable = true;
+                chip.innerHTML = `<span>${item.text}</span>`;
+
+                // Add tap-to-move for mobile
+                chip.addEventListener('click', () => {
+                    cycleChipZone(item.id);
+                });
+
+                // Drag events
+                chip.addEventListener('dragstart', (e) => {
+                    draggedChipId = item.id;
+                    e.dataTransfer.setData('text/plain', item.id);
+                });
+
+                container.appendChild(chip);
+            });
+
+            saveChipState();
+        }
+
+        function cycleChipZone(chipId) {
+            const current = chipState[chipId] || 'bank';
+            const zones = ['bank', 'phase1', 'phase2', 'phase3', 'phase4', 'phase5'];
+            const nextIdx = (zones.indexOf(current) + 1) % zones.length;
+            chipState[chipId] = zones[nextIdx];
+            renderLifecycleChips();
+            updateProgress();
+        }
+
+        function setupDropzones() {
+            const zones = document.querySelectorAll('[data-dropzone]');
+            zones.forEach(zone => {
+                zone.addEventListener('dragover', (e) => e.preventDefault());
+                zone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    const chipId = e.dataTransfer.getData('text/plain') || draggedChipId;
+                    if (!chipId) return;
+
+                    const dropTarget = zone.getAttribute('data-dropzone');
+                    chipState[chipId] = dropTarget;
+                    renderLifecycleChips();
+                    updateProgress();
+                });
+            });
+        }
+
+        function saveChipState() {
+            localStorage.setItem('onedrive_a9_chips', JSON.stringify(chipState));
+        }
+
+        /* --- Live Footprint Calculator --- */
+        function calculateFootprint() {
+            const mobileHours = parseInt(document.getElementById('slider_mobile_hours').value) || 0;
+            const pcHours = parseInt(document.getElementById('slider_pc_hours').value) || 0;
+            const usageYears = parseInt(document.getElementById('select_usage_years').value) || 2;
+
+            document.getElementById('val_mobile_hours').innerText = mobileHours + " Std. / Tag";
+            document.getElementById('val_pc_hours').innerText = pcHours + " Std. / Tag";
+
+            // Calculation logic:
+            // Smartphone battery charge + cloud stream: ~0.015 kWh/h -> 365 days
+            // PC / Console: ~0.25 kWh/h -> 365 days
+            // Smartphone manufacturing footprint: ~80 kg CO2 amortized over usageYears
+            const kwhYear = Math.round((mobileHours * 0.015 + pcHours * 0.25) * 365);
+            const useCo2 = Math.round(kwhYear * 0.38); // 0.38 kg CO2/kWh German energy mix
+            const manuCo2Year = Math.round(80 / usageYears);
+            const totalCo2 = useCo2 + manuCo2Year;
+
+            const trees = Math.round(totalCo2 / 12); // ~12kg CO2 absorbed per tree/year
+
+            document.getElementById('calc_co2_kg').innerText = totalCo2;
+            document.getElementById('calc_kwh').innerText = kwhYear + " kWh";
+            document.getElementById('calc_trees').innerText = "~" + trees + " Bäume";
+
+            updateProgress();
+        }
+
+        /* --- Progress & Score Update --- */
+        function updateProgress() {
+            let filled = 0;
+
+            // Track form inputs
+            inputs.forEach(id => {
+                const el = document.getElementById(id);
+                if (el && el.value.trim().length > 0) filled++;
+            });
+
+            // Track chips placed outside bank
+            let chipsPlaced = 0;
+            Object.keys(chipState).forEach(id => {
+                if (chipState[id] !== 'bank') chipsPlaced++;
+            });
+
+            const totalTracked = inputs.length + lifecycleItems.length;
+            const totalFilled = filled + chipsPlaced;
+
+            const percent = Math.round((totalFilled / totalTracked) * 100);
+
+            // Update Progress Header UI
+            const progressBar = document.getElementById('progressBar');
+            if (progressBar) progressBar.style.width = percent + '%';
+
+            const headerPercentText = document.getElementById('headerPercentText');
+            if (headerPercentText) headerPercentText.innerText = percent + '% erledigt';
+
+            const headerPercentNumber = document.getElementById('headerPercentNumber');
+            if (headerPercentNumber) headerPercentNumber.innerText = percent + '%';
+
+            const headerSvgCircle = document.getElementById('headerSvgCircle');
+            if (headerSvgCircle) {
+                const offset = 100.53 - (100.53 * percent) / 100;
+                headerSvgCircle.style.strokeDashoffset = offset;
+            }
+
+            // Calculate Eco Score
+            const s1 = parseInt(document.getElementById('q1').value) || 0;
+            const s2 = parseInt(document.getElementById('q2').value) || 0;
+            const s3 = parseInt(document.getElementById('q3').value) || 0;
+            const s4 = parseInt(document.getElementById('q4').value) || 0;
+            const totalScore = s1 + s2 + s3 + s4;
+
+            const headerScore = document.getElementById('headerScore');
+            if (headerScore) headerScore.innerText = totalScore;
+
+            const scoreDisplay = document.getElementById('scoreDisplay');
+            if (scoreDisplay) scoreDisplay.innerText = totalScore + " / 100 Pkt.";
+
+            const rankBox = document.getElementById('rankBox');
+            if (rankBox) {
+                if (totalScore >= 80) {
+                    rankBox.innerHTML = '<i class="fa-solid fa-trophy text-yellow-300"></i> Hardware-Hero';
+                    rankBox.className = "inline-flex items-center gap-2 px-6 py-3 bg-eco-600 text-white rounded-xl text-xl font-extrabold shadow-md eco-rank-bounce";
+                    if (scoreDisplay) scoreDisplay.className = "text-3xl font-black mt-2 text-eco-600 dark:text-eco-400";
+                } else if (totalScore >= 45) {
+                    rankBox.innerHTML = '<i class="fa-solid fa-seedling"></i> Eco-Starter';
+                    rankBox.className = "inline-flex items-center gap-2 px-6 py-3 bg-amber-500 text-white rounded-xl text-xl font-extrabold shadow-md";
+                    if (scoreDisplay) scoreDisplay.className = "text-3xl font-black mt-2 text-amber-600 dark:text-amber-400";
+                } else {
+                    rankBox.innerHTML = '<i class="fa-solid fa-leaf"></i> Eco-Newbie';
+                    rankBox.className = "inline-flex items-center gap-2 px-6 py-3 bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-xl text-xl font-extrabold";
+                    if (scoreDisplay) scoreDisplay.className = "text-3xl font-black mt-2 text-slate-700 dark:text-slate-300";
+                }
+            }
+
+            // PDF Lock Button
+            const printBtn = document.getElementById('hdrPdfBtn');
+            const printIcon = document.getElementById('printIcon');
+            if (printBtn) {
+                if (percent >= 100) {
+                    printBtn.classList.remove('opacity-60', 'cursor-not-allowed', 'bg-slate-200', 'dark:bg-slate-800', 'text-slate-400');
+                    printBtn.classList.add('bg-eco-600', 'hover:bg-eco-700', 'text-white', 'shadow-md');
+                    printBtn.title = "PDF Exportieren / Drucken";
+                    if (printIcon) printIcon.className = 'fa-solid fa-file-pdf text-sm';
+                } else {
+                    printBtn.classList.remove('bg-eco-600', 'hover:bg-eco-700', 'text-white', 'shadow-md');
+                    printBtn.classList.add('opacity-60', 'cursor-not-allowed', 'bg-slate-200', 'dark:bg-slate-800', 'text-slate-400');
+                    printBtn.title = "Erst bei 100% Ausfüllung möglich";
+                    if (printIcon) printIcon.className = 'fa-solid fa-lock text-sm';
+                }
+            }
+        }
+
+        function handlePrint() {
+            const headerPercentText = document.getElementById('headerPercentText');
+            if (headerPercentText && headerPercentText.innerText.indexOf('100%') === -1) {
+                showToast('Fülle bitte zuerst alle Felder aus (100%), um das Dokument zu drucken.');
+                return;
+            }
+            safePrint();
+        }
+
+        function confirmReset() {
+            showConfirmModal('Möchtest du wirklich alle Eingaben auf diesem Arbeitsblatt zurücksetzen?', () => {
+                localStorage.removeItem('hw_autosave_' + location.pathname.split('/').pop());
+                localStorage.removeItem('onedrive_a9_chips');
+                document.querySelectorAll('input[type="text"], input[type="number"], textarea').forEach(i => {
+                    if (i.id !== 'studentName' && i.id !== 'studentClass' && i.id !== 'studentDate') {
+                        i.value = '';
+                    }
+                });
+                document.querySelectorAll('select').forEach(s => s.selectedIndex = 0);
+                
+                chipState = {};
+                initLifecycleChips();
+                applyDefaultClassAndDate();
+                const nameEl = document.getElementById('studentName');
+                const globalVorname = localStorage.getItem('studentVorname') || localStorage.getItem('student_vorname');
+                if (nameEl && globalVorname) nameEl.value = globalVorname;
+                
+                calculateFootprint();
+                updateProgress();
+                showToast('Arbeitsblatt wurde zurückgesetzt.');
+            });
+        }
+
+        function showToast(message) {
+            let toast = document.getElementById('customToast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'customToast';
+                toast.className = 'fixed bottom-5 right-5 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-2xl z-50 transition-all duration-300 transform translate-y-10 opacity-0 flex items-center gap-2.5 text-xs font-semibold border border-slate-700 max-w-md';
+                document.body.appendChild(toast);
+            }
+            toast.innerHTML = `<i class="fa-solid fa-circle-info text-eco-400 text-base shrink-0"></i> <span>${message}</span>`;
+            toast.classList.remove('translate-y-10', 'opacity-0');
+
+            setTimeout(() => {
+                toast.classList.add('translate-y-10', 'opacity-0');
+            }, 3500);
+        }
+
+        function showConfirmModal(message, onConfirm) {
+            let modal = document.getElementById('customConfirmModal');
+            if (!modal) {
+                modal = document.createElement('div');
+                modal.id = 'customConfirmModal';
+                modal.className = 'fixed inset-0 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 transition-opacity duration-200 opacity-0 pointer-events-none';
+                modal.innerHTML = `
+                    <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-200 dark:border-slate-800 space-y-4">
+                        <div class="flex items-center gap-3 text-rose-600">
+                            <i class="fa-solid fa-triangle-exclamation text-xl"></i>
+                            <h4 class="font-bold text-base text-slate-900 dark:text-slate-100">Zurücksetzen bestätigen</h4>
+                        </div>
+                        <p id="modalConfirmText" class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed"></p>
+                        <div class="flex items-center justify-end gap-2 pt-2">
+                            <button id="modalCancelBtn" class="px-3.5 py-1.5 text-xs font-semibold rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200">Abbrechen</button>
+                            <button id="modalConfirmBtn" class="px-3.5 py-1.5 text-xs font-semibold rounded-xl bg-rose-600 hover:bg-rose-700 text-white">Zurücksetzen</button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+            }
+
+            document.getElementById('modalConfirmText').innerText = message;
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+
+            const cancelBtn = document.getElementById('modalCancelBtn');
+            const confirmBtn = document.getElementById('modalConfirmBtn');
+
+            const closeModal = () => {
+                modal.classList.add('opacity-0', 'pointer-events-none');
+            };
+
+            cancelBtn.onclick = closeModal;
+            confirmBtn.onclick = () => {
+                closeModal();
+                if (typeof onConfirm === 'function') onConfirm();
+            };
+        }
+    </script>
+</body>
+</html>

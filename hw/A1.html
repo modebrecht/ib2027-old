@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="de" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A1: IT-Hardware Memory • Arbeitsblatt</title>
+    <script src="assets/js/tailwind.min.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        slate: {
+                            50: '#fafafa', 100: '#f5f5f5', 200: '#e5e5e5', 300: '#d4d4d4',
+                            400: '#b4bdca', 500: '#a3a3a3', 600: '#616161', 700: '#404040',
+                            800: '#303846', 900: '#1a1f26', 950: '#111418'
+                        },
+                        onedrive: {
+                            50: '#eff6ff', 100: '#dbeafe', 400: '#66a1ff', 500: '#0078d4',
+                            600: '#106ebe', 700: '#005a9e', 800: '#004578',
+                            900: '#00335c', 950: '#001f3f'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Segoe UI', 'Inter', 'system-ui', '-apple-system', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="assets/css/fontawesome.min.css">
+<link rel="stylesheet" href="assets/css/worksheet-common.css">
+    <style>
+        @import url('assets/fonts/inter.css');
+        * { transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease; -webkit-tap-highlight-color: transparent; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(156, 163, 175, 0.5); border-radius: 4px; }
+        
+        :root {
+            --card-min: 160px;
+            --card-text: 15px;
+        }
+
+        @keyframes flyInCard {
+            0% {
+                opacity: 0;
+                transform: translateY(60px) scale(0.8) rotateX(-20deg);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1) rotateX(0deg);
+            }
+        }
+        
+        .card-fly-in {
+            animation: flyInCard 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+        }
+
+        .mem-board {
+            display: grid;
+            gap: 8px;
+            width: 100%;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .mem-card {
+            width: 100%;
+            aspect-ratio: 4 / 5;
+            perspective: 1000px;
+            transform-style: preserve-3d;
+            position: relative;
+            cursor: pointer;
+            user-select: none;
+            box-sizing: border-box;
+            transition: transform 0.25s ease;
+        }
+
+        .mem-card:hover {
+            transform: scale(1.02);
+        }
+
+        .mem-face {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 1.25rem;
+            border: 2px solid rgba(226, 232, 240, 0.9);
+            box-sizing: border-box !important;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 8px;
+            backface-visibility: hidden !important;
+            -webkit-backface-visibility: hidden !important;
+            transform-style: preserve-3d;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.07);
+            transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .dark .mem-face {
+            border-color: rgba(51, 65, 85, 0.8);
+        }
+
+        .mem-term-emoji {
+            font-size: calc(var(--card-text, 15px) * 2.6);
+            line-height: 1;
+            margin-bottom: 0.35rem;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+        }
+
+        .mem-term-label {
+            font-size: calc(var(--card-text, 15px) * 1.15);
+            font-weight: 900;
+            line-height: 1.25;
+            text-align: center;
+        }
+
+        .mem-desc-text {
+            font-size: var(--card-text, 15px);
+            font-weight: 700;
+            line-height: 1.35;
+            text-align: center;
+            padding: 0 6px;
+        }
+
+        .mem-front {
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            color: #0f172a;
+            transform: rotateY(180deg);
+        }
+
+        .dark .mem-front {
+            background: linear-gradient(180deg, #334155 0%, #1e293b 100%);
+            color: #f8fafc;
+        }
+
+        .mem-back {
+            background-image: 
+                url("data:image/svg+xml,%3Csvg width='18' height='18' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M 9 0 L 18 9 L 9 18 L 0 9 Z' fill='none' stroke='rgba(251,191,36,0.18)' stroke-width='1.2'/%3E%3Ccircle cx='9' cy='9' r='1.8' fill='rgba(251,191,36,0.24)'/%3E%3C/svg%3E"),
+                radial-gradient(ellipse at center, #1e1b4b 0%, #090d16 100%);
+            color: #ffffff;
+            font-weight: 700;
+            border: 2px solid #f59e0b !important;
+            box-shadow: inset 0 0 0 1px rgba(251, 191, 36, 0.4), inset 0 0 24px rgba(245, 158, 11, 0.3), 0 8px 25px rgba(0,0,0,0.4);
+            transform: rotateY(0deg);
+        }
+
+        .dark .mem-back {
+            background-image: 
+                url("data:image/svg+xml,%3Csvg width='18' height='18' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M 9 0 L 18 9 L 9 18 L 0 9 Z' fill='none' stroke='rgba(251,191,36,0.18)' stroke-width='1.2'/%3E%3Ccircle cx='9' cy='9' r='1.8' fill='rgba(251,191,36,0.24)'/%3E%3C/svg%3E"),
+                radial-gradient(ellipse at center, #172554 0%, #020617 100%);
+            border: 2px solid #f59e0b !important;
+            box-shadow: inset 0 0 0 1px rgba(251, 191, 36, 0.5), inset 0 0 28px rgba(245, 158, 11, 0.35), 0 8px 30px rgba(0,0,0,0.6);
+        }
+
+        .mem-card.flipped .mem-front { 
+            transform: rotateY(0deg);
+            z-index: 2;
+        }
+
+        .mem-card.flipped .mem-back { 
+            transform: rotateY(180deg);
+            z-index: 1;
+        }
+
+        .mem-card.matched .mem-front {
+            border: 2px solid #10b981 !important;
+            box-shadow: 0 0 0 2px #10b981, 0 10px 25px rgba(16, 185, 129, 0.4) !important;
+            background: linear-gradient(180deg, #ecfdf5 0%, #d1fae5 100%) !important;
+        }
+        .dark .mem-card.matched .mem-front {
+            background: linear-gradient(180deg, #047857 0%, #064e3b 100%) !important;
+            color: #ecfdf5 !important;
+        }
+
+        .mem-card.shake { animation: memShake 0.4s linear; }
+        .mem-card.shake .mem-front {
+            border: 2px solid #ef4444 !important;
+            box-shadow: 0 0 0 2px #ef4444, 0 10px 25px rgba(239, 68, 68, 0.4) !important;
+            background: linear-gradient(180deg, #fef2f2 0%, #fee2e2 100%) !important;
+            color: #7f1d1d !important;
+        }
+        .dark .mem-card.shake .mem-front {
+            background: linear-gradient(180deg, #991b1b 0%, #7f1d1d 100%) !important;
+            color: #fef2f2 !important;
+        }
+        @keyframes memShake {
+            20% { transform: translateX(-4px); }
+            40% { transform: translateX(4px); }
+            60% { transform: translateX(-3px); }
+            80% { transform: translateX(3px); }
+        }
+
+    
+        .premium-progress{position:relative;overflow:hidden;background:linear-gradient(90deg,#0078d4 0%,#7c3aed 38%,#10b981 68%,#0078d4 100%);background-size:240% 100%;box-shadow:0 0 12px rgba(0,120,212,.34);animation:premiumProgressFlow 3.4s linear infinite}
+        .premium-progress::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 20%,rgba(255,255,255,.72) 48%,transparent 76%);transform:translateX(-130%);animation:premiumProgressShine 2.3s ease-in-out infinite}
+        @keyframes premiumProgressFlow{to{background-position:240% 0}}
+        @keyframes premiumProgressShine{0%,35%{transform:translateX(-130%)}75%,100%{transform:translateX(130%)}}
+        @media(prefers-reduced-motion:reduce){.premium-progress,.premium-progress::after{animation:none!important}}
+</style>
+</head>
+<body class="bg-slate-100 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-full flex flex-col font-sans antialiased">
+
+    <!-- Header -->
+    <header class="sticky top-0 z-40 worksheet-header no-print">
+        <div class="max-w-[1920px] w-full mx-auto px-4 sm:px-8 py-2.5 flex items-center justify-between gap-4">
+            <div class="flex items-center gap-3 min-w-0">
+                <div class="w-9 h-9 rounded-lg bg-onedrive-500 text-white flex items-center justify-center font-bold shadow-md shadow-onedrive-500/20 shrink-0">
+                    <i class="fa-solid fa-puzzle-piece text-lg"></i>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div>
+                        <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Fortschritt</span>
+                        <span id="headerPercentText" class="text-sm font-extrabold text-onedrive-600 dark:text-onedrive-400">0 / 3 Modi erledigt</span>
+                    </div>
+                    <div class="relative w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center font-bold text-[10px] sm:text-xs text-slate-700 dark:text-slate-200 shrink-0 ml-1">
+                        <svg class="absolute inset-0 w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+                            <circle cx="18" cy="18" r="16" fill="none" class="stroke-slate-200 dark:stroke-slate-800" stroke-width="4"></circle>
+                            <circle id="headerSvgCircle" cx="18" cy="18" r="16" fill="none" class="stroke-emerald-500 transition-all duration-500 ease-out" stroke-width="4" stroke-dasharray="100.53" stroke-dashoffset="100.53" stroke-linecap="round"></circle>
+                        </svg>
+                        <span id="headerPercentNumber" class="relative z-10">0%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2 shrink-0">
+                <button onclick="toggleDarkMode()" title="Dunkelmodus umschalten" class="p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
+                    <i id="themeIcon" class="fa-solid fa-moon text-sm"></i>
+                </button>
+                <button id="hdrPdfBtn" onclick="handleDownloadPdf()" class="p-2 rounded-lg bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-500 transition border border-slate-200 dark:border-slate-700 opacity-60 cursor-not-allowed" title="Erst bei 3 gelösten Modi freigeschaltet">
+                    <i class="fa-solid fa-file-pdf text-sm"></i>
+                </button>
+                <button onclick="confirmReset()" title="Zurücksetzen" class="p-2 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/50 rounded-lg border border-rose-200 dark:border-rose-900/50">
+                    <i class="fa-solid fa-rotate-right text-sm"></i>
+                </button>
+            </div>
+        </div>
+        <div class="w-full bg-slate-200 dark:bg-slate-800 h-1">
+            <div id="progressBar" class="premium-progress h-1 transition-all duration-500" style="width: 0%"></div>
+        </div>
+    </header>
+
+    <main class="max-w-[1920px] w-full mx-auto px-2 sm:px-6 py-2 space-y-3 flex-grow">
+
+        <!-- Title & Metadata Card -->
+        <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 p-3 sm:p-4 print-card">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-xl bg-onedrive-50 dark:bg-onedrive-900/40 text-onedrive-600 dark:text-onedrive-400 flex items-center justify-center text-xl font-bold border border-onedrive-100 dark:border-onedrive-800/50">
+                        <i class="fa-solid fa-puzzle-piece"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900 dark:text-slate-100">A1: IT-Hardware Memory</h2>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Informatische Bildung • IT-Hardware • A1</p>
+                    </div>
+                </div>
+                <div class="hidden flex items-center gap-3">
+                    <div class="text-right">
+                        <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Fortschritt</span>
+                        <span id="completionBadge" class="text-sm font-bold text-onedrive-600 dark:text-onedrive-400">0 / 3 erledigt</span>
+                    </div>
+                    <div class="relative w-12 h-12 flex items-center justify-center font-bold text-xs text-slate-700 dark:text-slate-200">
+                        <svg class="absolute inset-0 w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+                            <circle cx="18" cy="18" r="16" fill="none" class="stroke-slate-200 dark:stroke-slate-800" stroke-width="4"></circle>
+                            <circle id="completionSvgCircle" cx="18" cy="18" r="16" fill="none" class="stroke-emerald-500 transition-all duration-500 ease-out" stroke-width="4" stroke-dasharray="100.53" stroke-dashoffset="100.53" stroke-linecap="round"></circle>
+                        </svg>
+                        <span id="completionPercentNumber" class="relative z-10">0%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Student Metadata -->
+            <div class="hidden sm:grid sm:grid-cols-3 gap-4 mt-4 no-print">
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-500 dark:text-slate-400 mb-1">
+                        <i class="fa-solid fa-user mr-1 text-onedrive-500"></i> Vorname
+                    </label>
+                    <input type="text" id="studentName" readonly tabindex="-1" style="pointer-events: none;" class="w-full px-3.5 py-2 text-sm bg-slate-100 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl font-medium text-slate-500 dark:text-slate-400 opacity-90 cursor-not-allowed">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-500 dark:text-slate-400 mb-1">
+                        <i class="fa-solid fa-users mr-1 text-onedrive-500"></i> Klasse
+                    </label>
+                    <input type="text" id="studentClass" readonly tabindex="-1" style="pointer-events: none;" class="w-full px-3.5 py-2 text-sm bg-slate-100 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl font-medium text-slate-500 dark:text-slate-400 opacity-90 cursor-not-allowed" value="B24">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-500 dark:text-slate-400 mb-1">
+                        <i class="fa-solid fa-calendar mr-1 text-onedrive-500"></i> Datum
+                    </label>
+                    <input type="text" id="studentDate" readonly tabindex="-1" style="pointer-events: none;" class="w-full px-3.5 py-2 text-sm bg-slate-100 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl font-medium text-slate-500 dark:text-slate-400 opacity-90 cursor-not-allowed">
+                </div>
+            </div>
+            <!-- Mobile Tiny Metadata Display (Visible only on mobile) -->
+            <div class="sm:hidden mt-3 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-semibold text-slate-500 dark:text-slate-400 no-print">
+                <div class="flex gap-4">
+                    <span><i class="fa-solid fa-user text-onedrive-500/80 mr-1"></i> <span id="mobName">Gast</span></span>
+                    <span><i class="fa-solid fa-users text-onedrive-500/80 mr-1"></i> <span id="mobClass">-</span></span>
+                </div>
+                <span><i class="fa-solid fa-calendar text-onedrive-500/80 mr-1"></i> <span id="mobDate"></span></span>
+            </div>
+        </div>
+
+        <!-- Controls & Live Stats Card -->
+        <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 p-2 sm:p-3 space-y-2 no-print">
+            <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+                
+                <!-- Action Buttons & Difficulty Select (Without 'Modus:' label) -->
+                <div class="flex flex-wrap items-center justify-center md:justify-start gap-2">
+                    <div id="diffBtnGroup" class="flex gap-1 p-1 bg-slate-100 dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 shadow-inner overflow-x-auto max-w-full">
+                        <button onclick="setDifficulty('einfach')" data-diff="einfach" class="diff-btn whitespace-nowrap px-3 py-1.5 text-xs sm:text-sm font-bold rounded-lg transition-all text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700">Einfach</button>
+                        <button onclick="setDifficulty('mittel')" data-diff="mittel" class="diff-btn whitespace-nowrap px-3 py-1.5 text-xs sm:text-sm font-bold rounded-lg transition-all text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700">Mittel</button>
+                        <button onclick="setDifficulty('schwer')" data-diff="schwer" class="diff-btn whitespace-nowrap px-3 py-1.5 text-xs sm:text-sm font-bold rounded-lg transition-all text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700">Schwer</button>
+                        <button onclick="setDifficulty('ultra')" data-diff="ultra" class="diff-btn whitespace-nowrap px-3 py-1.5 text-xs sm:text-sm font-bold rounded-lg transition-all text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700">Ultra</button>
+                    </div>
+
+                    <button id="restartBtn" class="px-3 sm:px-4 py-2 text-sm font-extrabold rounded-xl bg-onedrive-500 hover:bg-onedrive-600 text-white shadow-[0_4px_12px_rgba(2,132,199,0.3)] transition-all flex items-center gap-1.5 hover:-translate-y-1 group shrink-0">
+                        <i class="fa-solid fa-rotate-right group-hover:-rotate-90 transition-transform duration-300"></i> <span class="hidden sm:inline">Neues Spiel</span>
+                    </button>
+                    <button id="leaderBtn" class="px-3 py-2 text-sm font-bold rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition flex items-center gap-1.5 border border-slate-200 dark:border-slate-700 shrink-0">
+                        <i class="fa-solid fa-trophy text-amber-500 text-sm"></i> <span class="hidden sm:inline">Rekorde</span>
+                    </button>
+                    <button id="settingsToggleBtn" onclick="document.getElementById('extendedSettingsPanel').classList.toggle('hidden')" class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition flex items-center justify-center border border-slate-200 dark:border-slate-700 shrink-0" title="Erweiterte Einstellungen">
+                        <i class="fa-solid fa-sliders text-onedrive-500 text-sm"></i>
+                    </button>
+                </div>
+
+                <!-- Right: Stats Bar -->
+                <div class="grid grid-cols-4 gap-2 text-center flex-grow max-w-lg">
+                    <div class="p-2 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 shadow-xs">
+                        <span class="block text-[9px] font-extrabold uppercase tracking-wider text-slate-400 dark:text-slate-500">Punkte</span>
+                        <span id="points" class="text-sm sm:text-base font-black text-onedrive-600 dark:text-onedrive-400">0</span>
+                    </div>
+                    <div class="p-2 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 shadow-xs">
+                        <span class="block text-[9px] font-extrabold uppercase tracking-wider text-slate-400 dark:text-slate-500">Züge</span>
+                        <span id="moves" class="text-sm sm:text-base font-black text-slate-700 dark:text-slate-200">0</span>
+                    </div>
+                    <div class="p-2 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 shadow-xs">
+                        <span class="block text-[9px] font-extrabold uppercase tracking-wider text-slate-400 dark:text-slate-500">Treffer</span>
+                        <span id="hits" class="text-sm sm:text-base font-black text-emerald-600 dark:text-emerald-400">0</span>
+                    </div>
+                    <div class="p-2 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 shadow-xs">
+                        <span class="block text-[9px] font-extrabold uppercase tracking-wider text-slate-400 dark:text-slate-500">Zeit</span>
+                        <span id="time" class="text-sm sm:text-base font-black text-slate-700 dark:text-slate-200 font-mono">00:00</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Extended Settings Panel (Toggled via button) -->
+            <div id="extendedSettingsPanel" class="hidden pt-3 border-t border-slate-100 dark:border-slate-800">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1">
+                            Umdreh-Verzögerung: <span id="flipVal" class="text-onedrive-500">1.8s</span>
+                        </label>
+                        <input id="flipDelay" type="range" min="600" max="5000" step="100" value="1800" class="w-full">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1">
+                            Kartengröße: <span id="sizeVal" class="text-onedrive-500">150px</span>
+                        </label>
+                        <input id="cardSize" type="range" min="100" max="300" step="10" value="150" class="w-full">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1">
+                            Textgröße: <span id="textSizeVal" class="text-onedrive-500">13px</span>
+                        </label>
+                        <input id="textSize" type="range" min="10" max="32" step="1" value="13" class="w-full">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Board Section (No Container) -->
+        <div class="print-card w-full">
+            <section id="board" class="mem-board" aria-live="polite">
+                <div class="col-span-full text-center text-slate-400 dark:text-slate-500 py-12 text-sm font-semibold">
+                    Wähle einen Modus und klicke <b>Start</b>, um das Memory-Spiel zu beginnen.
+                </div>
+            </section>
+        </div>
+
+    </main>
+
+    <!-- Win Modal -->
+    <div id="modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 modal-print-show" role="dialog" aria-modal="true">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 max-w-lg w-full p-6 space-y-4 dialog-print">
+            <div class="w-14 h-14 rounded-2xl bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-2xl font-bold mx-auto no-print">
+                <i class="fa-solid fa-trophy"></i>
+            </div>
+            <h3 id="modalTitle" class="text-xl font-extrabold text-slate-900 dark:text-slate-100 text-center">Runde geschafft! 🎉</h3>
+            
+            <div id="summary" class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed bg-slate-50 dark:bg-slate-800/60 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700"></div>
+            
+            <div id="stars" class="text-center text-amber-400 text-2xl font-bold tracking-widest my-2"></div>
+            
+            <div id="scoreList" class="max-h-48 overflow-y-auto text-xs text-slate-600 dark:text-slate-300"></div>
+
+            <div class="flex flex-wrap justify-end gap-2 pt-3 no-print">
+                <button id="modalPdfBtn" onclick="handleDownloadPdf()" class="px-4 py-2 text-xs font-bold rounded-xl bg-onedrive-500 text-white hover:bg-onedrive-600 transition shadow-sm">
+                    🔒 PDF Export (0/3)
+                </button>
+                <button id="again" class="px-4 py-2 text-xs font-semibold rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700">
+                    Nochmal
+                </button>
+                <button id="change" class="px-4 py-2 text-xs font-semibold rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700">
+                    Modus ändern
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaderboard Modal -->
+    <div id="leaderModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 max-w-xl w-full p-6 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+                <h3 class="text-base font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                    <i class="fa-solid fa-trophy text-amber-500"></i> Bestenliste – Top 3 je Modus
+                </h3>
+                <button id="closeLeader" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            
+            <div id="leaderContent" class="max-h-80 overflow-y-auto space-y-4 text-xs"></div>
+
+            <div class="flex justify-end pt-2">
+                <button id="closeLeaderBtn" onclick="document.getElementById('leaderModal').classList.add('hidden')" class="px-4 py-2 text-xs font-bold rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200">
+                    Schließen
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/worksheet-common.js"></script>
+    <script src="assets/js/pdf-engine.js"></script>
+    <script>
+        var SET_EASY = [
+          {id:'cpu', emoji:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" class="w-[2.5em] h-[2.5em] drop-shadow-lg"><rect x="15" y="15" width="70" height="70" rx="5" fill="#2d6a4f" stroke="#1b4332" stroke-width="2"/><rect x="18" y="18" width="64" height="64" fill="none" stroke="#fb8500" stroke-width="2" stroke-dasharray="2 4"/><rect x="25" y="25" width="50" height="50" rx="4" fill="#ced4da" stroke="#adb5bd" stroke-width="2"/><rect x="30" y="30" width="40" height="40" rx="2" fill="#e9ecef"/><circle cx="80" cy="80" r="3" fill="#fb8500"/><text x="50" y="55" font-family="sans-serif" font-size="14" font-weight="bold" fill="#6c757d" text-anchor="middle">CPU</text></svg>', term:'CPU (Prozessor)', desc:'Das Gehirn des Computers.'},
+          {id:'ram', emoji:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" class="w-[2.5em] h-[2.5em] drop-shadow-lg"><rect x="10" y="35" width="80" height="30" rx="2" fill="#1b4332"/><path d="M14 58 v7 M18 58 v7 M22 58 v7 M26 58 v7 M30 58 v7 M34 58 v7 M38 58 v7 M42 58 v7 M50 58 v7 M54 58 v7 M58 58 v7 M62 58 v7 M66 58 v7 M70 58 v7 M74 58 v7 M78 58 v7 M82 58 v7" stroke="#fb8500" stroke-width="1.5"/><line x1="45" y1="58" x2="45" y2="65" stroke="#1b4332" stroke-width="3"/><rect x="15" y="40" width="12" height="12" rx="1" fill="#212529"/><rect x="32" y="40" width="12" height="12" rx="1" fill="#212529"/><rect x="56" y="40" width="12" height="12" rx="1" fill="#212529"/><rect x="73" y="40" width="12" height="12" rx="1" fill="#212529"/><text x="50" y="49" font-family="sans-serif" font-size="8" font-weight="bold" fill="#6c757d" text-anchor="middle">DDR5</text></svg>', term:'RAM', desc:'Schneller Arbeitsspeicher für laufende Programme.'},
+          {id:'mb',  emoji:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" class="w-[2.5em] h-[2.5em] drop-shadow-lg"><rect x="10" y="10" width="80" height="80" fill="#212529" stroke="#111" stroke-width="2"/><rect x="25" y="25" width="26" height="26" fill="#ced4da" stroke="#6c757d"/><rect x="28" y="28" width="20" height="20" fill="#e9ecef"/><rect x="60" y="15" width="4" height="40" fill="#343a40"/><rect x="68" y="15" width="4" height="40" fill="#495057"/><rect x="76" y="15" width="4" height="40" fill="#343a40"/><rect x="84" y="15" width="4" height="40" fill="#495057"/><rect x="15" y="60" width="60" height="6" fill="#0077b6"/><rect x="15" y="72" width="40" height="4" fill="#343a40"/><rect x="60" y="65" width="20" height="20" fill="#6c757d"/><circle cx="70" cy="75" r="6" fill="#495057"/><rect x="5" y="15" width="10" height="40" fill="#adb5bd"/></svg>', term:'Mainboard (Motherboard)', desc:'Zentrale Hauptplatine, verbindet alle Teile.'},
+          {id:'ssd', emoji:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" class="w-[2.5em] h-[2.5em] drop-shadow-lg"><rect x="15" y="10" width="70" height="80" rx="4" fill="#495057" stroke="#212529" stroke-width="2"/><rect x="25" y="25" width="50" height="50" rx="2" fill="#f8f9fa"/><rect x="25" y="25" width="50" height="15" fill="#0077b6"/><text x="50" y="36" font-family="sans-serif" font-size="10" font-weight="bold" fill="#fff" text-anchor="middle">SSD</text><text x="50" y="55" font-family="sans-serif" font-size="14" font-weight="900" fill="#212529" text-anchor="middle">1 TB</text><rect x="30" y="90" width="15" height="5" fill="#e9ecef"/><rect x="50" y="90" width="25" height="5" fill="#e9ecef"/><rect x="32" y="90" width="11" height="3" fill="#ffb703"/><rect x="52" y="90" width="21" height="3" fill="#ffb703"/></svg>', term:'SSD', desc:'Nicht-mechanischer Flash-Speicher.'},
+          {id:'gpu', emoji:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" class="w-[2.5em] h-[2.5em] drop-shadow-lg"><rect x="5" y="15" width="10" height="70" fill="#adb5bd"/><path d="M15 20 H 90 Q 95 20 95 25 V 65 Q 95 70 90 70 H 15 Z" fill="#212529"/><circle cx="40" cy="45" r="16" fill="#343a40"/><circle cx="70" cy="45" r="16" fill="#343a40"/><circle cx="40" cy="45" r="14" fill="#111"/><circle cx="70" cy="45" r="14" fill="#111"/><circle cx="40" cy="45" r="4" fill="#e63946"/><circle cx="70" cy="45" r="4" fill="#e63946"/><rect x="25" y="70" width="50" height="8" fill="#ffb703"/><rect x="25" y="72" width="50" height="6" fill="#ffb703" stroke="#fb8500" stroke-width="1"/><path d="M20 25 L 45 25 L 55 35 L 90 35" fill="none" stroke="#e63946" stroke-width="2"/><text x="85" y="30" font-family="sans-serif" font-size="8" font-weight="bold" fill="#fff" text-anchor="end">RTX</text></svg>', term:'GPU (Grafikkarte)', desc:'Zuständig für Bild- & Videoberechnung.'},
+          {id:'psu', emoji:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" class="w-[2.5em] h-[2.5em] drop-shadow-lg"><rect x="15" y="15" width="70" height="70" fill="#212529" rx="3"/><circle cx="50" cy="50" r="25" fill="none" stroke="#495057" stroke-width="2"/><circle cx="50" cy="50" r="18" fill="none" stroke="#495057" stroke-width="2"/><circle cx="50" cy="50" r="11" fill="none" stroke="#495057" stroke-width="2"/><line x1="25" y1="50" x2="75" y2="50" stroke="#495057" stroke-width="2"/><line x1="50" y1="25" x2="50" y2="75" stroke="#495057" stroke-width="2"/><line x1="32" y1="32" x2="68" y2="68" stroke="#495057" stroke-width="2"/><line x1="32" y1="68" x2="68" y2="32" stroke="#495057" stroke-width="2"/><circle cx="50" cy="50" r="4" fill="#ced4da"/><path d="M85 70 Q 95 70 95 85" fill="none" stroke="#e63946" stroke-width="3"/><path d="M85 75 Q 90 75 90 85" fill="none" stroke="#ffd166" stroke-width="3"/><path d="M85 65 Q 98 65 98 85" fill="none" stroke="#111" stroke-width="3"/></svg>', term:'PSU (Netzteil)', desc:'Versorgt das System zuverlässig mit Strom.'}
+        ];
+
+        var SET_MEDIUM = [
+          {id:'hdd', emoji:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" class="w-[2.5em] h-[2.5em] drop-shadow-lg"><rect x="15" y="10" width="70" height="80" rx="3" fill="#ced4da" stroke="#6c757d" stroke-width="2"/><rect x="20" y="15" width="60" height="70" rx="2" fill="#adb5bd"/><circle cx="50" cy="45" r="25" fill="#f8f9fa" stroke="#e9ecef" stroke-width="2"/><circle cx="50" cy="45" r="8" fill="#adb5bd" stroke="#6c757d" stroke-width="1"/><circle cx="50" cy="45" r="3" fill="#343a40"/><path d="M 75 75 L 55 50 L 50 48" fill="none" stroke="#495057" stroke-width="4" stroke-linecap="round"/><circle cx="75" cy="75" r="4" fill="#212529"/></svg>', term:'HDD (Harddisk)', desc:'Klassische Festplatte mit rotierenden Scheiben.'},
+          {id:'case',emoji:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" class="w-[2.5em] h-[2.5em] drop-shadow-lg"><rect x="25" y="10" width="50" height="80" rx="2" fill="#212529"/><rect x="75" y="10" width="5" height="80" fill="#343a40"/><rect x="30" y="15" width="40" height="60" fill="#495057" opacity="0.8"/><rect x="35" y="20" width="20" height="20" fill="#3f37c9"/><rect x="35" y="45" width="30" height="8" fill="#e63946"/><rect x="35" y="65" width="15" height="10" fill="#111"/><circle cx="60" cy="25" r="6" fill="#4cc9f0"/><circle cx="60" cy="40" r="6" fill="#f72585"/><circle cx="60" cy="55" r="6" fill="#4cc9f0"/><rect x="30" y="90" width="6" height="4" fill="#adb5bd"/><rect x="64" y="90" width="6" height="4" fill="#adb5bd"/></svg>', term:'Gehäuse', desc:'Schützt Hardware & sorgt für Luftstrom.'}
+        ];
+
+        var SET_HARD = [
+          {id:'cool',emoji:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" class="w-[2.5em] h-[2.5em] drop-shadow-lg"><rect x="30" y="20" width="40" height="45" fill="#ced4da"/><line x1="30" y1="25" x2="70" y2="25" stroke="#adb5bd" stroke-width="1"/><line x1="30" y1="35" x2="70" y2="35" stroke="#adb5bd" stroke-width="1"/><line x1="30" y1="45" x2="70" y2="45" stroke="#adb5bd" stroke-width="1"/><line x1="30" y1="55" x2="70" y2="55" stroke="#adb5bd" stroke-width="1"/><rect x="40" y="65" width="20" height="15" fill="#e6ccb2"/><rect x="42" y="80" width="16" height="5" fill="#6c757d"/><line x1="45" y1="20" x2="45" y2="65" stroke="#b08968" stroke-width="2"/><line x1="55" y1="20" x2="55" y2="65" stroke="#b08968" stroke-width="2"/><rect x="25" y="25" width="50" height="50" rx="5" fill="#212529"/><circle cx="50" cy="50" r="22" fill="#343a40"/><circle cx="50" cy="50" r="8" fill="#e63946"/><path d="M50 50 Q 55 35 60 30 Q 65 40 50 50" fill="#495057"/><path d="M50 50 Q 65 55 70 60 Q 60 65 50 50" fill="#495057"/><path d="M50 50 Q 45 65 40 70 Q 35 60 50 50" fill="#495057"/><path d="M50 50 Q 35 45 30 40 Q 40 35 50 50" fill="#495057"/></svg>', term:'CPU-Kühler', desc:'Leitet Hitze vom Prozessor ab.'},
+          {id:'nvme',emoji:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" class="w-[2.5em] h-[2.5em] drop-shadow-lg"><rect x="10" y="40" width="80" height="20" rx="1" fill="#111"/><rect x="10" y="40" width="6" height="20" fill="#ffb703"/><rect x="10" y="46" width="6" height="3" fill="#111"/><circle cx="85" cy="50" r="3" fill="#fff" stroke="#ffb703" stroke-width="1.5"/><rect x="22" y="43" width="15" height="14" rx="1" fill="#212529"/><rect x="40" y="43" width="15" height="14" rx="1" fill="#212529"/><rect x="58" y="43" width="12" height="14" rx="1" fill="#343a40"/><rect x="22" y="45" width="48" height="10" fill="#f8f9fa" opacity="0.9"/><text x="46" y="52" font-family="sans-serif" font-size="6" font-weight="bold" fill="#000" text-anchor="middle">M.2 NVMe</text></svg>', term:'NVMe SSD', desc:'Schnellster Flash-Speicher.'}
+        ];
+
+        var SET_ULTRA = [
+          {id:'lan', emoji:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" class="w-[2.5em] h-[2.5em] drop-shadow-lg"><rect x="25" y="25" width="50" height="50" rx="3" fill="#ced4da" stroke="#6c757d" stroke-width="2"/><path d="M30 35 H70 V65 H30 Z" fill="#212529"/><path d="M40 65 V55 H60 V65" fill="#ced4da"/><line x1="38" y1="35" x2="38" y2="45" stroke="#ffb703" stroke-width="2"/><line x1="42" y1="35" x2="42" y2="45" stroke="#ffb703" stroke-width="2"/><line x1="46" y1="35" x2="46" y2="45" stroke="#ffb703" stroke-width="2"/><line x1="50" y1="35" x2="50" y2="45" stroke="#ffb703" stroke-width="2"/><line x1="54" y1="35" x2="54" y2="45" stroke="#ffb703" stroke-width="2"/><line x1="58" y1="35" x2="58" y2="45" stroke="#ffb703" stroke-width="2"/><line x1="62" y1="35" x2="62" y2="45" stroke="#ffb703" stroke-width="2"/><circle cx="35" cy="70" r="3" fill="#10b981"/><circle cx="65" cy="70" r="3" fill="#f59e0b"/></svg>', term:'Netzwerkkarte (RJ45)', desc:'LAN-Anschluss / Ethernet-Verbindung.'},
+          {id:'hdmi',emoji:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" class="w-[2.5em] h-[2.5em] drop-shadow-lg"><rect x="40" y="70" width="20" height="30" fill="#212529"/><rect x="30" y="40" width="40" height="30" rx="4" fill="#343a40"/><path d="M35 40 L35 25 L40 20 L60 20 L65 25 L65 40 Z" fill="#ffb703" stroke="#fb8500" stroke-width="1"/><path d="M38 38 L38 27 L42 23 L58 23 L62 27 L62 38 Z" fill="#212529"/><text x="50" y="60" font-family="sans-serif" font-size="10" font-weight="bold" fill="#adb5bd" text-anchor="middle">HDMI</text></svg>', term:'HDMI', desc:'Digitale Bild- und Ton-Schnittstelle zum Monitor (zwei schräge Ecken).'},
+          {id:'dp',emoji:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" class="w-[2.5em] h-[2.5em] drop-shadow-lg"><rect x="40" y="70" width="20" height="30" fill="#212529"/><rect x="30" y="40" width="40" height="30" rx="4" fill="#343a40"/><path d="M35 40 L35 20 L55 20 L65 30 L65 40 Z" fill="#ced4da" stroke="#adb5bd" stroke-width="1"/><path d="M38 38 L38 23 L53 23 L62 32 L62 38 Z" fill="#212529"/><text x="50" y="60" font-family="sans-serif" font-size="10" font-weight="bold" fill="#adb5bd" text-anchor="middle">DP</text></svg>', term:'DisplayPort', desc:'Digitale Monitor-Schnittstelle, oft für PC-Gaming (nur eine schräge Ecke).'}
+        ];
+
+        var ALL_MODES = ['einfach', 'mittel', 'schwer', 'ultra'];
+
+        var boardEl = document.getElementById('board');
+        var pointsEl = document.getElementById('points');
+        var movesEl  = document.getElementById('moves');
+        var hitsEl   = document.getElementById('hits');
+        var timeEl   = document.getElementById('time');
+        var startBtn = document.getElementById('startBtn');
+        var restartBtn = document.getElementById('restartBtn');
+        var modalEl  = document.getElementById('modal');
+        var summaryEl= document.getElementById('summary');
+        var starsEl  = document.getElementById('stars');
+        var againBtn = document.getElementById('again');
+        var changeBtn= document.getElementById('change');
+        var flipSlider = document.getElementById('flipDelay');
+        var flipVal = document.getElementById('flipVal');
+        var sizeSlider = document.getElementById('cardSize');
+        var sizeVal = document.getElementById('sizeVal');
+        var textSlider = document.getElementById('textSize');
+        var textSizeVal = document.getElementById('textSizeVal');
+        var leaderBtn = document.getElementById('leaderBtn');
+        var leaderModal = document.getElementById('leaderModal');
+        var leaderContent = document.getElementById('leaderContent');
+
+        function resetState(){
+          return {
+            running:false, difficulty:'einfach',
+            deck:[], flipped:[], lock:false,
+            points:0, moves:0, hits:0, misses:0,
+            combo:0, maxCombo:0, comboBonus:0, totalPairs:0,
+            timer:null, startTime:null,
+            flipDelay: Number(localStorage.getItem('memFlipDelay')) || 1800,
+            cardMin: Number(localStorage.getItem('memCardMin')) || 170,
+            textSize: Number(localStorage.getItem('memTextSize')) || 13
+          };
+        }
+        var state = resetState();
+
+        function formatTime(ms){ var s=Math.floor(ms/1000), m=Math.floor(s/60), r=s%60; return (m<10?'0'+m:m)+':' + (r<10?'0'+r:r); }
+        function shuffle(arr){ for(var i=arr.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=arr[i]; arr[i]=arr[j]; arr[j]=t; } return arr; }
+
+        function createDeck(difficulty){
+          var pool = [];
+          var pairCount = 4;
+          if (!difficulty) difficulty = localStorage.getItem('memDifficulty') || 'einfach';
+
+          if (difficulty === 'einfach') {
+            pool = SET_EASY.slice();
+            pairCount = 4;
+          } else if (difficulty === 'mittel') {
+            pool = SET_EASY.concat(SET_MEDIUM);
+            pairCount = 8;
+          } else if (difficulty === 'schwer') {
+            pool = SET_EASY.concat(SET_MEDIUM, SET_HARD);
+            pairCount = 10;
+          } else {
+            pool = SET_EASY.concat(SET_MEDIUM, SET_HARD, SET_ULTRA);
+            pairCount = 12;
+          }
+
+          var chosen = shuffle(pool.slice()).slice(0, pairCount);
+          var deck = [];
+          for(var i=0; i<chosen.length; i++){
+            var p = chosen[i];
+            deck.push({pairId: p.id, kind: 'term', emoji: p.emoji, term: p.term, type: 'term'});
+            deck.push({pairId: p.id, kind: 'desc', content: p.desc, type: 'desc'});
+          }
+          return shuffle(deck);
+        }
+
+        function updateDynamicCardDimensions() {
+          var count = (state.deck && state.deck.length) || 8;
+          var boardWidth = boardEl.clientWidth || (window.innerWidth - 48);
+          
+          var reservedHeight = window.innerWidth < 768 ? 260 : 190;
+          var availHeight = window.innerHeight - reservedHeight;
+          availHeight = Math.max(300, availHeight);
+          var gap = (boardWidth < 480) ? 6 : 10;
+
+          var validCols = [4];
+          if (count === 8) validCols = [2, 4];
+          if (count === 16) validCols = [4, 8];
+          if (count === 20) validCols = [4, 5, 10];
+          if (count === 24) validCols = [4, 6, 8];
+
+          var bestCols = 4;
+          var bestFitW = 0;
+          var bestScore = 0;
+
+          for (var i = 0; i < validCols.length; i++) {
+              var testCols = validCols[i];
+              var testRows = count / testCols;
+              
+              var maxW = (boardWidth - (gap * (testCols - 1))) / testCols;
+              var maxH = (availHeight - (gap * (testRows - 1))) / testRows;
+              
+              var possibleFitW;
+              var score;
+              
+              if (window.innerWidth >= 768) {
+                  // Desktop: Prefer wider layouts that utilize screen width nicely
+                  possibleFitW = Math.min(maxW, 220); // Cap max size so cards aren't huge
+                  possibleFitW = Math.min(possibleFitW, (maxH * 1.5) / 1.25); // Allow some vertical scrolling
+                  score = possibleFitW * testCols; // Maximize horizontal space utilization!
+              } else {
+                  // Mobile: Strictly fit to 1 screen, maximize absolute card size
+                  possibleFitW = Math.min(maxW, maxH / 1.25);
+                  score = possibleFitW;
+              }
+              
+              if (score > bestScore) {
+                  bestScore = score;
+                  bestFitW = possibleFitW;
+                  bestCols = testCols;
+              }
+          }
+
+          var cols = bestCols;
+          var fitCardW = bestFitW;
+          var absoluteMaxW = (boardWidth - (gap * (cols - 1))) / cols;
+          var minW = window.innerWidth < 768 ? 75 : 120; // lower min width for desktop slightly to allow wider grids
+          
+          fitCardW = Math.max(minW, fitCardW); 
+          // CRITICAL: Never exceed the available horizontal space, otherwise we get horizontal scrolling!
+          fitCardW = Math.min(fitCardW, absoluteMaxW);
+          
+          var fitCardH = fitCardW * 1.25;
+
+          boardEl.style.gridTemplateColumns = 'repeat(' + cols + ', ' + Math.floor(fitCardW) + 'px)';
+          boardEl.style.justifyContent = 'center';
+          boardEl.style.gap = gap + 'px';
+
+          var dynamicFontSize = Math.max(12, Math.min(28, Math.round(fitCardW * 0.115)));
+          document.documentElement.style.setProperty('--card-text', dynamicFontSize + 'px');
+
+          document.querySelectorAll('.mem-card').forEach(function(card) {
+            card.style.height = Math.floor(fitCardH) + 'px';
+            card.style.width = Math.floor(fitCardW) + 'px';
+          });
+        }
+
+        function renderBoard(){
+          boardEl.innerHTML = '';
+          updateDynamicCardDimensions();
+          for(var k=0; k<state.deck.length; k++){
+            (function(idx){
+              var c = state.deck[idx];
+              var el = document.createElement('div');
+              el.className = 'mem-card card-fly-in';
+              el.style.animationDelay = (idx * 0.04) + 's';
+              el.dataset.index = String(idx);
+              
+              var back = document.createElement('div');
+              back.className = 'mem-face mem-back relative overflow-hidden group';
+              back.innerHTML = '<div class="relative z-10 flex w-full h-full items-center justify-center pointer-events-none group-hover:scale-110 transition-transform duration-300">' +
+                '<svg viewBox="0 0 100 100" class="w-14 h-14 sm:w-20 sm:h-20 drop-shadow-[0_4px_12px_rgba(245,158,11,0.8)]" aria-hidden="true">' +
+                  '<defs>' +
+                    '<linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">' +
+                      '<stop offset="0%" stop-color="#FEF08A"/>' +
+                      '<stop offset="50%" stop-color="#F59E0B"/>' +
+                      '<stop offset="100%" stop-color="#B45309"/>' +
+                    '</linearGradient>' +
+                  '</defs>' +
+                  '<path d="M 50 12 C 34 26 14 20 6 36 C 16 38 28 45 38 50 C 44 42 56 42 62 50 C 72 45 84 38 94 36 C 86 20 66 26 50 12 Z" fill="url(#goldGrad)"/>' +
+                  '<circle cx="6" cy="36" r="4.5" fill="#FEF08A"/>' +
+                  '<circle cx="50" cy="12" r="4.5" fill="#FEF08A"/>' +
+                  '<circle cx="94" cy="36" r="4.5" fill="#FEF08A"/>' +
+                  '<path d="M 28 54 Q 50 48 72 54 Q 66 84 50 92 Q 34 84 28 54 Z" fill="url(#goldGrad)" opacity="0.95"/>' +
+                  '<path d="M 38 64 Q 44 60 47 64" stroke="#451A03" stroke-width="3" fill="none" stroke-linecap="round"/>' +
+                  '<path d="M 53 64 Q 56 60 62 64" stroke="#451A03" stroke-width="3" fill="none" stroke-linecap="round"/>' +
+                  '<path d="M 40 76 Q 50 84 60 76" stroke="#451A03" stroke-width="3.5" fill="none" stroke-linecap="round"/>' +
+                '</svg>' +
+              '</div>';
+              
+              var front = document.createElement('div');
+              front.className = 'mem-face mem-front';
+              
+              if(c.type === 'term'){
+                var wrap = document.createElement('div');
+                wrap.className = 'flex flex-col items-center justify-center text-center w-full h-full p-3';
+                var em = document.createElement('div');
+                em.className = 'mem-term-emoji';
+                em.innerHTML = c.emoji;
+                var lab = document.createElement('div');
+                lab.className = 'mem-term-label text-slate-800 dark:text-slate-100';
+                lab.innerHTML = c.term;
+                wrap.appendChild(em); wrap.appendChild(lab); front.appendChild(wrap);
+              } else {
+                var d = document.createElement('div');
+                d.className = 'mem-desc-text text-slate-800 dark:text-slate-100 w-full h-full flex items-center justify-center';
+                d.textContent = c.content;
+                front.appendChild(d);
+              }
+
+              el.appendChild(front); el.appendChild(back);
+              el.addEventListener('click', onFlip);
+              boardEl.appendChild(el);
+            })(k);
+          }
+          
+          setTimeout(function() {
+              document.querySelectorAll('.card-fly-in').forEach(function(card) {
+                  card.classList.remove('card-fly-in');
+                  card.style.animationDelay = '';
+              });
+          }, 2500);
+        }
+
+        function setStats(){ pointsEl.textContent=String(state.points); movesEl.textContent=String(state.moves); hitsEl.textContent=String(state.hits); }
+        function startTimer(){ state.startTime=performance.now(); state.timer=setInterval(function(){ timeEl.textContent=formatTime(performance.now()-state.startTime); },250); }
+        function stopTimer(){ if(state.timer){ clearInterval(state.timer); state.timer=null; } }
+
+        function getScoresFor(diff){ try{ var arr = JSON.parse(localStorage.getItem('memScores_'+diff)||'[]'); return Array.isArray(arr)?arr:[]; } catch(e){ return []; } }
+        function saveScore(entry){ var key='memScores_'+state.difficulty; var list=getScoresFor(state.difficulty); list.unshift(entry); if(list.length>50) list=list.slice(0,50); localStorage.setItem(key, JSON.stringify(list)); }
+        function renderScores(){ var el=document.getElementById('scoreList'); if(!el) return; var list=getScoresFor(state.difficulty); if(!list.length){ el.innerHTML='<div class="text-slate-400 text-xs py-2">Noch keine Scores gespeichert.</div>'; return;} var html='<table class="w-full text-left text-xs border-collapse"><thead><tr class="border-b border-slate-200 dark:border-slate-700"><th>#</th><th>Punkte</th><th>Zeit</th><th>Züge</th><th>Treffer</th><th>Datum</th></tr></thead><tbody>'; for(var i=0;i<list.length;i++){ var s=list[i]; html+='<tr class="border-b border-slate-100 dark:border-slate-800/50"><td>'+(i+1)+'</td><td class="font-bold text-onedrive-500">'+s.points+'</td><td>'+formatTime(s.time)+'</td><td>'+s.moves+'</td><td>'+s.hits+'</td><td class="text-slate-400">'+new Date(s.date).toLocaleDateString()+'</td></tr>'; } html+='</tbody></table>'; el.innerHTML=html; }
+        function topN(list,n){ return list.slice().sort(function(a,b){ if(b.points!==a.points) return b.points-a.points; return a.time-b.time; }).slice(0,n); }
+        function openLeaderboard(){ var diffs=[{k:'einfach',label:'Einfach (8 Karten)'},{k:'mittel',label:'Mittel (16 Karten)'},{k:'schwer',label:'Schwer (20 Karten)'},{k:'ultra',label:'Ultra (24 Karten)'}]; var html=''; for(var i=0;i<diffs.length;i++){ var d=diffs[i]; var arr=topN(getScoresFor(d.k),3); html += '<h4 class="font-bold text-slate-800 dark:text-slate-200 mt-2 mb-1">'+d.label+'</h4>'; if(!arr.length){ html+='<div class="text-slate-400 text-xs">Noch keine Daten.</div>'; } else { html+='<table class="w-full text-left text-xs border-collapse mb-2"><thead><tr class="border-b border-slate-200 dark:border-slate-700"><th>#</th><th>Punkte</th><th>Zeit</th><th>Züge</th><th>Datum</th></tr></thead><tbody>'; for(var j=0;j<arr.length;j++){ var s=arr[j]; html+='<tr class="border-b border-slate-100 dark:border-slate-800"><td>'+(j+1)+'</td><td class="font-bold text-onedrive-500">'+s.points+'</td><td>'+formatTime(s.time)+'</td><td>'+s.moves+'</td><td class="text-slate-400">'+new Date(s.date).toLocaleDateString()+'</td></tr>'; } html+='</tbody></table>'; } } if(leaderContent) leaderContent.innerHTML=html; if(leaderModal) leaderModal.classList.remove('hidden'); }
+
+        function diffParams(){
+          if(state.difficulty==='einfach') return {max:80, exp:0.30};
+          if(state.difficulty==='mittel') return {max:120, exp:0.45};
+          if(state.difficulty==='schwer') return {max:140, exp:0.55};
+          return {max:160, exp:0.65};
+        }
+        function recomputePoints(){ var p=diffParams(); var eff = state.moves ? (state.hits / state.moves) : 0; var core = Math.round(p.max * Math.pow(eff, p.exp)); state.points = Math.max(0, core + (state.comboBonus||0)); setStats(); }
+        function timeBonus(elapsed){ if(elapsed < 120000) return 10; if(elapsed < 180000) return 0; return -10; }
+
+        function updateDiffButtons(activeDiff) {
+            document.querySelectorAll('.diff-btn').forEach(function(b) {
+                if (b.dataset.diff === activeDiff) {
+                    b.className = 'diff-btn whitespace-nowrap px-3 py-1.5 text-xs sm:text-sm font-bold rounded-lg transition-all bg-onedrive-500 text-white shadow-md animate-pulse cursor-default';
+                } else {
+                    b.className = 'diff-btn whitespace-nowrap px-3 py-1.5 text-xs sm:text-sm font-bold rounded-lg transition-all text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer hover:-translate-y-0.5';
+                }
+            });
+        }
+        
+        function setDifficulty(diff) {
+            localStorage.setItem('memDifficulty', diff);
+            startGame();
+        }
+
+        function startGame(){
+          var diff = localStorage.getItem('memDifficulty') || 'einfach';
+          state = resetState();
+          state.difficulty = diff; localStorage.setItem('memDifficulty', diff);
+          updateDiffButtons(diff);
+          
+          if(flipSlider){ state.flipDelay=Number(flipSlider.value); localStorage.setItem('memFlipDelay', state.flipDelay); }
+          if(sizeSlider){ state.cardMin=Number(sizeSlider.value); localStorage.setItem('memCardMin', state.cardMin); document.documentElement.style.setProperty('--card-min', state.cardMin+'px'); }
+          if(textSlider){ state.textSize=Number(textSlider.value); localStorage.setItem('memTextSize', state.textSize); document.documentElement.style.setProperty('--card-text', state.textSize+'px'); }
+
+          state.deck = createDeck(diff);
+          state.totalPairs = state.deck.length / 2;
+
+          setStats(); timeEl.textContent='00:00'; state.running=true; state.lock=false; state.flipped=[]; renderBoard(); if(restartBtn) restartBtn.disabled=false;
+          
+          setTimeout(function() {
+              var brd = document.getElementById('board');
+              if(brd) brd.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }, 500);
+        }
+        function restartGame(){ startGame(); }
+
+        function onFlip(e){
+          if(!state.running||state.lock) return;
+          var btn = e.currentTarget;
+          var idx = Number(btn.dataset.index);
+          var model = state.deck[idx];
+          if(!state.startTime) startTimer();
+          if(btn.classList.contains('flipped')||btn.classList.contains('matched')) return;
+          
+          btn.classList.add('flipped');
+          state.flipped.push({idx:idx, model:model, btn:btn});
+          
+          if(state.flipped.length === 2){
+            state.moves++;
+            var a = state.flipped[0], b = state.flipped[1];
+            var isMatch = (a.model.pairId === b.model.pairId && a.idx !== b.idx && a.model.kind !== b.model.kind);
+            
+            if(isMatch){
+              a.btn.classList.add('matched');
+              b.btn.classList.add('matched');
+              state.hits++;
+              state.combo = (state.combo||0) + 1;
+              if(state.combo >= 2){ state.comboBonus = (state.comboBonus||0) + 3*(state.combo-1); }
+              if(state.combo > (state.maxCombo||0)) state.maxCombo = state.combo;
+              recomputePoints();
+              state.flipped = [];
+              if(state.hits === state.totalPairs){
+                stopTimer();
+                setTimeout(showSummary, 350);
+              }
+            } else {
+              state.combo = 0;
+              state.lock = true;
+              a.btn.classList.add('shake');
+              b.btn.classList.add('shake');
+              setTimeout(function(){
+                a.btn.classList.remove('flipped','shake');
+                b.btn.classList.remove('flipped','shake');
+                state.flipped = [];
+                state.lock = false;
+              }, state.flipDelay);
+            }
+          }
+        }
+
+        function getCompletedModes() {
+          try {
+            var raw = localStorage.getItem('memCompletedModes') || '[]';
+            var arr = JSON.parse(raw);
+            return Array.isArray(arr) ? arr : [];
+          } catch(e) { return []; }
+        }
+
+        function markModeCompleted(mode) {
+          var list = getCompletedModes();
+          if (list.indexOf(mode) === -1) {
+            list.push(mode);
+            localStorage.setItem('memCompletedModes', JSON.stringify(list));
+          }
+          updatePdfButtonState();
+        }
+
+        function updatePdfButtonState() {
+          var completed = getCompletedModes();
+          var count = completed.length;
+          var isUnlocked = count >= 3;
+
+          var modalBtn = document.getElementById('modalPdfBtn');
+          var hdrBtn = document.getElementById('hdrPdfBtn');
+
+          var percent = Math.min(100, Math.round((count / 3) * 100));
+
+          document.getElementById('headerPercentText').innerText = count + ' / 3 Modi erledigt';
+          
+          var hdrSvgCircle = document.getElementById('headerSvgCircle');
+          if (hdrSvgCircle) {
+              var offset = 100.53 - (100.53 * percent / 100);
+              hdrSvgCircle.style.strokeDashoffset = offset;
+          }
+          var hdrPercentNum = document.getElementById('headerPercentNumber');
+          if (hdrPercentNum) {
+              hdrPercentNum.innerText = percent + '%';
+          }
+          document.getElementById('progressBar').style.width = percent + '%';
+          document.getElementById('completionBadge').innerText = count + ' / 3 erledigt';
+          document.getElementById('completionPercentNumber').innerText = percent + '%';
+          
+          var svgCircle = document.getElementById('completionSvgCircle');
+          if (svgCircle) {
+              var offset = 100.53 - (100.53 * percent / 100);
+              svgCircle.style.strokeDashoffset = offset;
+          }
+
+          if (modalBtn) {
+            modalBtn.innerHTML = isUnlocked ? '<i class="fa-solid fa-file-pdf"></i> PDF herunterladen (' + count + '/3)' : ('<i class="fa-solid fa-lock"></i> PDF Export (' + count + '/3)');
+            modalBtn.className = isUnlocked ? 'px-4 py-2 text-xs font-bold rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white transition shadow-sm' : 'px-4 py-2 text-xs font-bold rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-500 transition opacity-60 cursor-not-allowed';
+          }
+          if (hdrBtn) {
+            hdrBtn.className = isUnlocked ? 'p-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white transition shadow-sm' : 'p-2 rounded-lg bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-500 transition border border-slate-200 dark:border-slate-700 opacity-60 cursor-not-allowed';
+          }
+        }
+
+        function handleDownloadPdf() {
+          var completed = getCompletedModes();
+          if (completed.length < 3) {
+            alert('🔒 PDF-Export gesperrt!\n\nDie PDF-Funktion wird freigeschaltet, wenn mindestens drei Modi gespielt wurden (bisher ' + completed.length + '/3 erledigt).');
+            return;
+          }
+
+          var modes = [
+              { k: 'einfach', label: 'Einfach (8 Karten)' },
+              { k: 'mittel', label: 'Mittel (16 Karten)' },
+              { k: 'schwer', label: 'Schwer (20 Karten)' },
+              { k: 'ultra', label: 'Ultra (24 Karten)' }
+          ];
+
+          var totalPoints = 0;
+          var rows = modes.map(function (m) {
+              var isDone = completed.indexOf(m.k) > -1;
+              var topScore = topN(getScoresFor(m.k), 1)[0];
+
+              if (isDone && topScore) {
+                  totalPoints += topScore.points;
+                  var ratio = topScore.moves / (topScore.hits || 1);
+                  var stars = ratio <= 1.8 ? '★★★' : (ratio <= 2.8 ? '★★☆' : '★☆☆');
+                  return [m.label, '✅ Absolviert', topScore.points + ' Pkt.', formatTime(topScore.time), topScore.moves, stars];
+              }
+              return [m.label, '⚪ Ausstehend', '--', '--', '--', '--'];
+          });
+
+          downloadCertificatePDF({
+              icon: '🏆',
+              title: 'Leistungsnachweis • IT-Hardware Memory',
+              subtitle: 'Informatische Bildung • IT-Hardware • A1',
+              badge: '✅ Modi absolviert',
+              badgeOk: true,
+              filenamePrefix: 'A1_Leistungsnachweis',
+              blocks: [
+                  {
+                      type: 'table',
+                      heading: '📊 Übersicht der absolvierten Schwierigkeitsgrade',
+                      headers: ['Schwierigkeitsgrad', 'Status', 'Punkte', 'Zeit', 'Züge', 'Bewertung'],
+                      colWidths: [49, 31, 27, 24, 20, 23], // mm, muss zu contentW (174mm) passen
+                      rows: rows
+                  },
+                  {
+                      type: 'summary',
+                      label: 'Gesamtwertung IT-Hardware',
+                      note: 'Ausgezeichnete Kenntnisse der Komponenten & Fachbegriffe.',
+                      value: totalPoints + ' Pkt.'
+                  }
+              ]
+          });
+        }
+
+        function showSummary(){
+          var elapsed = state.startTime ? (performance.now() - state.startTime) : 0;
+          var bonus = timeBonus(elapsed); var finalPoints = Math.max(0, state.points + bonus); state.points = finalPoints;
+          var tp = state.totalPairs || 1; var ratio = state.moves / tp; var t2, t3, timeReq;
+          if(state.difficulty==='einfach'){ t3 = 2.0; t2 = 3.0; timeReq = 120000; }
+          else if(state.difficulty==='mittel'){ t3 = 1.8; t2 = 2.6; timeReq = 150000; }
+          else if(state.difficulty==='schwer'){ t3 = 1.6; t2 = 2.2; timeReq = 180000; }
+          else { t3 = 1.5; t2 = 2.0; timeReq = 210000; }
+          var stars = 1; if(ratio <= t2) stars = 2; if(ratio <= t3 && elapsed <= timeReq) stars = 3; var starStr = new Array(stars+1).join('★') + new Array(3-stars+1).join('☆');
+          var diffName = (state.difficulty==='einfach'?'Einfach (8)': state.difficulty==='mittel'?'Mittel (16)': state.difficulty==='schwer'?'Schwer (20)':'Ultra (24)');
+          var effNow = state.moves ? (state.hits/state.moves) : 0;
+          var msg = 'Modus: ' + diffName + ' · Zeit: ' + formatTime(elapsed) + ' · Züge: ' + state.moves + ' · Treffer: ' + state.hits + ' · Effizienz: ' + Math.round(effNow*100) + '%' + ' · Punkte: ' + state.points + ' · Zeitbonus: ' + (bonus>0?('+'+bonus):String(bonus)) + ' · Combo-Bonus: ' + (state.comboBonus||0);
+          summaryEl.textContent = msg; starsEl.textContent = starStr;
+          var bestKey = 'memHigh_' + state.difficulty; var prev = null; try{ prev = JSON.parse(localStorage.getItem(bestKey)||'null'); }catch(_){ }
+          var current = {points: state.points, time: elapsed, moves: state.moves, hits: state.hits, bonus: bonus, comboBonus: (state.comboBonus||0), maxCombo: (state.maxCombo||0), date: (new Date()).toISOString()};
+          var better=false; if(!prev) better=true; else { if(current.points>prev.points) better=true; else if(current.points===prev.points && current.time<prev.time) better=true; }
+          if(better) localStorage.setItem(bestKey, JSON.stringify(current));
+          markModeCompleted(state.difficulty);
+          saveScore(current); renderScores(); modalEl.classList.remove('hidden');
+        }
+
+        function saveStudentInfo() {
+          var sName = document.getElementById('studentName').value;
+          var sClass = document.getElementById('studentClass').value;
+          var sDate = document.getElementById('studentDate').value;
+          localStorage.setItem('memStudentInfo', JSON.stringify({ name: sName, sClass: sClass, date: sDate }));
+          if(document.getElementById('mobName')) document.getElementById('mobName').textContent = sName || 'Gast';
+          if(document.getElementById('mobClass')) document.getElementById('mobClass').textContent = sClass || '-';
+          if(document.getElementById('mobDate')) document.getElementById('mobDate').textContent = sDate;
+        }
+
+        function loadStudentInfo() {
+          try {
+            var raw = localStorage.getItem('memStudentInfo');
+            if (raw) {
+              var info = JSON.parse(raw);
+              if (info.name) document.getElementById('studentName').value = info.name;
+              if (info.sClass) document.getElementById('studentClass').value = info.sClass;
+            }
+          } catch(e) {}
+          saveStudentInfo();
+        }
+
+        function confirmReset() {
+          if (confirm('Möchtest du wirklich alle erzielten Highscores und absolvierten Modi zurücksetzen?')) {
+            ALL_MODES.forEach(function(m){
+              localStorage.removeItem('memScores_' + m);
+              localStorage.removeItem('memHigh_' + m);
+            });
+            localStorage.removeItem('memCompletedModes');
+            updatePdfButtonState();
+            alert('Highscores & Fortschritt wurden zurückgesetzt.');
+          }
+        }
+
+        if(restartBtn) restartBtn.addEventListener('click', restartGame);
+        if(againBtn) againBtn.addEventListener('click', function(){ modalEl.classList.add('hidden'); restartGame(); });
+        if(changeBtn) changeBtn.addEventListener('click', function(){ modalEl.classList.add('hidden'); startGame(); });
+        if(leaderBtn) leaderBtn.addEventListener('click', openLeaderboard);
+        if(closeLeader) closeLeader.addEventListener('click', function(){ leaderModal.classList.add('hidden'); });
+        window.addEventListener('resize', function(){ if(state && state.deck && state.deck.length) updateDynamicCardDimensions(); });
+
+        (function init(){
+            initTheme();
+            loadStudentInfo();
+            applyDefaultClassAndDate();
+
+            // Sync global Vorname
+            var globalVorname = localStorage.getItem('studentVorname') || localStorage.getItem('student_vorname');
+            var nameEl = document.getElementById('studentName');
+            if (nameEl) {
+                if (!nameEl.value && globalVorname) {
+                    nameEl.value = globalVorname;
+                } else if (nameEl.value && nameEl.value.trim()) {
+                    localStorage.setItem('studentVorname', nameEl.value.trim());
+                    localStorage.setItem('student_vorname', nameEl.value.trim());
+                }
+            }
+
+            setupUniversalAutoSave();
+            updatePdfButtonState();
+            if(flipSlider){ flipSlider.value = state.flipDelay; flipVal.textContent = (state.flipDelay/1000).toFixed(1)+'s'; flipSlider.addEventListener('input', function(){ state.flipDelay = Number(flipSlider.value); flipVal.textContent = (state.flipDelay/1000).toFixed(1)+'s'; localStorage.setItem('memFlipDelay', state.flipDelay); }); }
+            if(sizeSlider){ sizeSlider.value = state.cardMin; sizeVal.textContent = state.cardMin+'px'; document.documentElement.style.setProperty('--card-min', state.cardMin+'px'); sizeSlider.addEventListener('input', function(){ state.cardMin = Number(sizeSlider.value); sizeVal.textContent = state.cardMin+'px'; document.documentElement.style.setProperty('--card-min', state.cardMin+'px'); localStorage.setItem('memCardMin', state.cardMin); }); }
+            if(textSlider){ textSlider.value = state.textSize; textSizeVal.textContent = state.textSize+'px'; document.documentElement.style.setProperty('--card-text', state.textSize+'px'); textSlider.addEventListener('input', function(){ state.textSize = Number(textSlider.value); textSizeVal.textContent = state.textSize+'px'; document.documentElement.style.setProperty('--card-text', state.textSize+'px'); localStorage.setItem('memTextSize', state.textSize); }); }
+            
+            // Auto-start Memory game immediately on page load
+            startGame();
+        })();
+    </script>
+
+</body>
+</html>

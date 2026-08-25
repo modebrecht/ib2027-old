@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Informatik B25 – Präsentation</title>
+  <style>
+    html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#020617}
+    iframe{display:block;width:100%;height:100%;border:0;background:#020617}
+  </style>
+</head>
+<body>
+  <iframe id="presentationFrame" src="../tk/presentation.html" title="Informatik B25 Präsentation"></iframe>
+  <script>
+    (function(){
+      var frame=document.getElementById('presentationFrame');
+      frame.addEventListener('load',function(){
+        try{
+          var doc=frame.contentDocument;
+          var text={
+            section1:'Heute schauen wir, wie Computer Daten verarbeiten – und wie wir sie effizient nutzen.',
+            section2:'Informatik bedeutet: Informationen verarbeiten und Probleme mit klaren Regeln lösen.',
+            section3:'Computer verarbeiten Daten nach einem einfachen Muster: Eingabe, Verarbeitung, Ausgabe.',
+            section4:'Computer speichern Informationen als Folgen aus 0 und 1. 8 Bits ergeben 1 Byte.',
+            section5:'Ein Algorithmus ist eine klare Schritt-für-Schritt-Anleitung, die zu einem Ergebnis führt.',
+            section6:'Ein Computer braucht beides: Hardware zum Anfassen und Software zum Ausführen.',
+            section7:'Computer tauschen über Netzwerke Daten aus.',
+            section8:'Jetzt geht’s an die Tastatur: Wir lernen die wichtigsten Kürzel und arbeiten damit schneller am PC.'
+          };
+          Object.keys(text).forEach(function(id){
+            var p=doc.querySelector('#'+id+' p.description');
+            if(p)p.textContent=text[id];
+          });
+
+          var s6=doc.getElementById('section6');
+          if(s6){
+            var cards=s6.querySelectorAll('.hw-sw-card p');
+            if(cards[0])cards[0].textContent='Bauteile & Geräte: CPU, RAM, Tastatur, Monitor und Speicher.';
+            if(cards[1])cards[1].textContent='Programme & Daten: Windows/macOS, Browser, Apps, Spiele und Code.';
+          }
+
+          var s7=doc.getElementById('section7');
+          if(s7){
+            var heading=s7.querySelector('.card > div');
+            var copy=s7.querySelector('.card > p');
+            if(heading)heading.textContent='🌐 Daten schützen';
+            if(copy)copy.textContent='Passwörter, Verschlüsselung und Datenschutz helfen, diese Daten zu schützen.';
+          }
+
+          var s8=doc.getElementById('section8');
+          if(s8){
+            var title=s8.querySelector('h2');
+            var link=s8.querySelector('a.btn-primary');
+            if(title)title.textContent='Jetzt an die Tastatur!';
+            if(link){link.href='../tk2/index.html';link.target='_top';}
+          }
+
+          var algoExamplesWrap=doc.getElementById('algo-examples');
+          if(algoExamplesWrap){
+            [
+              {key:'ampel',label:'🚦 Ampel'},
+              {key:'snack',label:'🥤 Snackautomat'},
+              {key:'waschmaschine',label:'🧺 Waschmaschine'}
+            ].forEach(function(item){
+              if(algoExamplesWrap.querySelector('[data-key="'+item.key+'"]'))return;
+              var btn=doc.createElement('button');
+              btn.className='algo-chip';
+              btn.setAttribute('data-key',item.key);
+              btn.setAttribute('onclick','toggleAlgoExample(this)');
+              btn.textContent=item.label;
+              algoExamplesWrap.appendChild(btn);
+            });
+          }
+
+          var algoStyle=doc.createElement('style');
+          algoStyle.textContent=''
+            +'.algo-examples{opacity:1!important;transform:none!important;pointer-events:auto!important}'
+            +'.algo-examples .algo-chip{opacity:0!important;transform:translateY(16px) scale(.9)!important;pointer-events:none!important;transition:opacity .34s ease,transform .46s cubic-bezier(.34,1.56,.64,1)!important}'
+            +'.algo-examples .algo-chip.step-visible{opacity:1!important;transform:none!important;pointer-events:auto!important}';
+          doc.head.appendChild(algoStyle);
+
+          var mobileStyle=doc.createElement('style');
+          mobileStyle.textContent=''
+            +'@media(max-width:768px){'
+            +'.section{height:auto!important;min-height:100svh!important;box-sizing:border-box!important;padding:2.25rem .9rem 5.25rem!important}'
+            +'.section-content{gap:.75rem!important}'
+            +'.badge{font-size:.78rem!important;padding:6px 12px!important}'
+            +'h1{font-size:clamp(2.15rem,11vw,3.25rem)!important;line-height:1.04!important}'
+            +'h2{font-size:clamp(1.9rem,9vw,2.65rem)!important;line-height:1.08!important}'
+            +'p.description{font-size:1.03rem!important;line-height:1.42!important}'
+            +'.card{padding:.9rem!important;border-radius:16px!important;margin-top:.2rem!important}'
+            +'.btn-primary{padding:13px 22px!important;font-size:1.05rem!important;margin-top:.55rem!important}'
+            +'.nav-controls{bottom:max(10px,env(safe-area-inset-bottom))!important;gap:9px!important;padding:8px 12px!important}'
+            +'.nav-dots{gap:6px!important}.nav-dot{width:9px!important;height:9px!important}.nav-arrow-btn{font-size:1.2rem!important}'
+            +'.binary-container{gap:.55rem!important;margin:.55rem 0!important}.bit-label{font-size:.78rem!important}.bit-btn{width:58px!important;height:64px!important;font-size:1.8rem!important;border-radius:11px!important}.binary-result{font-size:1.12rem!important;margin-top:.45rem!important}.binary-result span{font-size:1.55rem!important}'
+            +'.flow-container{gap:.4rem!important;margin:.45rem 0!important}.flow-step{padding:9px 11px!important;font-size:.88rem!important}.flow-arrow{font-size:1rem!important}.algo-chip{padding:8px 13px!important;font-size:.88rem!important}.algo-examples{gap:.45rem!important;margin-top:.45rem!important}.algo-reveal{min-height:2.7rem!important;margin-top:.2rem!important}.algo-reveal p{font-size:.95rem!important}'
+            +'.hw-sw-grid{gap:.65rem!important}.hw-sw-card{padding:.8rem!important}.hw-sw-card h4{font-size:1.08rem!important;margin-bottom:.3rem!important}'
+            +'.eva-card{padding:.8rem!important}.eva-pipeline{flex-direction:row!important;align-items:flex-start!important;gap:.35rem!important}.eva-col{width:auto!important;gap:.42rem!important}.eva-title{padding:7px 5px!important;font-size:.72rem!important;letter-spacing:.15px!important;white-space:normal!important;line-height:1.12!important}.eva-node{width:48px!important;height:48px!important}.eva-node svg{width:24px!important;height:24px!important}.eva-popup{min-height:46px!important;padding:.4rem .25rem!important;border-radius:11px!important}.eva-typewriter{font-size:.75rem!important;line-height:1.22!important}.eva-play-btn{font-size:.95rem!important;padding:11px 18px!important}'
+            +'}'
+            +'@media(max-width:390px){.section{padding-left:.65rem!important;padding-right:.65rem!important}.card{padding:.75rem!important}.bit-btn{width:52px!important;height:58px!important}.algo-chip{font-size:.82rem!important;padding:7px 10px!important}}';
+          doc.head.appendChild(mobileStyle);
+
+          var examples={
+            tiktok:'TikTok wertet aus, was du anschaust, und empfiehlt ähnliche Videos.',
+            navi:'Das Navi vergleicht Routen und berechnet einen passenden Weg.',
+            google:'Google sortiert Suchergebnisse nach Relevanz.',
+            ampel:'Die Ampel folgt festen Regeln: Rot = warten, Grün = fahren oder gehen.',
+            snack:'Der Automat prüft Geld und Auswahl – dann gibt er das Produkt aus.',
+            waschmaschine:'Die Waschmaschine arbeitet ein Programm Schritt für Schritt ab: waschen, spülen, schleudern.'
+          };
+          frame.contentWindow.toggleAlgoExample=function(btn){
+            var textEl=doc.getElementById('algo-reveal-text');
+            var wasActive=btn.classList.contains('active');
+            doc.querySelectorAll('.algo-chip').forEach(function(chip){chip.classList.remove('active');});
+            textEl.classList.remove('show');
+            if(wasActive){textEl.textContent='';return;}
+            btn.classList.add('active');
+            textEl.textContent=examples[btn.dataset.key]||'';
+            frame.contentWindow.requestAnimationFrame(function(){textEl.classList.add('show');});
+          };
+
+          var s5=doc.getElementById('section5');
+          var algoChips=algoExamplesWrap?Array.prototype.slice.call(algoExamplesWrap.querySelectorAll('.algo-chip')):[];
+          var algoRevealIndex=0;
+
+          function revealNextAlgo(){
+            if(algoRevealIndex>=algoChips.length)return false;
+            algoChips[algoRevealIndex].classList.add('step-visible');
+            algoRevealIndex+=1;
+            return true;
+          }
+
+          function algorithmSlideVisible(){
+            if(!s5)return false;
+            var rect=s5.getBoundingClientRect();
+            var h=frame.contentWindow.innerHeight||doc.documentElement.clientHeight||1;
+            return rect.top<h*.55&&rect.bottom>h*.45;
+          }
+
+          if(s5&&algoChips.length){
+            s5.addEventListener('click',function(e){
+              if(e.target.closest&&e.target.closest('.algo-chip'))return;
+              if(algorithmSlideVisible()&&revealNextAlgo()){
+                e.preventDefault();
+                e.stopPropagation();
+              }
+            },true);
+
+            frame.contentWindow.addEventListener('keydown',function(e){
+              if(e.key==='ArrowDown'&&algorithmSlideVisible()&&algoRevealIndex<algoChips.length){
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                revealNextAlgo();
+              }
+            },true);
+          }
+        }catch(e){
+          console.warn('Präsentation konnte nicht sprachlich angepasst werden.',e);
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
