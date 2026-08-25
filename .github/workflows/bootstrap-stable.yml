@@ -19,9 +19,7 @@ jobs:
       - name: Copy ib2026 main snapshot
         run: |
           git clone --depth 1 --branch main https://github.com/modebrecht/ib2026.git /tmp/ib2026
-          rsync -a --delete --exclude='.git' /tmp/ib2026/ ./
-          rm -f .github/workflows/pages-multibranch.yml
-          rm -f .github/workflows/bootstrap-stable.yml
+          rsync -a --delete --exclude='.git' --exclude='.github/workflows/' /tmp/ib2026/ ./
 
       - name: Commit stable baseline
         run: |
