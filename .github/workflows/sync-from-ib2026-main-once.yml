@@ -1,0 +1,33 @@
+name: Sync ib2026 main into ib2027 once
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    if: github.event.head_commit.message == 'chore: start one-off sync from ib2026 main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout ib2027
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 1
+
+      - name: Fetch ib2026 main
+        run: git clone --depth 1 --branch main https://github.com/modebrecht/ib2026.git /tmp/ib2026
+
+      - name: Mirror files
+        run: rsync -a --delete --exclude '.git' /tmp/ib2026/ ./
+
+      - name: Commit exact main snapshot
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "sync: ib2026 main -> ib2027 main"
+          git push origin main
