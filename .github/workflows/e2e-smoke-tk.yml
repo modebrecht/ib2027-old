@@ -1,0 +1,201 @@
+name: E2E Smoke TK A1-A7
+
+on:
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: Vercel production base URL
+        required: true
+        default: https://ib2026.vercel.app
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: e2e-smoke-tk-a1-a7
+  cancel-in-progress: false
+
+jobs:
+  smoke:
+    name: Chromium smoke TK A1-A7 + history + persistence + Gesamt-PDF
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      BASE_URL: ${{ inputs.base_url }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install Playwright
+        run: |
+          npm init -y >/dev/null
+          npm install --no-save @playwright/test
+          npx playwright install --with-deps chromium
+
+      - name: Run TK A1-A7 production smoke + score history + persistence contract
+        run: npx playwright test e2e/tk-a1-a7.spec.js e2e/tk-score-history-fast.spec.js e2e/tk-persistence-contract.spec.js --browser=chromium --workers=1 --reporter=line,html
+
+      - name: Generate Gesamt-PDF via "Zwischenstand erzeugen"
+        run: |
+          mkdir -p smoke-artifacts
+          node <<'NODE'
+          const fs = require('fs');
+          const path = require('path');
+          const { chromium } = require('@playwright/test');
+
+          (async () => {
+            const baseUrl = (process.env.BASE_URL || 'https://ib2026.vercel.app').replace(/\/$/, '');
+            const browser = await chromium.launch();
+            const context = await browser.newContext({ acceptDownloads: true });
+            const page = await context.newPage();
+
+            await page.goto(`${baseUrl}/`, { waitUntil: 'domcontentloaded' });
+            await page.evaluate(() => {
+              localStorage.clear();
+              sessionStorage.clear();
+
+              localStorage.setItem('studentVorname', 'E2E Smoke');
+              localStorage.setItem('student_vorname', 'E2E Smoke');
+              localStorage.setItem('tk_student_name_v1', 'E2E Smoke');
+
+              localStorage.setItem('tk_quest_scores_v1', JSON.stringify({
+                q1: 100, q2: 100, q3: 100,
+                q4: 100, q5: 100, q6: 100,
+                q7: 100, q8: 100, q9: 100,
+                q10: 100, q11: 100, q12: 100, q13: 100
+              }));
+
+              localStorage.setItem('tk_a3_progress_v1', JSON.stringify({
+                schemaVersion: 2,
+                downloaded: true,
+                onedriveStored: true,
+                choices: [
+                  { shortcut: 'Ctrl + C', reason: 'Schneller kopieren' },
+                  { shortcut: 'Ctrl + Z', reason: 'Fehler rueckgaengig machen' },
+                  { shortcut: 'Win + L', reason: 'Computer schnell sperren' }
+                ],
+                completed: true,
+                rewarded: true
+              }));
+
+              localStorage.setItem('tk_a4_progress_v1', JSON.stringify({
+                A: { attempts: 2, first: 100, second: 100, best: 100 }
+              }));
+              localStorage.setItem('tk_a5_progress_v1', JSON.stringify({
+                A: { attempts: 2, first: 100, second: 100, best: 100 }
+              }));
+              localStorage.setItem('tk_a6_progress_v1', JSON.stringify({
+                A: { first: 100, best: 100 },
+                B: { first: 100, best: 100 },
+                C: { first: 100, best: 100 },
+                D: { first: 100, best: 100 }
+              }));
+
+              const now = new Date().toISOString();
+              localStorage.setItem('tk_a7_training_v1', JSON.stringify({
+                schemaVersion: 1,
+                modes: {
+                  challenge: {
+                    all: { completedRuns: 2, correct: 18, wrong: 2, lastAccuracy: 90, bestAccuracy: 100, lastAt: now, retries: 0 }
+                  },
+                  hunt: {
+                    all: { completedRuns: 1, correct: 9, wrong: 1, lastAccuracy: 90, bestAccuracy: 90, lastAt: now, retries: 0 }
+                  },
+                  memory: {
+                    all: { completedRuns: 3, pairs: 12, moves: 15, points: 220, lastEfficiency: 80, bestEfficiency: 100, lastDiff: 'easy', lastElapsed: 1000, lastAt: now }
+                  }
+                }
+              }));
+
+              localStorage.setItem('tk_a7_progress_v1', JSON.stringify({
+                schemaVersion: 2,
+                completed: true,
+                completedStations: 3,
+                stations: { challenge: 2, hunt: 1, memory: 3 },
+                completedRuns: 6,
+                accuracy: 90,
+                target: 70,
+                targetReached: true,
+                pdfReady: true,
+                updatedAt: now
+              }));
+            });
+
+            await page.goto(`${baseUrl}/tk2/index.html`, { waitUntil: 'domcontentloaded' });
+
+            const a7Sheet = await page.evaluate(() => {
+              if (!window.tk2Pdf || typeof window.tk2Pdf.collectSheets !== 'function') return null;
+              const sheets = window.tk2Pdf.collectSheets();
+              return sheets.find((sheet) => sheet.id === 'A7') || null;
+            });
+            if (!a7Sheet) {
+              throw new Error('Gesamt-PDF dataset does not contain A7.');
+            }
+            if (!Array.isArray(a7Sheet.rows) || a7Sheet.rows.length !== 4) {
+              throw new Error(`Expected 4 A7 statistic rows in Gesamt-PDF dataset, got ${a7Sheet.rows && a7Sheet.rows.length}.`);
+            }
+            const a7Labels = a7Sheet.rows.map((row) => row.label);
+            for (const expected of ['Challenge', 'Fehlerjagd', 'Memory', 'Gesamt']) {
+              if (!a7Labels.includes(expected)) throw new Error(`Missing A7 Gesamt-PDF row: ${expected}`);
+            }
+            console.log('A7 Gesamt-PDF dataset verified:', a7Sheet.rows);
+
+            const exportButton = page.locator('button, a').filter({ hasText: 'Zwischenstand erzeugen' });
+            if (await exportButton.count() !== 1) {
+              throw new Error(`Expected exactly one "Zwischenstand erzeugen" button/link in tk2/index.html, found ${await exportButton.count()}.`);
+            }
+
+            const [download] = await Promise.all([
+              page.waitForEvent('download', { timeout: 30000 }),
+              exportButton.click()
+            ]);
+
+            const suggested = download.suggestedFilename();
+            if (!/\.pdf$/i.test(suggested)) {
+              throw new Error(`Expected a PDF download, got: ${suggested}`);
+            }
+
+            const output = path.resolve('smoke-artifacts', 'TK2-Gesamt-Zwischenstand-E2E.pdf');
+            await download.saveAs(output);
+
+            const bytes = fs.readFileSync(output);
+            if (bytes.length <= 1000) {
+              throw new Error(`Generated PDF is unexpectedly small: ${bytes.length} bytes.`);
+            }
+            if (bytes.subarray(0, 5).toString('ascii') !== '%PDF-') {
+              throw new Error('Generated file does not have a valid PDF signature.');
+            }
+
+            console.log(`Gesamt-PDF generated successfully: ${output} (${bytes.length} bytes; browser filename: ${suggested})`);
+            await browser.close();
+          })().catch((error) => {
+            console.error(error);
+            process.exit(1);
+          });
+          NODE
+
+      - name: Upload TK2 Gesamt-PDF
+        uses: actions/upload-artifact@v4
+        with:
+          name: tk2-gesamtpdf-${{ github.run_id }}
+          path: smoke-artifacts/TK2-Gesamt-Zwischenstand-E2E.pdf
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Upload failure evidence
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-smoke-tk-a1-a7-${{ github.run_id }}
+          path: |
+            test-results/
+            playwright-report/
+          if-no-files-found: ignore
+          retention-days: 7
