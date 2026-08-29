@@ -408,3 +408,14 @@ window.addEventListener('storage', function(e) {
         if (e.newValue) syncVornameInputs(e.newValue);
     }
 });
+
+
+/* ---------- Shared score history bootstrap ---------- */
+(function loadSharedScoreHistory(){
+    if (document.querySelector('script[data-score-history]')) return;
+    var script = document.createElement('script');
+    script.src = 'assets/js/score-history.js';
+    script.async = false;
+    script.setAttribute('data-score-history', '1');
+    document.head.appendChild(script);
+})();

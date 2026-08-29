@@ -37,6 +37,7 @@
         }
     </script>
     <link rel="stylesheet" href="assets/css/fontawesome.min.css">
+    <link rel="stylesheet" href="assets/css/worksheet-common.css">
     <style>
         @import url('assets/fonts/inter.css');
         * { transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease; }
@@ -58,50 +59,37 @@
             input, textarea, select { border: 1px solid #94a3b8 !important; background: #fff !important; color: #000 !important; }
             .dark, .dark * { background-color: #fff !important; color: #000 !important; border-color: #cbd5e1 !important; }
         }
+        .progress-glow{background:linear-gradient(90deg,#0078d4,#7c3aed,#10b981);background-size:200% 100%;animation:flow 3.5s linear infinite}
+        @keyframes flow{to{background-position:200% 0}}
     </style>
 </head>
 <body class="bg-slate-100 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-full flex flex-col font-sans antialiased">
 
     <!-- Sticky Header Bar -->
-    <header class="sticky top-0 z-50 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 shadow-sm no-print">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-2.5 flex items-center justify-between gap-4">
-            <div class="flex items-center gap-3 min-w-0">
-                <div class="w-9 h-9 rounded-lg bg-eco-600 text-white flex items-center justify-center font-bold shadow-md shadow-eco-600/20 shrink-0">
-                    <i class="fa-solid fa-leaf text-lg"></i>
-                </div>
-                <div class="flex items-center gap-3">
-                    <div>
-                        <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Fortschritt</span>
-                        <span id="headerPercentText" class="text-sm font-extrabold text-eco-600 dark:text-eco-400">0% erledigt</span>
-                    </div>
-                    <div class="relative w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center font-bold text-[10px] sm:text-xs text-slate-700 dark:text-slate-200 shrink-0 ml-1">
-                        <svg class="absolute inset-0 w-full h-full transform -rotate-90" viewBox="0 0 36 36">
-                            <circle cx="18" cy="18" r="16" fill="none" class="stroke-slate-200 dark:stroke-slate-800" stroke-width="4"></circle>
-                            <circle id="headerSvgCircle" cx="18" cy="18" r="16" fill="none" class="stroke-eco-500 transition-all duration-500 ease-out" stroke-width="4" stroke-dasharray="100.53" stroke-dashoffset="100.53" stroke-linecap="round"></circle>
-                        </svg>
-                        <span id="headerPercentNumber" class="relative z-10">0%</span>
-                    </div>
+    <header class="sticky top-0 z-40 worksheet-header no-print">
+        <div class="max-w-5xl mx-auto p-3 flex items-center justify-between gap-3">
+            <div class="min-w-0">
+                <div class="text-[10px] uppercase font-black tracking-[.16em] text-slate-400">A9 · Grüne IT &amp; Nachhaltigkeit</div>
+                <div class="flex items-center gap-2 mt-.5">
+                    <div id="headerPercentText" class="font-black text-onedrive-600 dark:text-blue-400">0% bearbeitet</div>
+                    <span class="hidden sm:inline text-slate-300 dark:text-slate-700">•</span>
+                    <div class="hidden sm:block text-xs font-bold text-slate-400">5 Aufträge</div>
                 </div>
             </div>
-
-            <div class="flex items-center gap-2 shrink-0">
-                <button onclick="toggleDarkMode()" title="Dunkelmodus umschalten" class="p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
-                    <i id="themeIcon" class="fa-solid fa-moon text-sm"></i>
+            <div class="flex gap-2 shrink-0">
+                <button onclick="toggleDarkMode()" title="Dunkelmodus" class="w-10 h-10 rounded-xl border border-slate-200 dark:border-slate-700 bg-white/70 dark:bg-slate-900">
+                    <i id="themeIcon" class="fa-solid fa-moon"></i>
                 </button>
-                <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
-                    <span class="text-[10px] font-bold text-slate-400 uppercase">Eco-Score:</span>
-                    <span id="headerScore" class="text-xs font-black text-eco-600 dark:text-eco-400">0</span>
-                </div>
-                <button id="hdrPdfBtn" onclick="handlePrint()" class="p-2 rounded-lg bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-500 transition border border-slate-200 dark:border-slate-700 opacity-60 cursor-not-allowed" title="Erst bei 100% Ausfüllung möglich">
-                    <i id="printIcon" class="fa-solid fa-file-pdf text-sm"></i>
+                <button id="hdrPdfBtn" onclick="handlePrint()" class="w-10 h-10 rounded-xl bg-slate-200 text-slate-400 dark:bg-slate-800 dark:text-slate-600" title="PDF nach Abschluss">
+                    <i id="printIcon" class="fa-solid fa-lock"></i>
                 </button>
-                <button onclick="confirmReset()" title="Zurücksetzen" class="p-2 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/50 rounded-lg border border-rose-200 dark:border-rose-900/50">
-                    <i class="fa-solid fa-rotate-right text-sm"></i>
+                <button onclick="confirmReset()" title="Zurücksetzen" class="w-10 h-10 rounded-xl border border-rose-200 dark:border-rose-900/60 bg-white/70 dark:bg-slate-900 text-rose-600">
+                    <i class="fa-solid fa-rotate-right"></i>
                 </button>
             </div>
         </div>
-        <div class="w-full bg-slate-200 dark:bg-slate-800 h-1">
-            <div id="progressBar" class="bg-eco-500 h-1 transition-all duration-300" style="width: 0%"></div>
+        <div class="h-1 bg-slate-200 dark:bg-slate-800 overflow-hidden">
+            <div id="progressBar" class="h-1 progress-glow transition-all duration-300" style="width:0"></div>
         </div>
     </header>
 
@@ -810,7 +798,7 @@
             if (progressBar) progressBar.style.width = percent + '%';
 
             const headerPercentText = document.getElementById('headerPercentText');
-            if (headerPercentText) headerPercentText.innerText = percent + '% erledigt';
+            if (headerPercentText) headerPercentText.innerText = percent + '% bearbeitet';
 
             const headerPercentNumber = document.getElementById('headerPercentNumber');
             if (headerPercentNumber) headerPercentNumber.innerText = percent + '%';

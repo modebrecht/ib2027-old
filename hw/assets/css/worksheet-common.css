@@ -10,3 +10,203 @@
   background: rgba(15, 23, 42, .60);
   border-bottom-color: rgba(51, 65, 85, .50);
 }
+
+/* A8: keep the hardware card compact enough to fit without extra scrolling */
+#componentShell > .component-visual + div {
+  display: none;
+}
+
+#componentShell #component {
+  min-height: 0;
+  margin-top: .35rem;
+}
+
+#componentShell #componentQuestion {
+  margin-top: .2rem;
+}
+
+/* A8: the "Kurze Repetition" pill adds height without useful information. */
+body:has(#componentShell) main > section:first-child .inline-flex {
+  display: none;
+}
+
+body:has(#componentShell) main > section:first-child h1 {
+  margin-top: 0;
+}
+
+/* A9: icon + title on one compact row; description below. */
+body:has(#sceneShell) main > section:first-child > div:first-child {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  column-gap: .85rem;
+  row-gap: .45rem;
+}
+
+body:has(#sceneShell) main > section:first-child > div:first-child > div:nth-child(2) {
+  display: contents;
+}
+
+body:has(#sceneShell) main > section:first-child > div:first-child > div:first-child {
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: .9rem;
+  font-size: 1.1rem;
+}
+
+body:has(#sceneShell) main > section:first-child h1 {
+  margin-top: 0;
+}
+
+body:has(#sceneShell) main > section:first-child p {
+  grid-column: 1 / -1;
+  margin-top: 0;
+}
+
+/* A9: "Szenario" is redundant and only costs vertical space. */
+#sceneShell .scene-art + div > div:first-child {
+  display: none;
+}
+
+#sceneShell .scene-title {
+  margin-top: .45rem;
+}
+
+/* A9: the E/V/A choices already explain what the learner must decide. */
+body:has(#sceneShell) #sceneShell .text-center > p:last-of-type {
+  display: none;
+}
+
+/* A11: after a correct recommendation, teach from the real shop specs.
+   Only the decisive values glow; nothing is revealed before the learner answers. */
+#shop .device-card.correct .device-card-head {
+  background: linear-gradient(135deg, #ecfdf5, #f0fdf4);
+}
+
+.dark #shop .device-card.correct .device-card-head {
+  background: linear-gradient(135deg, rgba(6, 78, 59, .38), rgba(20, 83, 45, .22));
+}
+
+#shop .device-card.correct .device-build {
+  color: #059669;
+}
+
+#shop .device-card.correct[data-id="campus14"] .spec-item:nth-child(6),
+#shop .device-card.correct[data-id="campus14"] .spec-item:nth-child(7),
+#shop .device-card.correct[data-id="gametower"] .spec-item:nth-child(2),
+#shop .device-card.correct[data-id="gametower"] .spec-item:nth-child(3),
+#shop .device-card.correct[data-id="gametower"] .spec-item:nth-child(4),
+#shop .device-card.correct[data-id="creator16"] .spec-item:nth-child(2),
+#shop .device-card.correct[data-id="creator16"] .spec-item:nth-child(3),
+#shop .device-card.correct[data-id="creator16"] .spec-item:nth-child(4),
+#shop .device-card.correct[data-id="creator16"] .spec-item:nth-child(5),
+#shop .device-card.correct[data-id="flexpen"] .spec-item:nth-child(5),
+#shop .device-card.correct[data-id="flexpen"] .spec-item:nth-child(6),
+#shop .device-card.correct[data-id="flexpen"] .spec-item:nth-child(7),
+#shop .device-card.correct[data-id="feather13"] .spec-item:nth-child(6),
+#shop .device-card.correct[data-id="feather13"] .spec-item:nth-child(7) {
+  position: relative;
+  z-index: 1;
+  border-radius: .72rem;
+  border-bottom-color: transparent;
+  background: #dcfce7;
+  box-shadow: inset 0 0 0 1px #86efac, 0 0 0 0 rgba(34, 197, 94, 0);
+  animation: a11ReasonGlow 1.15s ease 2;
+}
+
+.dark #shop .device-card.correct[data-id="campus14"] .spec-item:nth-child(6),
+.dark #shop .device-card.correct[data-id="campus14"] .spec-item:nth-child(7),
+.dark #shop .device-card.correct[data-id="gametower"] .spec-item:nth-child(2),
+.dark #shop .device-card.correct[data-id="gametower"] .spec-item:nth-child(3),
+.dark #shop .device-card.correct[data-id="gametower"] .spec-item:nth-child(4),
+.dark #shop .device-card.correct[data-id="creator16"] .spec-item:nth-child(2),
+.dark #shop .device-card.correct[data-id="creator16"] .spec-item:nth-child(3),
+.dark #shop .device-card.correct[data-id="creator16"] .spec-item:nth-child(4),
+.dark #shop .device-card.correct[data-id="creator16"] .spec-item:nth-child(5),
+.dark #shop .device-card.correct[data-id="flexpen"] .spec-item:nth-child(5),
+.dark #shop .device-card.correct[data-id="flexpen"] .spec-item:nth-child(6),
+.dark #shop .device-card.correct[data-id="flexpen"] .spec-item:nth-child(7),
+.dark #shop .device-card.correct[data-id="feather13"] .spec-item:nth-child(6),
+.dark #shop .device-card.correct[data-id="feather13"] .spec-item:nth-child(7) {
+  background: rgba(6, 78, 59, .42);
+  box-shadow: inset 0 0 0 1px rgba(74, 222, 128, .55), 0 0 0 0 rgba(34, 197, 94, 0);
+}
+
+#shop .device-card.correct[data-id="campus14"] .spec-item:nth-child(6) .spec-label,
+#shop .device-card.correct[data-id="campus14"] .spec-item:nth-child(7) .spec-label,
+#shop .device-card.correct[data-id="gametower"] .spec-item:nth-child(2) .spec-label,
+#shop .device-card.correct[data-id="gametower"] .spec-item:nth-child(3) .spec-label,
+#shop .device-card.correct[data-id="gametower"] .spec-item:nth-child(4) .spec-label,
+#shop .device-card.correct[data-id="creator16"] .spec-item:nth-child(2) .spec-label,
+#shop .device-card.correct[data-id="creator16"] .spec-item:nth-child(3) .spec-label,
+#shop .device-card.correct[data-id="creator16"] .spec-item:nth-child(4) .spec-label,
+#shop .device-card.correct[data-id="creator16"] .spec-item:nth-child(5) .spec-label,
+#shop .device-card.correct[data-id="flexpen"] .spec-item:nth-child(5) .spec-label,
+#shop .device-card.correct[data-id="flexpen"] .spec-item:nth-child(6) .spec-label,
+#shop .device-card.correct[data-id="flexpen"] .spec-item:nth-child(7) .spec-label,
+#shop .device-card.correct[data-id="feather13"] .spec-item:nth-child(6) .spec-label,
+#shop .device-card.correct[data-id="feather13"] .spec-item:nth-child(7) .spec-label {
+  color: #059669;
+}
+
+#shop .device-card.correct[data-id="campus14"] .spec-item:nth-child(6) .spec-value,
+#shop .device-card.correct[data-id="campus14"] .spec-item:nth-child(7) .spec-value,
+#shop .device-card.correct[data-id="gametower"] .spec-item:nth-child(2) .spec-value,
+#shop .device-card.correct[data-id="gametower"] .spec-item:nth-child(3) .spec-value,
+#shop .device-card.correct[data-id="gametower"] .spec-item:nth-child(4) .spec-value,
+#shop .device-card.correct[data-id="creator16"] .spec-item:nth-child(2) .spec-value,
+#shop .device-card.correct[data-id="creator16"] .spec-item:nth-child(3) .spec-value,
+#shop .device-card.correct[data-id="creator16"] .spec-item:nth-child(4) .spec-value,
+#shop .device-card.correct[data-id="creator16"] .spec-item:nth-child(5) .spec-value,
+#shop .device-card.correct[data-id="flexpen"] .spec-item:nth-child(5) .spec-value,
+#shop .device-card.correct[data-id="flexpen"] .spec-item:nth-child(6) .spec-value,
+#shop .device-card.correct[data-id="flexpen"] .spec-item:nth-child(7) .spec-value,
+#shop .device-card.correct[data-id="feather13"] .spec-item:nth-child(6) .spec-value,
+#shop .device-card.correct[data-id="feather13"] .spec-item:nth-child(7) .spec-value {
+  color: #047857;
+  font-weight: 950;
+}
+
+.dark #shop .device-card.correct .spec-item .spec-label,
+.dark #shop .device-card.correct .spec-item .spec-value {
+  transition: color .2s ease;
+}
+
+.dark #shop .device-card.correct[data-id="campus14"] .spec-item:nth-child(6) .spec-label,
+.dark #shop .device-card.correct[data-id="campus14"] .spec-item:nth-child(7) .spec-label,
+.dark #shop .device-card.correct[data-id="gametower"] .spec-item:nth-child(2) .spec-label,
+.dark #shop .device-card.correct[data-id="gametower"] .spec-item:nth-child(3) .spec-label,
+.dark #shop .device-card.correct[data-id="gametower"] .spec-item:nth-child(4) .spec-label,
+.dark #shop .device-card.correct[data-id="creator16"] .spec-item:nth-child(2) .spec-label,
+.dark #shop .device-card.correct[data-id="creator16"] .spec-item:nth-child(3) .spec-label,
+.dark #shop .device-card.correct[data-id="creator16"] .spec-item:nth-child(4) .spec-label,
+.dark #shop .device-card.correct[data-id="creator16"] .spec-item:nth-child(5) .spec-label,
+.dark #shop .device-card.correct[data-id="flexpen"] .spec-item:nth-child(5) .spec-label,
+.dark #shop .device-card.correct[data-id="flexpen"] .spec-item:nth-child(6) .spec-label,
+.dark #shop .device-card.correct[data-id="flexpen"] .spec-item:nth-child(7) .spec-label,
+.dark #shop .device-card.correct[data-id="feather13"] .spec-item:nth-child(6) .spec-label,
+.dark #shop .device-card.correct[data-id="feather13"] .spec-item:nth-child(7) .spec-label {
+  color: #86efac;
+}
+
+.dark #shop .device-card.correct[data-id="campus14"] .spec-item:nth-child(6) .spec-value,
+.dark #shop .device-card.correct[data-id="campus14"] .spec-item:nth-child(7) .spec-value,
+.dark #shop .device-card.correct[data-id="gametower"] .spec-item:nth-child(2) .spec-value,
+.dark #shop .device-card.correct[data-id="gametower"] .spec-item:nth-child(3) .spec-value,
+.dark #shop .device-card.correct[data-id="gametower"] .spec-item:nth-child(4) .spec-value,
+.dark #shop .device-card.correct[data-id="creator16"] .spec-item:nth-child(2) .spec-value,
+.dark #shop .device-card.correct[data-id="creator16"] .spec-item:nth-child(3) .spec-value,
+.dark #shop .device-card.correct[data-id="creator16"] .spec-item:nth-child(4) .spec-value,
+.dark #shop .device-card.correct[data-id="creator16"] .spec-item:nth-child(5) .spec-value,
+.dark #shop .device-card.correct[data-id="flexpen"] .spec-item:nth-child(5) .spec-value,
+.dark #shop .device-card.correct[data-id="flexpen"] .spec-item:nth-child(6) .spec-value,
+.dark #shop .device-card.correct[data-id="flexpen"] .spec-item:nth-child(7) .spec-value,
+.dark #shop .device-card.correct[data-id="feather13"] .spec-item:nth-child(6) .spec-value,
+.dark #shop .device-card.correct[data-id="feather13"] .spec-item:nth-child(7) .spec-value {
+  color: #bbf7d0;
+}
+
+@keyframes a11ReasonGlow {
+  0%, 100% { transform: scale(1); box-shadow: inset 0 0 0 1px #86efac, 0 0 0 0 rgba(34, 197, 94, 0); }
+  45% { transform: scale(1.025); box-shadow: inset 0 0 0 1px #4ade80, 0 0 0 5px rgba(34, 197, 94, .14); }
+}

@@ -9,7 +9,7 @@
   var META={
     A:{q:10,name:'A1',title:'Quest 10 – Wiederholung A1',desc:'Alle 14 allgemeinen Tastenkürzel aus A1.',theme:BLUE},
     B:{q:11,name:'A2',title:'Quest 11 – Wiederholung A2',desc:'Sonderzeichen mit AltGr aus A2. Das Zielzeichen bleibt immer sichtbar.',theme:AMBER},
-    C:{q:12,name:'A4 + A5',title:'Quest 12 – Wiederholung A4 + A5',desc:'Alle 19 Browser-, Programm- und Windows-Tastenkombinationen aus A4 und A5.',theme:CYAN},
+    C:{q:12,name:'A4 + A5',title:'Quest 12 – Wiederholung A4 + A5',desc:'Alle 20 Browser-, Programm- und Windows-Tastenkombinationen aus A4 und A5.',theme:CYAN},
     D:{q:13,name:'Gemischt',title:'Quest 13 – Alles gemischt',desc:'A1, A2, A4 und A5 in gemischten Alltagssituationen.',theme:GREEN}
   };
 
@@ -43,7 +43,6 @@
       {char:'°',text:'Gradzeichen',correct:'AltGr + 4',wrong:['AltGr + 3','Shift + ^']}
     ],
     C:[
-      {text:'Du möchtest Text in Word fett formatieren.',correct:'Ctrl + B',wrong:['Ctrl + F','Ctrl + N']},
       {text:'Du möchtest in Word ein neues Dokument erstellen.',correct:'Ctrl + N',wrong:['Ctrl + T','Ctrl + W']},
       {text:'Du willst im Browser einen neuen Tab öffnen.',correct:'Ctrl + T',wrong:['Ctrl + N','Ctrl + Shift + T']},
       {text:'Du willst den aktuellen Browser-Tab schliessen.',correct:'Ctrl + W',wrong:['Alt + Tab','Ctrl + T']},
@@ -61,7 +60,9 @@
       {text:'Du möchtest den Verlauf deiner kopierten Inhalte öffnen.',correct:'Win + V',wrong:['Ctrl + V','Win + C']},
       {text:'Du möchtest das aktuell geöffnete Fenster oder Programm schliessen.',correct:'Alt + F4',wrong:['Ctrl + W','Win + L']},
       {text:'Du möchtest das aktuelle Fenster auf der linken Bildschirmhälfte andocken.',correct:'Win + ←',wrong:['Win + →','Win + D']},
-      {text:'Du möchtest das aktuelle Fenster auf der rechten Bildschirmhälfte andocken.',correct:'Win + →',wrong:['Win + ←','Win + D']}
+      {text:'Du möchtest das aktuelle Fenster auf der rechten Bildschirmhälfte andocken.',correct:'Win + →',wrong:['Win + ←','Win + D']},
+      {text:'Du möchtest das aktuelle Fenster maximieren.',correct:'Win + ↑',wrong:['Win + ↓','Win + →']},
+      {text:'Du möchtest das aktuelle Fenster verkleinern oder minimieren.',correct:'Win + ↓',wrong:['Win + ↑','Win + D']}
     ],
     D:[
       {text:'Du hast einen Text kopiert und möchtest ihn einfügen.',correct:'Ctrl + V',wrong:['Ctrl + C','Ctrl + X']},
@@ -86,17 +87,121 @@
   function scoreColor(p){return p>=80?'var(--accent-green)':p>=50?'var(--accent-amber)':'var(--accent-red)';}
   function setTheme(m){document.documentElement.style.setProperty('--sheet-accent',m.theme.accent);document.documentElement.style.setProperty('--sheet-rgb',m.theme.rgb);answerProgress.style.background='linear-gradient(90deg,'+m.theme.accent+',var(--accent-green))';checkBtn.style.setProperty('--btn-accent',m.theme.accent);checkBtn.style.setProperty('--btn-accent-dark',m.theme.dark);checkBtn.style.setProperty('--btn-accent-rgb',m.theme.rgb);}
 
-  function renderTabs(){setTabs.innerHTML='';SETS.forEach(function(key){var m=META[key],b=document.createElement('button');b.className='set-tab'+(key===currentSet?' active':'');b.style.setProperty('--tab-accent',m.theme.accent);b.style.setProperty('--tab-rgb',m.theme.rgb);b.innerHTML='<span class="tab-q">Q'+m.q+'</span><span class="tab-name">'+m.name+'</span>';b.addEventListener('click',function(){currentSet=key;freshAttempt=false;render();});setTabs.appendChild(b);});}
-  function updateAnswerProgress(){var ss=Array.from(questionsContainer.querySelectorAll('select')),n=ss.filter(function(s){return s.value;}).length;answerProgress.style.width=(ss.length?n/ss.length*100:0)+'%';}
-  function showFiftyFifty(select,hint){var row=select.parentNode,wrap=document.createElement('div'),note=document.createElement('div'),options=document.createElement('div');wrap.className='fifty-wrap';note.className='fifty-note';note.textContent='💡 Eine falsche Antwort wurde entfernt.';options.className='fifty-options';Array.from(select.options).filter(function(o){return o.value;}).forEach(function(o){var b=document.createElement('button');b.type='button';b.className='fifty-option'+(select.value===o.value?' selected':'');b.dataset.value=o.value;b.textContent=o.value;b.addEventListener('click',function(){select.value=o.value;options.querySelectorAll('.fifty-option').forEach(function(btn){btn.classList.toggle('selected',btn===b);});select.dispatchEvent(new Event('change',{bubbles:true}));});options.appendChild(b);});wrap.appendChild(note);wrap.appendChild(options);select.style.display='none';row.insertBefore(wrap,hint);}
+  function renderTabs(){
+    setTabs.innerHTML='';
+    SETS.forEach(function(key){
+      var m=META[key],b=document.createElement('button');
+      b.className='set-tab'+(key===currentSet?' active':'');
+      b.style.setProperty('--tab-accent',m.theme.accent);
+      b.style.setProperty('--tab-rgb',m.theme.rgb);
+      b.innerHTML='<span class="tab-q">Q'+m.q+'</span><span class="tab-name">'+m.name+'</span>';
+      b.addEventListener('click',function(){currentSet=key;freshAttempt=false;render();});
+      setTabs.appendChild(b);
+    });
+  }
 
-  function render(forceFresh){var m=META[currentSet];setTheme(m);renderTabs();sheetTitle.textContent=m.title;sheetDesc.textContent=m.desc;questionsContainer.innerHTML='';var data=loadProgress(),stored=data[currentSet],qs=DATA[currentSet],startFresh=Boolean(forceFresh||freshAttempt),completed=!startFresh&&stored&&typeof stored.last==='number';qs.forEach(function(q,i){var card=document.createElement('div'),title=document.createElement('div'),label=document.createElement('span'),text=document.createElement('span'),select=document.createElement('select'),empty=document.createElement('option'),hint=document.createElement('button'),row=document.createElement('div'),fb=document.createElement('div');card.className='question-card';title.className='question-title';label.className='question-label';label.textContent='Frage '+(i+1);title.appendChild(label);if(q.char){var sym=document.createElement('kbd');sym.className='big-symbol-kbd';sym.textContent=q.char;title.appendChild(sym);}text.className='question-text';text.textContent=q.text;title.appendChild(text);select.className='answer-select';select.dataset.correct=q.correct;empty.value='';empty.textContent='Bitte wählen …';select.appendChild(empty);shuffle([q.correct].concat(q.wrong)).forEach(function(v){var o=document.createElement('option');o.value=v;o.textContent=v;select.appendChild(o);});if(!startFresh&&stored&&stored.answers&&stored.answers[i])select.value=stored.answers[i];if(completed)select.disabled=true;hint.type='button';hint.className='btn-hint';hint.dataset.used='false';var xp=typeof getGlobalXP==='function'?getGlobalXP():0;hint.textContent=completed?'💡 Tipp':xp<30?'💡 Tipp (-30 XP | Zu wenig XP)':'💡 Tipp (-30 XP)';hint.disabled=completed||xp<30;hint.addEventListener('click',function(){if(hint.disabled||hint.dataset.used==='true')return;var now=typeof getGlobalXP==='function'?getGlobalXP():0;if(now<30){hint.disabled=true;return;}var wrong=Array.from(select.options).filter(function(o){return o.value&&o.value!==q.correct&&o.value!==select.value;});if(!wrong.length)wrong=Array.from(select.options).filter(function(o){return o.value&&o.value!==q.correct;});if(!wrong.length)return;wrong[Math.floor(Math.random()*wrong.length)].remove();if(typeof addGlobalXP==='function')addGlobalXP(-30);if(typeof playSound==='function')playSound('hint');hint.dataset.used='true';hint.textContent='💡 Tipp genutzt (-30 XP)';hint.disabled=true;showFiftyFifty(select,hint);});row.className='answer-row';row.appendChild(select);row.appendChild(hint);fb.className='q-feedback';select.addEventListener('change',function(){select.classList.remove('correct','wrong');fb.classList.remove('show');updateAnswerProgress();});card.appendChild(title);card.appendChild(row);card.appendChild(fb);questionsContainer.appendChild(card);});if(completed){var c=typeof stored.lastCorrect==='number'?stored.lastCorrect:Math.round(stored.last/100*qs.length);scoreBox.textContent='Letzter Versuch: '+c+' / '+qs.length+' richtig ('+stored.last+' %)';scoreBox.style.color=scoreColor(stored.last);checkBtn.textContent='↻ Neuer Versuch';attemptFinished=true;}else{scoreBox.textContent=(startFresh?'Neuer Versuch: ':'')+'0 / '+qs.length+' richtig';scoreBox.style.color='var(--text-muted)';checkBtn.textContent='✅ Überprüfen';attemptFinished=false;}updateAnswerProgress();updateCompletion();}
+  function updateAnswerProgress(){var cards=Array.from(questionsContainer.querySelectorAll('.question-card')),n=cards.filter(function(card){return Boolean(card.dataset.answer);}).length;answerProgress.style.width=(cards.length?n/cards.length*100:0)+'%';}
 
-  function evaluate(){var ss=Array.from(questionsContainer.querySelectorAll('select')),chosen=[],correct=0;ss.forEach(function(sel){var card=sel.closest('.question-card'),fb=card.querySelector('.q-feedback'),hint=card.querySelector('.btn-hint'),buttons=card.querySelectorAll('.fifty-option'),c=sel.dataset.correct;chosen.push(sel.value||'');sel.classList.remove('correct','wrong');buttons.forEach(function(b){b.disabled=true;b.classList.remove('correct','wrong');});if(sel.value&&sel.value===c){correct++;sel.classList.add('correct');buttons.forEach(function(b){if(b.dataset.value===c)b.classList.add('correct');});fb.innerHTML='<span style="color:var(--accent-green)">✅ Richtig</span>';}else if(sel.value){sel.classList.add('wrong');buttons.forEach(function(b){if(b.dataset.value===sel.value)b.classList.add('wrong');if(b.dataset.value===c)b.classList.add('correct');});fb.innerHTML='<span style="color:var(--accent-red)">❌ Falsch</span><span style="color:var(--text-muted)">Richtig wäre:</span>';var k=document.createElement('kbd');k.textContent=c;fb.appendChild(k);}else{sel.classList.add('wrong');fb.innerHTML='<span style="color:var(--accent-amber)">⚠️ Keine Antwort</span><span style="color:var(--text-muted)">Wähle beim nächsten Versuch zuerst eine Antwort.</span>';}fb.classList.add('show');sel.disabled=true;hint.disabled=true;});var pct=Math.round(correct/ss.length*100);saveProgress(currentSet,pct,chosen,correct);var qid='q'+META[currentSet].q;if(typeof saveQuestScore==='function')saveQuestScore(qid,pct);var xp=typeof awardQuestImprovementXP==='function'?awardQuestImprovementXP(qid,correct,5):0;scoreBox.textContent=correct+' / '+ss.length+' richtig ('+pct+' %)'+(xp?' · +'+xp+' XP':'');scoreBox.style.color=scoreColor(pct);attemptFinished=true;freshAttempt=false;checkBtn.textContent='↻ Neuer Versuch';renderSummary();updateCompletion();}
+  function useHint(card,hint,q){
+    if(hint.disabled||hint.dataset.used==='true')return;
+    var now=typeof getGlobalXP==='function'?getGlobalXP():0;
+    if(now<30){hint.disabled=true;return;}
+    var selected=card.dataset.answer||'';
+    var wrong=Array.from(card.querySelectorAll('.answer-option')).filter(function(b){return b.dataset.value!==q.correct&&b.dataset.value!==selected&&!b.classList.contains('removed');});
+    if(!wrong.length)wrong=Array.from(card.querySelectorAll('.answer-option')).filter(function(b){return b.dataset.value!==q.correct&&!b.classList.contains('removed');});
+    if(!wrong.length)return;
+    wrong[Math.floor(Math.random()*wrong.length)].classList.add('removed');
+    if(typeof addGlobalXP==='function')addGlobalXP(-30);
+    if(typeof playSound==='function')playSound('hint');
+    hint.dataset.used='true';hint.textContent='💡 Tipp genutzt (-30 XP)';hint.disabled=true;
+    var note=document.createElement('div');note.className='hint-note';note.textContent='Eine falsche Antwort wurde entfernt.';card.querySelector('.answer-row').appendChild(note);
+  }
+
+  function render(forceFresh){
+    var m=META[currentSet];
+    setTheme(m);renderTabs();sheetTitle.textContent=m.title;sheetDesc.textContent=m.desc;questionsContainer.innerHTML='';
+    var data=loadProgress(),stored=data[currentSet],qs=DATA[currentSet],startFresh=Boolean(forceFresh||freshAttempt),completed=!startFresh&&stored&&typeof stored.last==='number';
+    var randomized=shuffle(qs.map(function(q,sourceIndex){return{q:q,sourceIndex:sourceIndex};}));
+
+    randomized.forEach(function(entry,visualIndex){
+      var q=entry.q,sourceIndex=entry.sourceIndex;
+      var card=document.createElement('div'),title=document.createElement('div'),label=document.createElement('span'),text=document.createElement('span'),options=document.createElement('div'),hint=document.createElement('button'),row=document.createElement('div'),fb=document.createElement('div');
+      card.className='question-card';card.dataset.sourceIndex=String(sourceIndex);card.dataset.correct=q.correct;card.dataset.answer='';
+      title.className='question-title';label.className='question-label';label.textContent='Frage '+(visualIndex+1);title.appendChild(label);
+      if(q.char){var sym=document.createElement('kbd');sym.className='big-symbol-kbd';sym.textContent=q.char;title.appendChild(sym);}
+      text.className='question-text';text.textContent=q.text;title.appendChild(text);
+      options.className='answer-options';
+      var storedAnswer=!startFresh&&stored&&stored.answers&&stored.answers[sourceIndex]?stored.answers[sourceIndex]:'';
+      shuffle([q.correct].concat(q.wrong)).forEach(function(v){
+        var b=document.createElement('button');b.type='button';b.className='answer-option';b.dataset.value=v;b.textContent=v;
+        if(storedAnswer===v){b.classList.add('selected');card.dataset.answer=v;}
+        if(completed)b.disabled=true;
+        b.addEventListener('click',function(){
+          if(completed)return;
+          card.dataset.answer=v;
+          options.querySelectorAll('.answer-option').forEach(function(btn){btn.classList.remove('selected','correct','wrong');});
+          b.classList.add('selected');fb.classList.remove('show');updateAnswerProgress();
+        });
+        options.appendChild(b);
+      });
+      hint.type='button';hint.className='btn-hint';hint.dataset.used='false';
+      var xp=typeof getGlobalXP==='function'?getGlobalXP():0;
+      hint.textContent=completed?'💡 Tipp':xp<30?'💡 Tipp (-30 XP | Zu wenig XP)':'💡 Tipp (-30 XP)';
+      hint.disabled=completed||xp<30;
+      hint.addEventListener('click',function(){useHint(card,hint,q);});
+      row.className='answer-row';row.appendChild(options);row.appendChild(hint);
+      fb.className='q-feedback';
+      card.appendChild(title);card.appendChild(row);card.appendChild(fb);questionsContainer.appendChild(card);
+    });
+
+    if(completed){
+      var c=typeof stored.lastCorrect==='number'?stored.lastCorrect:Math.round(stored.last/100*qs.length);
+      scoreBox.textContent='Letzter Versuch: '+c+' / '+qs.length+' richtig ('+stored.last+' %)';scoreBox.style.color=scoreColor(stored.last);checkBtn.textContent='↻ Neuer Versuch';attemptFinished=true;
+    }else{
+      scoreBox.textContent=(startFresh?'Neuer Versuch: ':'')+'0 / '+qs.length+' richtig';scoreBox.style.color='var(--text-muted)';checkBtn.textContent='✅ Überprüfen';attemptFinished=false;
+    }
+    updateAnswerProgress();updateCompletion();
+  }
+
+  function evaluate(){
+    var cards=Array.from(questionsContainer.querySelectorAll('.question-card')),chosen=Array(DATA[currentSet].length).fill(''),correct=0;
+    cards.forEach(function(card){
+      var fb=card.querySelector('.q-feedback'),hint=card.querySelector('.btn-hint'),buttons=Array.from(card.querySelectorAll('.answer-option')),c=card.dataset.correct,sourceIndex=Number(card.dataset.sourceIndex),answer=card.dataset.answer||'';
+      chosen[sourceIndex]=answer;
+      buttons.forEach(function(b){b.disabled=true;b.classList.remove('correct','wrong');});
+      if(answer&&answer===c){
+        correct++;buttons.forEach(function(b){if(b.dataset.value===c)b.classList.add('correct');});fb.innerHTML='<span style="color:var(--accent-green)">✅ Richtig</span>';
+      }else if(answer){
+        buttons.forEach(function(b){if(b.dataset.value===answer)b.classList.add('wrong');if(b.dataset.value===c){b.classList.remove('removed');b.classList.add('correct');}});fb.innerHTML='<span style="color:var(--accent-red)">❌ Falsch</span><span style="color:var(--text-muted)">Richtig wäre:</span>';var k=document.createElement('kbd');k.textContent=c;fb.appendChild(k);
+      }else{
+        buttons.forEach(function(b){if(b.dataset.value===c){b.classList.remove('removed');b.classList.add('correct');}});fb.innerHTML='<span style="color:var(--accent-amber)">⚠️ Keine Antwort</span><span style="color:var(--text-muted)">Wähle beim nächsten Versuch zuerst eine Antwort.</span>';
+      }
+      fb.classList.add('show');hint.disabled=true;
+    });
+    var pct=Math.round(correct/cards.length*100);saveProgress(currentSet,pct,chosen,correct);var qid='q'+META[currentSet].q;
+    if(typeof saveQuestScore==='function')saveQuestScore(qid,pct);
+    var xp=typeof awardQuestImprovementXP==='function'?awardQuestImprovementXP(qid,correct,5):0;
+    scoreBox.textContent=correct+' / '+cards.length+' richtig ('+pct+' %)'+(xp?' · +'+xp+' XP':'');scoreBox.style.color=scoreColor(pct);attemptFinished=true;freshAttempt=false;checkBtn.textContent='↻ Neuer Versuch';renderSummary();updateCompletion();
+  }
+
   function renderSummary(){var d=loadProgress();summaryRows.innerHTML='';SETS.forEach(function(key){var m=META[key],s=d[key],row=document.createElement('div'),q=document.createElement('div'),name=document.createElement('div'),vals=document.createElement('div');row.className='summary-row';q.className='summary-q';q.textContent='Q'+m.q;q.style.color=m.theme.accent;name.textContent=m.title.replace(/^Quest \d+ – /,'');vals.className='summary-vals';vals.textContent=s?s.first+' % → '+s.best+' %':'noch offen';vals.style.color=s?scoreColor(s.best):'var(--text-muted)';row.appendChild(q);row.appendChild(name);row.appendChild(vals);summaryRows.appendChild(row);});}
   function updateCompletion(){var d=loadProgress(),n=SETS.filter(function(k){return d[k]&&typeof d[k].first==='number';}).length,ok=n===SETS.length;downloadPdfBtn.disabled=!ok;pdfHint.textContent=ok?'Alle vier Wiederholungs-Quests wurden mindestens einmal bearbeitet.':'PDF verfügbar nach dem ersten Versuch in Q10–Q13 ('+n+'/4).';finishCard.style.display=ok?'block':'none';}
 
-  function downloadPdf(){var data=loadProgress();if(!allAttempted()){alert('Bearbeite zuerst Q10 bis Q13 mindestens einmal.');return;}var student=typeof requireStudentName==='function'?requireStudentName():'';if(!student)return;var rows=SETS.map(function(k){return{q:META[k].q,name:META[k].name,first:data[k].first,best:data[k].best};});var avg=Math.round(rows.reduce(function(s,r){return s+r.best;},0)/rows.length),canvas=document.createElement('canvas');canvas.width=1200;canvas.height=850;var ctx=canvas.getContext('2d'),g=ctx.createLinearGradient(0,0,1200,850);g.addColorStop(0,'#0f172a');g.addColorStop(1,'#1e293b');ctx.fillStyle=g;ctx.fillRect(0,0,1200,850);ctx.strokeStyle='#10b981';ctx.lineWidth=6;ctx.strokeRect(30,30,1140,790);ctx.textAlign='center';ctx.fillStyle='#6ee7b7';ctx.font='800 20px "Space Grotesk", sans-serif';ctx.fillText('INFORMATIK B25 – ARBEITSBLATT A6',600,95);ctx.fillStyle='#fff';ctx.font='800 36px "Space Grotesk", sans-serif';ctx.fillText('WIEDERHOLUNG TASTENKÜRZEL',600,155);ctx.fillStyle='#94a3b8';ctx.font='500 18px sans-serif';ctx.fillText('Erster Versuch → bester Versuch · Quest 10–13',600,195);ctx.fillStyle='rgba(16,185,129,.15)';ctx.strokeStyle='#10b981';ctx.lineWidth=2;ctx.beginPath();ctx.roundRect(250,220,700,65,16);ctx.fill();ctx.stroke();ctx.fillStyle='#6ee7b7';ctx.font='800 28px "Space Grotesk", sans-serif';ctx.fillText(student,600,262);ctx.fillStyle='rgba(15,23,42,.85)';ctx.beginPath();ctx.roundRect(100,340,1000,350,20);ctx.fill();var y=405;ctx.textAlign='left';rows.forEach(function(r){ctx.fillStyle='#e2e8f0';ctx.font='700 20px "Space Grotesk", sans-serif';ctx.fillText('Q'+r.q+' ('+r.name+')',150,y);ctx.textAlign='right';ctx.fillStyle=r.best>=80?'#10b981':r.best>=50?'#f59e0b':'#ef4444';ctx.fillText(r.first+' % → '+r.best+' %',1050,y);ctx.textAlign='left';y+=60;});ctx.textAlign='center';ctx.fillStyle='#10b981';ctx.font='800 24px "Space Grotesk", sans-serif';ctx.fillText('Ø bester Versuch: '+avg+' %',600,735);ctx.fillStyle='#94a3b8';ctx.font='500 15px sans-serif';ctx.fillText('Wiederholung Tastenkürzel · Informatik B25',600,790);function make(){var pdf=new window.jspdf.jsPDF({orientation:'landscape',unit:'mm',format:[297,210]});pdf.addImage(canvas.toDataURL('image/png'),'PNG',0,0,297,210);var safe=typeof sanitizeStudentNameForFileName==='function'?sanitizeStudentNameForFileName(student):student.replace(/[^a-zA-Z0-9]/g,'_');pdf.save('A6_Wiederholung_'+safe+'.pdf');}if(window.jspdf)make();else{var s=document.createElement('script');s.src='../tk/vendor/jspdf.umd.min.js';s.onload=make;document.head.appendChild(s);}}
+  function downloadPdf(){
+    var data=loadProgress();if(!allAttempted()){alert('Bearbeite zuerst Q10 bis Q13 mindestens einmal.');return;}
+    var student=typeof requireStudentName==='function'?requireStudentName():'';if(!student)return;
+    var rows=SETS.map(function(k){return{q:META[k].q,name:META[k].name,first:data[k].first,best:data[k].best};});
+    var avg=Math.round(rows.reduce(function(s,r){return s+r.best;},0)/rows.length),canvas=document.createElement('canvas');canvas.width=1200;canvas.height=850;
+    var ctx=canvas.getContext('2d'),g=ctx.createLinearGradient(0,0,1200,850);g.addColorStop(0,'#0f172a');g.addColorStop(1,'#1e293b');ctx.fillStyle=g;ctx.fillRect(0,0,1200,850);ctx.strokeStyle='#10b981';ctx.lineWidth=6;ctx.strokeRect(30,30,1140,790);ctx.textAlign='center';ctx.fillStyle='#6ee7b7';ctx.font='800 20px "Space Grotesk", sans-serif';ctx.fillText('INFORMATIK B25 – ARBEITSBLATT A6',600,95);ctx.fillStyle='#fff';ctx.font='800 36px "Space Grotesk", sans-serif';ctx.fillText('WIEDERHOLUNG TASTENKÜRZEL',600,155);ctx.fillStyle='#94a3b8';ctx.font='500 18px sans-serif';ctx.fillText('Erster Versuch → bester Versuch · Quest 10–13',600,195);ctx.fillStyle='rgba(16,185,129,.15)';ctx.strokeStyle='#10b981';ctx.lineWidth=2;ctx.beginPath();ctx.roundRect(250,220,700,65,16);ctx.fill();ctx.stroke();ctx.fillStyle='#6ee7b7';ctx.font='800 28px "Space Grotesk", sans-serif';ctx.fillText(student,600,262);ctx.fillStyle='rgba(15,23,42,.85)';ctx.beginPath();ctx.roundRect(100,340,1000,350,20);ctx.fill();
+    var y=405;ctx.textAlign='left';rows.forEach(function(r){ctx.fillStyle='#e2e8f0';ctx.font='700 20px "Space Grotesk", sans-serif';ctx.fillText('Q'+r.q+' ('+r.name+')',150,y);ctx.textAlign='right';ctx.fillStyle=r.best>=80?'#10b981':r.best>=50?'#f59e0b':'#ef4444';ctx.fillText(r.first+' % → '+r.best+' %',1050,y);ctx.textAlign='left';y+=60;});ctx.textAlign='center';ctx.fillStyle='#10b981';ctx.font='800 24px "Space Grotesk", sans-serif';ctx.fillText('Ø bester Versuch: '+avg+' %',600,735);ctx.fillStyle='#94a3b8';ctx.font='500 15px sans-serif';ctx.fillText('Wiederholung Tastenkürzel · Informatik B25',600,790);
+    function make(){var pdf=new window.jspdf.jsPDF({orientation:'landscape',unit:'mm',format:[297,210]});pdf.addImage(canvas.toDataURL('image/png'),'PNG',0,0,297,210);var safe=typeof sanitizeStudentNameForFileName==='function'?sanitizeStudentNameForFileName(student):student.replace(/[^a-zA-Z0-9]/g,'_');pdf.save('A6_Wiederholung_'+safe+'.pdf');}
+    if(window.jspdf)make();else{var s=document.createElement('script');s.src='../tk/vendor/jspdf.umd.min.js';s.onload=make;document.head.appendChild(s);}
+  }
 
-  checkBtn.addEventListener('click',function(){if(attemptFinished){freshAttempt=true;render(true);}else evaluate();});document.getElementById('showSummaryBtn').addEventListener('click',function(){renderSummary();overlay.style.display='block';summaryPanel.classList.add('open');});document.getElementById('closeSummary').addEventListener('click',function(){overlay.style.display='none';summaryPanel.classList.remove('open');});overlay.addEventListener('click',function(){overlay.style.display='none';summaryPanel.classList.remove('open');});document.addEventListener('keydown',function(e){if(e.key==='Escape'){overlay.style.display='none';summaryPanel.classList.remove('open');}});downloadPdfBtn.addEventListener('click',downloadPdf);finishPdfBtn.addEventListener('click',downloadPdf);render();renderSummary();updateCompletion();
+  checkBtn.addEventListener('click',function(){if(attemptFinished){freshAttempt=true;render(true);}else evaluate();});
+  document.getElementById('showSummaryBtn').addEventListener('click',function(){renderSummary();overlay.style.display='block';summaryPanel.classList.add('open');});
+  document.getElementById('closeSummary').addEventListener('click',function(){overlay.style.display='none';summaryPanel.classList.remove('open');});
+  overlay.addEventListener('click',function(){overlay.style.display='none';summaryPanel.classList.remove('open');});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'){overlay.style.display='none';summaryPanel.classList.remove('open');}});
+  downloadPdfBtn.addEventListener('click',downloadPdf);finishPdfBtn.addEventListener('click',downloadPdf);render();renderSummary();updateCompletion();
 })();

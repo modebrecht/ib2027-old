@@ -3,7 +3,6 @@
 
   var counter=0;
   var LOOP_MS=5000;
-  var CHORD_HOLD_MS=500;
   var CONTEXT_X=410;
   var CONTEXT_Y=58;
   var FLY_X=207;
@@ -91,10 +90,8 @@
     }
 
     function keyMarkup(){
-      return '<g class="keys" transform="translate(36 219)" filter="url(#'+uid+'Shadow)">'+
-        '<g class="key key-alt" data-base="translate(0 0)" transform="translate(0 0)"><rect width="96" height="50" rx="12" fill="#182235" stroke="#f59e0b" stroke-opacity=".55" stroke-width="2"/><text x="48" y="31" text-anchor="middle" font-family="Arial,sans-serif" font-size="16" font-weight="900" fill="#fde68a">AltGr</text></g>'+
-        '<text x="112" y="31" font-family="Arial,sans-serif" font-size="18" font-weight="900" fill="#64748b">+</text>'+
-        '<g class="key key-main" data-base="translate(136 0)" transform="translate(136 0)"><rect width="70" height="50" rx="12" fill="#182235" stroke="#f59e0b" stroke-opacity=".55" stroke-width="2"/><text x="35" y="31" text-anchor="middle" font-family="Arial,sans-serif" font-size="18" font-weight="900" fill="#fde68a">'+escapeText(cfg.key2)+'</text><text x="58" y="44" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" font-weight="900" fill="#fbbf24">'+escapeText(cfg.char)+'</text></g>'+
+      return '<g class="keys" transform="translate(36 227)" filter="url(#'+uid+'Shadow)">'+
+        window.tk2SceneKeycaps.markup(['AltGr',cfg.key2],'utility')+
       '</g>';
     }
 
@@ -153,24 +150,10 @@
 
     function reset(){
       clearTimers();running=false;
-      $$('.key').forEach(function(k){k.style.filter='';k.style.transition='none';k.setAttribute('transform',k.getAttribute('data-base'));});
+      window.tk2SceneKeycaps.resetMany($$('.tk2-u-key'));
       opacity($('.hero-char'),.28);opacity($('.flying-char'),0);$('.flying-char').setAttribute('transform','translate(0 0) scale(1)');
       opacity($('.ctx-char'),0);opacity($('.context-result'),0);opacity($('.press-label'),0);
       layoutContext();
-    }
-
-    function keyDown(el){
-      var base=el.getAttribute('data-base');
-      trans(el,'transform 180ms ease, filter 180ms ease');
-      el.setAttribute('transform',base+' translate(0 5)');
-      el.style.filter='drop-shadow(0 0 10px rgba(245,158,11,.9))';
-    }
-
-    function keyUp(el){
-      var base=el.getAttribute('data-base');
-      trans(el,'transform 160ms ease, filter 160ms ease');
-      el.setAttribute('transform',base);
-      el.style.filter='';
     }
 
     function showEndState(){
@@ -180,9 +163,9 @@
     function run(){
       if(reduceMotion){showEndState();return;}
       reset();running=true;
-      var secondKeyAt=700;
-      later(350,function(){keyDown($('.key-alt'));});
-      later(secondKeyAt,function(){keyDown($('.key-main'));});
+      later(350,function(){
+        window.tk2SceneKeycaps.pressSequence($$('.tk2-u-key'),later,trans,'utility');
+      });
       later(1000,function(){
         trans($('.hero-char'),'opacity 260ms ease');
         opacity($('.hero-char'),1);
@@ -193,8 +176,6 @@
         trans($('.flying-char'),'transform 820ms cubic-bezier(.2,.78,.24,1), opacity 180ms ease');
         $('.flying-char').setAttribute('transform',flyingTargetTransform());
       });
-      later(secondKeyAt+CHORD_HOLD_MS,function(){keyUp($('.key-main'));});
-      later(secondKeyAt+CHORD_HOLD_MS+120,function(){keyUp($('.key-alt'));});
       later(1920,function(){opacity($('.flying-char'),0);opacity($('.ctx-char'),1);opacity($('.context-result'),1);});
       later(LOOP_MS,function(){running=false;if(active&&autoLoop)run();});
     }

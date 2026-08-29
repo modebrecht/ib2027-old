@@ -16,14 +16,6 @@ function setGlobalXP(val) {
 }
 
 function addGlobalXP(amount) {
-    // A3 practice task: the 50 XP completion reward may only be granted once.
-    // Q7 is saved immediately after the first successful stop, so later retries
-    // can still be timed without allowing students to farm additional XP.
-    const isA3CompletionReward = amount === 50 && document.getElementById('boss-timer');
-    if (isA3CompletionReward && (getQuestScores().q7 || 0) >= 100) {
-        return;
-    }
-
     let current = getGlobalXP();
     setGlobalXP(current + amount);
 }
@@ -356,8 +348,8 @@ function isQuestUnlocked(questId) {
     if (questId === 'q4') return (scores.q3 || 0) >= 70;
     if (questId === 'q5') return (scores.q4 || 0) >= 80;
     if (questId === 'q6') return (scores.q5 || 0) >= 70;
-    if (questId === 'q7') return (scores.q6 || 0) >= 70; // A3 practice task
-    return true; // q8-q14 (A4 Sets 1-7): frei navigierbares Quiz, kein Freischalt-Zwang
+    if (questId === 'q7') return (scores.q6 || 0) >= 70; // Legacy tk/A3 only; tk2/A3 is always open.
+    return true;
 }
 
 // SECRET TEACHER CHEAT CODE
@@ -446,35 +438,29 @@ function downloadCertificatePDF(studentName) {
 
     if (!studentName) return;
 
-    // Create high-res offscreen canvas (1200 x 850)
     const canvas = document.createElement('canvas');
     canvas.width = 1200;
     canvas.height = 850;
     const ctx = canvas.getContext('2d');
 
-    // Background Gradient
     const bgGrad = ctx.createLinearGradient(0, 0, 1200, 850);
     bgGrad.addColorStop(0, '#0f172a');
     bgGrad.addColorStop(1, '#1e293b');
     ctx.fillStyle = bgGrad;
     ctx.fillRect(0, 0, 1200, 850);
 
-    // Border
     ctx.strokeStyle = '#3b82f6';
     ctx.lineWidth = 6;
     ctx.strokeRect(30, 30, 1140, 790);
-
     ctx.strokeStyle = 'rgba(59, 130, 246, 0.3)';
     ctx.lineWidth = 2;
     ctx.strokeRect(42, 42, 1116, 766);
 
-    // Header Badge
     ctx.fillStyle = '#60a5fa';
     ctx.font = '800 20px "Space Grotesk", sans-serif';
     ctx.textAlign = 'center';
     ctx.fillText('INFORMATIK B25', 600, 95);
 
-    // Title
     ctx.fillStyle = '#ffffff';
     ctx.font = '800 38px "Space Grotesk", sans-serif';
     ctx.fillText('LEISTUNGSNACHWEIS TASTENKOMBINATIONEN (A1 - A3)', 600, 160);
@@ -483,7 +469,6 @@ function downloadCertificatePDF(studentName) {
     ctx.font = '500 19px sans-serif';
     ctx.fillText('Zusammenfassung der Ergebnisse aus den Übungen:', 600, 205);
 
-    // Student Name Box
     ctx.fillStyle = 'rgba(59, 130, 246, 0.15)';
     ctx.strokeStyle = '#3b82f6';
     ctx.lineWidth = 2;
@@ -501,15 +486,12 @@ function downloadCertificatePDF(studentName) {
     }
     ctx.fillText(studentName, 600, 275);
 
-    // Global XP & Date
     const currentXP = getGlobalXP();
     const today = new Date().toLocaleDateString('de-CH', { day: '2-digit', month: '2-digit', year: 'numeric' });
-
     ctx.fillStyle = '#f59e0b';
     ctx.font = '700 19px sans-serif';
     ctx.fillText(`⚡ Erreichte XP: ${currentXP} XP   •   Datum: ${today}`, 600, 340);
 
-    // Scores Table Box
     const scores = getQuestScores();
     ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
     ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
@@ -518,73 +500,69 @@ function downloadCertificatePDF(studentName) {
     ctx.roundRect(90, 370, 1020, 370, 20);
     ctx.fill();
     ctx.stroke();
-
     ctx.textAlign = 'left';
 
-    // A1 Column
     ctx.fillStyle = '#38bdf8';
     ctx.font = '800 22px "Space Grotesk", sans-serif';
     ctx.fillText('Arbeitsblatt A1 (Allgemeine Tastenkürzel)', 130, 420);
-
     ctx.fillStyle = '#e2e8f0';
     ctx.font = '600 18px sans-serif';
     ctx.fillText(`• Quest 1 – Geführt: ${scores.q1 || 0} %`, 150, 465);
     ctx.fillText(`• Quest 2 – Kürzel-Rätsel: ${scores.q2 || 0} %`, 150, 505);
     ctx.fillText(`• Quest 3 – Ohne Hilfe: ${scores.q3 || 0} %`, 150, 545);
 
-    // A2 Column
     ctx.fillStyle = '#fde047';
     ctx.font = '800 22px "Space Grotesk", sans-serif';
     ctx.fillText('Arbeitsblatt A2 (Sonderzeichen mit AltGr)', 630, 420);
-
     ctx.fillStyle = '#e2e8f0';
     ctx.font = '600 18px sans-serif';
     ctx.fillText(`• Quest 4 – Geführt: ${scores.q4 || 0} %`, 650, 465);
     ctx.fillText(`• Quest 5 – Kürzel-Rätsel: ${scores.q5 || 0} %`, 650, 505);
     ctx.fillText(`• Quest 6 – Ohne Hilfe: ${scores.q6 || 0} %`, 650, 545);
 
-    // Divider Line
     ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
     ctx.beginPath();
     ctx.moveTo(130, 580);
     ctx.lineTo(1070, 580);
     ctx.stroke();
 
-    // A3 practice task status
-    const a3Completed = scores.q7 === 100;
-    const a3Unlocked = (scores.q6 || 0) >= 70;
-    ctx.fillStyle = '#ef4444';
-    ctx.font = '800 22px "Space Grotesk", sans-serif';
-    ctx.fillText('Praxisaufgabe – Maus weglegen', 130, 625);
-
-    let a3StatusColor, a3StatusText;
-    if (a3Completed) {
-        a3StatusColor = '#10b981';
-        a3StatusText = 'Status: 🟢 Absolviert (Praktische Übung in MS Word)';
-    } else if (a3Unlocked) {
-        a3StatusColor = '#f59e0b';
-        a3StatusText = 'Status: 🟡 Freigeschaltet, aber noch nicht absolviert';
-    } else {
-        a3StatusColor = '#f43f5e';
-        a3StatusText = 'Status: 🔴 Gesperrt (Voraussetzung: Quest 6 ≥ 70 %)';
+    let a3Progress = {};
+    try {
+        a3Progress = JSON.parse(localStorage.getItem('tk_a3_progress_v1') || '{}');
+    } catch(e) {
+        a3Progress = {};
     }
-    ctx.fillStyle = a3StatusColor;
-    ctx.font = '700 18px sans-serif';
-    ctx.fillText(a3StatusText, 150, 665);
+    const a3Completed = a3Progress.schemaVersion === 2 && a3Progress.completed === true && Array.isArray(a3Progress.choices) && a3Progress.choices.length === 3;
 
-    // Stamp Text
+    ctx.fillStyle = '#a5b4fc';
+    ctx.font = '800 22px "Space Grotesk", sans-serif';
+    ctx.fillText('A3 · Meine drei Tastenkürzel', 130, 620);
+
+    ctx.font = '600 16px sans-serif';
+    if (a3Completed) {
+        ctx.fillStyle = '#e2e8f0';
+        a3Progress.choices.forEach((choice, index) => {
+            const shortcut = (choice.shortcut || '').trim();
+            const reason = (choice.reason || '').trim();
+            const line = `${index + 1}. ${shortcut} – weil ${reason}`;
+            ctx.fillText(line.length > 105 ? line.slice(0, 102) + '…' : line, 150, 650 + index * 25);
+        });
+    } else {
+        ctx.fillStyle = '#f59e0b';
+        ctx.fillText('Noch offen: Merkblatt herunterladen und drei Kürzel mit Begründung festlegen.', 150, 660);
+    }
+
     ctx.fillStyle = '#94a3b8';
     ctx.font = '500 15px sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('Leistungsnachweis Informatik B25', 600, 715);
+    ctx.fillText('Leistungsnachweis Informatik B25', 600, 730);
 
-    // Dynamic jsPDF loader & direct download
     function generatePDF() {
         const { jsPDF } = window.jspdf;
         const pdf = new jsPDF({
             orientation: 'landscape',
             unit: 'mm',
-            format: [297, 210] // A4 Landscape
+            format: [297, 210]
         });
 
         const imgData = canvas.toDataURL('image/png');

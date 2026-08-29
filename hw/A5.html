@@ -41,7 +41,7 @@ body{background-image:radial-gradient(circle at 12% 8%,rgba(0,120,212,.10),trans
 .connector-image{filter:drop-shadow(0 18px 18px rgba(15,23,42,.20));animation:connectorFloat 3.6s ease-in-out infinite;transition:filter .3s ease,transform .3s ease}
 .connector-visual:hover .connector-image{filter:drop-shadow(0 23px 22px rgba(15,23,42,.28))}
 .intro-hero-icon{animation:introIcon 3s ease-in-out infinite;box-shadow:0 16px 34px rgba(0,120,212,.28)}
-.carousel-nav{padding:.8rem 1rem;border:1px solid rgba(226,232,240,.92);background:rgba(255,255,255,.78);box-shadow:0 14px 34px rgba(15,23,42,.07);backdrop-filter:blur(14px);animation:navRise .5s ease both}
+.carousel-nav{padding:.6rem 1rem;border:1px solid rgba(226,232,240,.92);background:rgba(255,255,255,.78);box-shadow:0 14px 34px rgba(15,23,42,.07);backdrop-filter:blur(14px);animation:navRise .5s ease both}
 .dark .carousel-nav{background:rgba(15,23,42,.82);border-color:#334155}
 .field{transition:border-color .22s ease,box-shadow .22s ease,background .22s ease,transform .22s ease}
 .field:focus{outline:none;border-color:#0078d4;box-shadow:0 0 0 4px rgba(0,120,212,.12);transform:translateY(-1px)}
@@ -55,11 +55,11 @@ body{background-image:radial-gradient(circle at 12% 8%,rgba(0,120,212,.10),trans
 @keyframes navRise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 
 .carousel-center{min-width:0;flex:1}
-.carousel-dots{display:flex;align-items:center;justify-content:center;gap:.38rem;max-width:520px;margin:.45rem auto 0;padding:.25rem .15rem;overflow-x:auto;scrollbar-width:none}.carousel-dots::-webkit-scrollbar{display:none}
+.carousel-dots{display:flex;align-items:center;justify-content:center;gap:.38rem;max-width:520px;margin:0 auto;padding:.15rem;overflow-x:auto;scrollbar-width:none}.carousel-dots::-webkit-scrollbar{display:none}
 .carousel-dot{flex:0 0 auto;width:.58rem;height:.58rem;border-radius:999px;background:#cbd5e1;transition:width .22s ease,transform .22s ease,background .22s ease,box-shadow .22s ease;color:white;display:flex;align-items:center;justify-content:center;font-size:.55rem}
 .dark .carousel-dot{background:#475569}.carousel-dot:hover{transform:scale(1.2);background:#94a3b8}.carousel-dot.active{width:1.7rem;background:#0078d4;box-shadow:0 0 0 3px rgba(0,120,212,.13),0 5px 12px rgba(0,120,212,.25)}.carousel-dot.complete{width:1.08rem;height:1.08rem;background:#10b981;box-shadow:0 4px 10px rgba(16,185,129,.22)}.carousel-dot.complete.active{width:1.75rem;background:linear-gradient(90deg,#0078d4,#10b981)}
-.carousel-nav .btn{flex:0 0 auto}.carousel-hint{display:none}@media(min-width:700px){.carousel-hint{display:block}}
-@media(max-width:520px){.carousel-nav{padding:.7rem .65rem}.carousel-nav .btn{padding:.58rem .7rem}.carousel-dots{justify-content:flex-start;max-width:180px}}
+.carousel-nav .btn{flex:0 0 auto}
+@media(max-width:520px){.carousel-nav{padding:.5rem .65rem}.carousel-nav .btn{padding:.58rem .7rem}.carousel-dots{justify-content:flex-start;max-width:180px}}
 
 
 </style>
@@ -87,11 +87,6 @@ body{background-image:radial-gradient(circle at 12% 8%,rgba(0,120,212,.10),trans
         <i class="fa-solid fa-arrow-left mr-1"></i> Zurück
       </button>
       <div class="carousel-center text-center">
-        <div class="flex items-center justify-center gap-2">
-          <div id="cardCounter" class="text-sm font-black text-onedrive-600 dark:text-blue-400">Info</div>
-          <span class="carousel-hint text-[10px] font-bold text-slate-400"><i class="fa-solid fa-keyboard mr-1"></i>← / →</span>
-        </div>
-        <div id="cardCounterLabel" class="text-[10px] uppercase font-bold tracking-wider text-slate-400">Information</div>
         <div id="carouselDots" class="carousel-dots" aria-label="Direkt zu einer Karte springen"></div>
       </div>
       <button id="nextCardBtn" type="button" class="btn bg-onedrive-500 hover:bg-onedrive-600 text-white disabled:opacity-40 disabled:cursor-not-allowed" onclick="changeCard(1)">
@@ -174,8 +169,6 @@ function isCardCompleted(index){
 function updateCarouselUi(){
   const isIntro=currentCardIndex===0;
   const isLast=currentCardIndex===CONNECTORS.length;
-  document.getElementById('cardCounter').textContent=isIntro?'Info':currentCardIndex+' / '+CONNECTORS.length;
-  document.getElementById('cardCounterLabel').textContent=isIntro?'Information':'Anschluss';
   document.getElementById('prevCardBtn').disabled=isIntro;
   const next=document.getElementById('nextCardBtn');
   if(isLast){

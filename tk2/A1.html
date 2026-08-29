@@ -55,13 +55,12 @@
     .replay-btn{border:1px solid rgba(56,189,248,.25);background:rgba(56,189,248,.08);color:#bae6fd;font-family:inherit;font-size:.82rem;font-weight:800;border-radius:10px;padding:8px 11px;cursor:pointer;transition:.16s}
     .replay-btn:hover{background:rgba(56,189,248,.14);border-color:rgba(56,189,248,.42)}
     .replay-btn:focus-visible{outline:3px solid rgba(56,189,248,.28);outline-offset:2px}
-    .theory-finish{max-width:1040px;text-align:center;margin:1.5rem auto 0;padding:18px;border-radius:18px;background:rgba(16,185,129,.045);border:1px solid rgba(16,185,129,.14)}
-    .theory-finish p{color:var(--text-muted);margin:0 0 .5rem}
 
     @media(max-width:780px){.anim-scene{min-height:0}.anim-card{border-radius:18px}.theory-section{margin-top:14px}}
     @media(max-width:520px){.anim-head{padding:14px;flex-direction:column}.anim-keys{justify-content:flex-start}.anim-foot{padding:4px 14px 14px}.anim-title{font-size:1.04rem}.anim-keys kbd{font-size:.7rem;padding:4px 7px}.anim-scene{padding:8px 2px 4px}.theory-meta{gap:6px}.theory-meta span{font-size:.7rem}.theory-section{align-items:flex-start}.theory-section-icon{width:32px;height:32px;flex:0 0 32px}}
     @media(prefers-reduced-motion:reduce){.anim-card,.replay-btn,.tab-btn,.btn-start-course{transition:none!important}}
   </style>
+  <link rel="stylesheet" href="theoryCards.css">
 </head>
 <body>
   <header class="top-bar">
@@ -130,8 +129,11 @@
   </div>
 
   <script src="../tk/xp.js"></script>
+  <script src="quest-attempts.js"></script>
+  <script src="sceneKeycaps.js"></script>
   <script src="docTextScene.js"></script>
   <script src="utilityScenes.js"></script>
+  <script src="theoryCards.js"></script>
   <script>
     (function(){
       var groupMeta={
@@ -156,21 +158,20 @@
         {group:'navigation',title:'Zum Anfang springen',keys:['Ctrl','Home'],family:'util',mode:'home',flow:['Seite 6','Ctrl + Home','Seite 1'],desc:'Die Ansicht springt direkt an den Anfang eines langen Dokuments.',remember:'Kein langes Hochscrollen nötig.'},
         {group:'navigation',title:'Zum Ende springen',keys:['Ctrl','End'],family:'util',mode:'end',flow:['Seite 1','Ctrl + End','Seite 6'],desc:'Die Ansicht springt direkt an das Ende eines langen Dokuments.',remember:'Das Gegenstück zu Ctrl + Home.'}
       ];
-      var grid=document.getElementById('theoryGrid'),scenes=[],phaseActive=true,lastGroup='';
-      function keyHtml(keys){return keys.map(function(k){return '<kbd>'+k+'</kbd>';}).join('<span class="anim-plus">+</span>');}
-      function flowHtml(flow){return flow.map(function(part,index){return (index?'<b>→</b>':'')+'<span>'+part+'</span>';}).join('');}
-      theoryItems.forEach(function(item,index){
-        if(item.group!==lastGroup){
-          var meta=groupMeta[item.group],section=document.createElement('div');section.className='theory-section';section.innerHTML='<div class="theory-section-icon">'+meta.icon+'</div><div><h2>'+meta.title+'</h2><p>'+meta.desc+'</p></div>';grid.appendChild(section);lastGroup=item.group;
+      var theoryController=window.tk2TheoryCards.mount({
+        grid:'theoryGrid',
+        groups:groupMeta,
+        items:theoryItems,
+        accent:'#38bdf8',
+        rgb:'56,189,248',
+        accentText:'#bae6fd',
+        sceneFactory:function(target,item){
+          return item.family==='doc'
+            ? createDocTextScene(target,{mode:item.mode,autoplay:false})
+            : createUtilityScene(target,{mode:item.mode,autoplay:false});
         }
-        var card=document.createElement('article');card.className='anim-card';card.dataset.group=item.group;card.innerHTML='<div class="anim-head"><div><div class="anim-number">Kürzel '+(index+1)+' von 14</div><h2 class="anim-title">'+item.title+'</h2></div><div class="anim-keys">'+keyHtml(item.keys)+'</div></div><div class="anim-scene" id="scene-'+index+'"></div><div class="anim-foot"><div class="anim-flow">'+flowHtml(item.flow)+'</div><p class="anim-desc">'+item.desc+'</p><p class="anim-remember"><strong>Merke:</strong> '+item.remember+'</p><div class="anim-actions"><button type="button" class="replay-btn" data-replay="'+index+'" aria-label="Animation zu '+item.title+' wiederholen">↻ Wiederholen</button></div></div>';
-        grid.appendChild(card);
-        var target=card.querySelector('.anim-scene');var scene=item.family==='doc'?createDocTextScene(target,{mode:item.mode,autoplay:false}):createUtilityScene(target,{mode:item.mode,autoplay:false});scenes.push({scene:scene,card:card,visible:false});
       });
-      var observer=new IntersectionObserver(function(entries){entries.forEach(function(entry){var index=scenes.findIndex(function(x){return x.card===entry.target;});if(index<0)return;scenes[index].visible=entry.isIntersecting&&entry.intersectionRatio>.18;scenes[index].card.classList.toggle('is-visible',scenes[index].visible);scenes[index].scene.setActive(phaseActive&&scenes[index].visible);});},{threshold:[0,.18,.4]});
-      scenes.forEach(function(x){observer.observe(x.card);});
-      grid.addEventListener('click',function(e){var btn=e.target.closest('[data-replay]');if(!btn)return;var idx=Number(btn.dataset.replay);if(scenes[idx])scenes[idx].scene.play();});
-      window.tk2SetTheoryActive=function(value){phaseActive=Boolean(value);scenes.forEach(function(x){x.scene.setActive(phaseActive&&x.visible);});};
+      window.tk2SetTheoryActive=function(value){theoryController.setActive(value);};
     })();
   </script>
   <script src="a1-app.js"></script>

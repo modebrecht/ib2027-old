@@ -35,8 +35,6 @@ async function assertDownload(download, extension, magic, expectedPrefix) {
 async function downloadFrom(page, selector, extension, magic, expectedPrefix) {
   const [download] = await Promise.all([
     page.waitForEvent('download', { timeout: 20_000 }),
-    // Several premium CTA buttons use continuous transform animations.
-    // Playwright otherwise waits forever for them to become "stable".
     page.locator(selector).click({ force: true }),
   ]);
   await assertDownload(download, extension, magic, expectedPrefix);
@@ -78,6 +76,13 @@ async function solveCurrentMemory(page) {
   await expect(page.locator('#modalTitle')).toContainText('Runde geschafft');
 }
 
+async function speedUpTimers(page) {
+  await page.evaluate(() => {
+    const nativeSetTimeout = window.setTimeout.bind(window);
+    window.setTimeout = (fn, delay, ...args) => nativeSetTimeout(fn, Math.min(Number(delay) || 0, 50), ...args);
+  });
+}
+
 test.use({
   acceptDownloads: true,
   screenshot: 'only-on-failure',
@@ -87,7 +92,7 @@ test.use({
 
 test.setTimeout(180_000);
 
-test.describe('HW production smoke: A1-A9', () => {
+test.describe('HW production smoke: A1-A14', () => {
   test('A1: solves three Memory modes and downloads a valid PDF', async ({ page }) => {
     const errors = collectPageErrors(page);
     await openWorksheet(page, '/hw/A1.html');
@@ -209,12 +214,12 @@ test.describe('HW production smoke: A1-A9', () => {
     const ids = await page.evaluate(() => fieldIds());
     expect(ids).toHaveLength(16);
 
-    await expect(page.locator('#cardCounter')).toHaveText('Info');
     await expect(page.locator('#nextCardBtn')).toBeVisible();
+    expect(await page.evaluate(() => currentCardIndex)).toBe(0);
     await page.locator('#nextCardBtn').click();
 
     for (let i = 0; i < ids.length; i += 1) {
-      await expect(page.locator('#cardCounter')).toHaveText(`${i + 1} / ${ids.length}`);
+      expect(await page.evaluate(() => currentCardIndex)).toBe(i + 1);
       await expect(page.locator(`#${ids[i]}`)).toBeVisible();
       await page.locator(`#${ids[i]}`).fill(`E2E A5 ${i + 1}`);
       if (i < ids.length - 1) await page.locator('#nextCardBtn').click();
@@ -336,6 +341,183 @@ test.describe('HW production smoke: A1-A9', () => {
     expect(saved.bestScore).toBe(total);
     await expect(page.locator('#result')).toBeVisible();
     await downloadPdf(page, '#pdf', 'A9_EVA_Szenarien');
+    expectNoPageErrors(errors);
+  });
+
+  test('A10: solves all storage scenarios, persists best score and downloads PDF', async ({ page }) => {
+    const errors = collectPageErrors(page);
+    await openWorksheet(page, '/hw/A10.html');
+
+    await expect(page).toHaveTitle(/A10: RAM, HDD oder SSD/);
+    const total = await page.evaluate(() => SCENES.length);
+    expect(total).toBe(10);
+    await speedUpTimers(page);
+
+    for (let i = 0; i < total; i += 1) {
+      const category = await page.evaluate(() => current().cat);
+      await page.locator(`.storage-btn[data-cat="${category}"]`).click();
+      await page.waitForFunction(
+        (previousIndex) => index > previousIndex || document.getElementById('result')?.classList.contains('hidden') === false,
+        i,
+        { timeout: 5_000 },
+      );
+    }
+
+    const result = await page.evaluate(() => ({ index, score, bestScore, pass: PASS }));
+    expect(result.score).toBe(total);
+    expect(result.bestScore).toBe(total);
+    expect(result.pass).toBe(7);
+    const saved = await page.evaluate(() => JSON.parse(localStorage.getItem(K) || '{}'));
+    expect(saved.bestScore).toBe(total);
+    await expect(page.locator('#result')).toBeVisible();
+    await downloadPdf(page, '#pdf', 'A10_RAM_HDD_SSD');
+    expectNoPageErrors(errors);
+  });
+
+  test('A11: completes all five customer consultations, persists and downloads PDF', async ({ page }) => {
+    const errors = collectPageErrors(page);
+    await openWorksheet(page, '/hw/A11.html');
+
+    await expect(page).toHaveTitle(/A11: Kaufberatung im Tech Shop/);
+    const total = await page.evaluate(() => CASES.length);
+    expect(total).toBe(5);
+    await speedUpTimers(page);
+
+    for (let i = 0; i < total; i += 1) {
+      await page.locator('#dialogueNext').click({ force: true });
+      const correctId = await page.evaluate(() => CASES[index].correct);
+      await page.locator(`.device-card[data-id="${correctId}"]`).click();
+      await expect(page.locator('#nextBtn')).toHaveClass(/show/);
+      await page.locator('#nextBtn').click();
+      await page.waitForFunction(
+        (previousIndex) => index > previousIndex || document.getElementById('result')?.classList.contains('hidden') === false,
+        i,
+        { timeout: 5_000 },
+      );
+    }
+
+    await expect(page.locator('#result')).toBeVisible();
+    const saved = await page.evaluate(() => JSON.parse(localStorage.getItem(K) || '{}'));
+    expect(saved.done).toHaveLength(total);
+    expect(saved.index).toBe(total);
+    await expect(page.locator('#pct')).toHaveText('100% bearbeitet');
+    await downloadPdf(page, '#pdf', 'A11_Kaufberatung');
+    expectNoPageErrors(errors);
+  });
+
+  test('A12: sorts all 12 interfaces correctly, persists and downloads PDF', async ({ page }) => {
+    const errors = collectPageErrors(page);
+    await openWorksheet(page, '/hw/A12.html');
+
+    await expect(page).toHaveTitle(/A12: Schnittstellen sortieren/);
+    const connectors = await page.evaluate(() => C.map(({ id, category }) => ({ id, category })));
+    expect(connectors).toHaveLength(12);
+
+    for (const connector of connectors) {
+      await page.locator(`#choice_${connector.id}`).selectOption(connector.category);
+    }
+
+    await expect(page.locator('#pct')).toHaveText('100% bearbeitet');
+    await page.waitForTimeout(250);
+    const saved = await page.evaluate(() => JSON.parse(localStorage.getItem(K) || '{}'));
+    for (const connector of connectors) {
+      expect(saved.choices?.[connector.id]).toBe(connector.category);
+    }
+    await downloadPdf(page, '#pdf', 'A12_Schnittstellen');
+    expectNoPageErrors(errors);
+  });
+
+  test('A13: completes Green IT learning tasks, persists and downloads PDF', async ({ page }) => {
+    const errors = collectPageErrors(page);
+    await openWorksheet(page, '/hw/A13.html');
+
+    await expect(page).toHaveTitle(/A13: Grüne IT & Nachhaltigkeit/);
+    for (const id of ['cobalt', 'lithium', 'gold']) {
+      await page.locator(`#${id}`).selectOption('correct');
+    }
+    await page.locator('#responsibility').fill('Hersteller, Politik und Konsumentinnen tragen gemeinsam Verantwortung.');
+    await page.locator('#goldEstimate').fill('Altgeräte enthalten konzentrierte Wertstoffe und können zurückgewonnen werden.');
+    await page.locator('#task2 button').click();
+    await expect(page.locator('#dot2')).toHaveClass(/done/);
+
+    await page.locator('#mobileHours').focus();
+    await page.locator('#mobileHours').press('ArrowRight');
+    await expect(page.locator('#dot3')).toHaveClass(/done/);
+
+    await page.locator('#oldDevices').fill('2');
+    const goodProcureIds = await page.evaluate(() => procure.filter((item) => item.good).map((item) => item.id));
+    for (const id of goodProcureIds) {
+      await page.locator(`[data-procure="${id}"]`).check();
+    }
+    await page.locator('#task5 button').nth(0).click();
+
+    for (const name of ['rq1', 'rq2', 'rq3']) {
+      await page.locator(`input[name="${name}"][value="1"]`).check();
+    }
+    await page.locator('#task5 button').nth(1).click();
+
+    await expect(page.locator('#pct')).toHaveText('100% bearbeitet');
+    await expect(page.locator('#pdf')).toHaveAttribute('data-unlocked', '1');
+    const saved = await page.evaluate(() => JSON.parse(localStorage.getItem(K) || '{}'));
+    expect(saved.state).toMatchObject({ task2: true, task3: true, procure: true, recycle: true });
+    expect(saved.vals.oldDevices).toBe('2');
+    await downloadPdf(page, '#pdf', 'A13_Gruene_IT');
+    expectNoPageErrors(errors);
+  });
+
+  test('A14: solves all Green IT scenarios, persists best score and downloads PDF', async ({ page }) => {
+    const errors = collectPageErrors(page);
+    await openWorksheet(page, '/hw/A14.html');
+
+    await expect(page).toHaveTitle(/A14: Green IT Challenge/);
+    const total = await page.evaluate(() => TOTAL);
+    expect(total).toBe(14);
+    await speedUpTimers(page);
+
+    for (let i = 0; i < total; i += 1) {
+      const correctId = await page.evaluate(() => queue[index].correct);
+      await page.locator(`.option-btn[data-id="${correctId}"]`).click();
+      await page.waitForFunction(
+        (previousIndex) => index > previousIndex || document.getElementById('result')?.classList.contains('hidden') === false,
+        i,
+        { timeout: 5_000 },
+      );
+    }
+
+    await expect(page.locator('#result')).toBeVisible();
+    const result = await page.evaluate(() => ({ score, bestScore, pass: PASS }));
+    expect(result.score).toBe(total);
+    expect(result.bestScore).toBe(total);
+    expect(result.pass).toBe(10);
+    const saved = await page.evaluate(() => JSON.parse(localStorage.getItem(K) || '{}'));
+    expect(saved.bestScore).toBe(total);
+    await downloadPdf(page, '#pdf', 'A14_Green_IT_Challenge');
+    expectNoPageErrors(errors);
+  });
+
+  test('Root: exposes A1-A14 and only manualDoneA6 completes A6', async ({ page }) => {
+    const errors = collectPageErrors(page);
+    await seedStudent(page);
+
+    await expect(page).toHaveTitle(/Informatische Bildung/);
+    await expect(page.locator('#hwKachel .hw-task-list .task-card')).toHaveCount(14);
+    for (let n = 1; n <= 14; n += 1) {
+      await expect(page.locator(`#title-A${n}`)).toBeAttached();
+      await expect(page.locator(`a[href="hw/A${n}.html"]`)).toBeAttached();
+    }
+
+    const a6Card = page.locator('#title-A6').locator('xpath=ancestor::div[contains(@class,"task-card")][1]');
+    await page.evaluate(() => {
+      localStorage.setItem('hw_autosave_A6.html', JSON.stringify({ manualDoneA5: true }));
+      checkCompletionStatus();
+    });
+    await expect(a6Card).not.toHaveClass(/task-done/);
+
+    await page.evaluate(() => {
+      localStorage.setItem('hw_autosave_A6.html', JSON.stringify({ manualDoneA6: true }));
+      checkCompletionStatus();
+    });
+    await expect(a6Card).toHaveClass(/task-done/);
     expectNoPageErrors(errors);
   });
 });

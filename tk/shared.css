@@ -571,3 +571,19 @@ body.tk-page-a1 .btn-start-course:not([style*="background"]):hover {
         font-size: 0.72rem !important;
     }
 }
+
+/* Shared A1 theory completion component. */
+.theory-finish {
+    max-width: 1040px;
+    text-align: center;
+    margin: 1.5rem auto 0;
+    padding: 18px;
+    border-radius: 18px;
+    background: rgba(16, 185, 129, 0.045);
+    border: 1px solid rgba(16, 185, 129, 0.14);
+}
+
+.theory-finish p {
+    color: var(--text-muted);
+    margin: 0 0 0.5rem;
+}

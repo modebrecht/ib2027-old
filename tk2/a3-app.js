@@ -2,168 +2,151 @@
   'use strict';
 
   var STORAGE_KEY='tk_a3_progress_v1';
-  var startTime=0;
-  var timerId=null;
-  var running=false;
+  var QUEST_SCORES_KEY='tk_quest_scores_v1';
+  var SCHEMA_VERSION=2;
 
   function byId(id){return document.getElementById(id);}
-  function parseProgress(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}');}catch(e){return{};}}
-  function saveProgress(progress){localStorage.setItem(STORAGE_KEY,JSON.stringify(progress));if(window.tk2Pdf&&typeof window.tk2Pdf.sync==='function')window.tk2Pdf.sync();}
-  function formatTime(ms){
-    var totalSeconds=Math.max(0,Math.floor(ms/1000));
-    var minutes=Math.floor(totalSeconds/60);
-    var seconds=totalSeconds%60;
-    return String(minutes).padStart(2,'0')+':'+String(seconds).padStart(2,'0');
+  function freshProgress(){return{schemaVersion:SCHEMA_VERSION,downloaded:false,onedriveStored:false,choices:[{shortcut:'',reason:''},{shortcut:'',reason:''},{shortcut:'',reason:''}],completed:false,rewarded:false};}
+  function parseProgress(){
+    var progress;
+    try{progress=JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}');}catch(e){progress={};}
+    if(!progress||progress.schemaVersion!==SCHEMA_VERSION)return freshProgress();
+    if(!Array.isArray(progress.choices)||progress.choices.length!==3)progress.choices=freshProgress().choices;
+    if(typeof progress.onedriveStored!=='boolean')progress.onedriveStored=false;
+    return progress;
   }
-  function render(){if(running)byId('boss-timer').textContent=formatTime(Date.now()-startTime);}
-
-  function downloadDocx(){
-    if(!window.A3_PIZZA_DOCX_BASE64){alert('Die Word-Datei konnte nicht geladen werden.');return;}
-    var binary=atob(window.A3_PIZZA_DOCX_BASE64);
-    var bytes=new Uint8Array(binary.length);
-    for(var i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);
-    var blob=new Blob([bytes],{type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
-    var url=URL.createObjectURL(blob);
-    var a=document.createElement('a');
-    a.href=url;
-    a.download='A3_Pizza-Werkstatt.docx';
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    window.setTimeout(function(){URL.revokeObjectURL(url);},1000);
-    var progress=parseProgress();
-    progress.downloaded=true;
-    saveProgress(progress);
+  function saveProgress(progress){
+    progress.schemaVersion=SCHEMA_VERSION;
+    localStorage.setItem(STORAGE_KEY,JSON.stringify(progress));
+    if(window.tk2Pdf&&typeof window.tk2Pdf.sync==='function')window.tk2Pdf.sync();
   }
-
-  function ensureCompletionReward(progress){
-    if(progress.rewarded)return;
-    addGlobalXP(50);
-    progress.rewarded=true;
-    progress.completed=true;
-    saveProgress(progress);
+  function shortcutValid(shortcut){
+    var text=(shortcut||'').trim();
+    return text.length>=2&&/[A-Za-z0-9ÄÖÜäöü]/.test(text);
   }
+  function duplicateKey(shortcut){
+    return(shortcut||'').trim().replace(/\s+/g,'').toLowerCase();
+  }
+  function reasonValid(reason){
+    var text=(reason||'').trim();
+    return text.length>=5&&/[A-Za-zÄÖÜäöüß]/.test(text);
+  }
+  function choicesComplete(progress){
+    var choices=progress.choices||[];
+    if(choices.length!==3)return false;
+    if(!choices.every(function(c){return shortcutValid(c.shortcut)&&reasonValid(c.reason);})){return false;}
+    var keys=choices.map(function(c){return duplicateKey(c.shortcut);});
+    return new Set(keys).size===3;
+  }
+  function isCompleted(progress){return progress.downloaded===true&&progress.onedriveStored===true&&choicesComplete(progress);}
 
-  function showFirstReady(progress){
-    byId('boss-timer').textContent=progress.first||'00:00';
-    byId('run-instruction').textContent='Runde 2: Scrolle im selben Word-Dokument auf Seite 2. Starte erst, wenn Seite 2 bereit ist.';
-    byId('start-boss-btn').style.display='inline-flex';
-    byId('start-boss-btn').textContent='▶ Runde 2 starten';
-    byId('stop-boss-btn').style.display='none';
-    byId('result-time-msg').style.display='block';
-    byId('result-prefix').textContent='Runde 1: ';
-    byId('result-time-value').textContent=progress.first;
-    byId('result-next').textContent=' gespeichert. Jetzt im selben Dokument auf Seite 2 wechseln.';
-    byId('completion-panel').style.display='none';
+  function syncCompatibilityScore(completed){
+    try{
+      var scores=JSON.parse(localStorage.getItem(QUEST_SCORES_KEY)||'{}');
+      if(completed)scores.q7=100;
+      else delete scores.q7;
+      localStorage.setItem(QUEST_SCORES_KEY,JSON.stringify(scores));
+    }catch(e){}
   }
 
-  function applyReflection(progress){
-    document.querySelectorAll('.choice-btn').forEach(function(btn){
-      btn.classList.toggle('selected',btn.dataset.choice===progress.preference);
+  function syncChoiceStep(progress){
+    var enabled=progress.downloaded===true;
+    document.querySelectorAll('.shortcut-choice,.shortcut-reason').forEach(function(input){
+      input.disabled=!enabled;
     });
-    if(byId('remember-shortcut'))byId('remember-shortcut').value=progress.rememberShortcut||'';
   }
 
-  function showCompleted(progress){
-    ensureCompletionReward(progress);
-    byId('boss-timer').textContent=progress.second||'00:00';
-    byId('run-instruction').textContent='Beide Pizza-Runden sind abgeschlossen.';
-    byId('start-boss-btn').style.display='none';
-    byId('stop-boss-btn').style.display='none';
-    byId('result-time-msg').style.display='block';
-    byId('result-prefix').textContent='Runde 2 mit Shortcuts: ';
-    byId('result-time-value').textContent=progress.second;
-    byId('result-next').textContent=' · Runde 1: '+progress.first;
-    byId('completion-panel').style.display='block';
-    byId('completion-note').textContent='Runde 1 ohne Shortcuts: '+progress.first+' · Runde 2 mit Shortcuts: '+progress.second+'. Entscheide jetzt kurz, welche Bedienung für dich angenehmer war.';
-    applyReflection(progress);
+  function syncChoiceValidation(progress){
+    var enabled=progress.downloaded===true;
+    var keys=(progress.choices||[]).map(function(c){return duplicateKey(c.shortcut);});
+    document.querySelectorAll('.shortcut-choice').forEach(function(input,index){
+      var value=(progress.choices[index]&&progress.choices[index].shortcut)||'';
+      var key=keys[index];
+      var duplicate=key&&keys.filter(function(k){return k===key;}).length>1;
+      input.classList.toggle('is-invalid',enabled&&value.trim()!==''&&(!shortcutValid(value)||duplicate));
+    });
+    document.querySelectorAll('.shortcut-reason').forEach(function(input,index){
+      var value=(progress.choices[index]&&progress.choices[index].reason)||'';
+      input.classList.toggle('is-invalid',enabled&&value.trim()!==''&&!reasonValid(value));
+    });
   }
 
-  function showInitial(){
-    byId('boss-timer').textContent='00:00';
-    byId('run-instruction').textContent='Öffne die Word-Datei und bleibe auf Seite 1. Starte den Timer erst, wenn das Dokument bereit ist.';
-    byId('start-boss-btn').style.display='inline-flex';
-    byId('start-boss-btn').textContent='▶ Runde 1 starten';
-    byId('stop-boss-btn').style.display='none';
-    byId('result-time-msg').style.display='none';
-    byId('completion-panel').style.display='none';
-  }
-
-  function refreshFromProgress(){
-    var progress=parseProgress();
-    if(progress.second){showCompleted(progress);return;}
-    if(progress.first){showFirstReady(progress);return;}
-    showInitial();
-  }
-
-  function startBossChallenge(){
-    if(running)return;
-    var progress=parseProgress();
-    if(progress.second)return;
-    running=true;
-    startTime=Date.now();
-    byId('boss-timer').textContent='00:00';
-    byId('start-boss-btn').style.display='none';
-    byId('stop-boss-btn').style.display='inline-flex';
-    byId('result-time-msg').style.display='none';
-    byId('completion-panel').style.display='none';
-    byId('timer-box').classList.add('is-running');
-    timerId=window.setInterval(render,250);
-  }
-
-  function stopBossChallenge(){
-    if(!running)return;
-    running=false;
-    if(timerId){window.clearInterval(timerId);timerId=null;}
-    var elapsed=Date.now()-startTime;
-    var text=formatTime(elapsed);
-    var progress=parseProgress();
-    byId('timer-box').classList.remove('is-running');
-
-    if(!progress.first){
-      progress.first=text;
-      progress.firstMs=elapsed;
-      progress.attempts=1;
-      saveProgress(progress);
-      showFirstReady(progress);
-      return;
+  function syncOneDriveStep(progress){
+    var checkbox=byId('onedrive-confirm'),status=byId('onedrive-status');
+    if(!checkbox)return;
+    var choicesDone=choicesComplete(progress);
+    checkbox.checked=progress.onedriveStored===true;
+    checkbox.disabled=progress.downloaded!==true||!choicesDone;
+    if(status){
+      if(progress.onedriveStored)status.textContent='Gesichert ✓';
+      else if(!progress.downloaded)status.textContent='Zuerst das Merkblatt herunterladen und anschauen.';
+      else if(!choicesDone)status.textContent='Trage zuerst deine drei Kürzel mit Begründung ein.';
+      else status.textContent='Setze den Haken, sobald die PDF im Ordner „IB“ liegt.';
     }
+  }
 
-    progress.second=text;
-    progress.secondMs=elapsed;
-    progress.attempts=2;
-    progress.completed=true;
+  function renderCompleted(progress){
+    var card=byId('completion-card'),hint=byId('choice-hint');
+    if(card)card.classList.toggle('is-visible',progress.completed===true);
+    syncChoiceStep(progress);
+    syncChoiceValidation(progress);
+    syncOneDriveStep(progress);
+    if(hint){
+      if(progress.completed)hint.textContent='✓ Merkblatt angeschaut, drei Kürzel ausgewählt und in OneDrive gesichert.';
+      else if(!progress.downloaded)hint.textContent='1. Lade zuerst das Merkblatt herunter und schau es dir an.';
+      else if(!choicesComplete(progress))hint.textContent='PDF heruntergeladen ✓ 2. Trage jetzt drei unterschiedliche Kürzel mit Begründung ein.';
+      else if(!progress.onedriveStored)hint.textContent='Drei Kürzel vollständig ✓ 3. Sichere das Merkblatt jetzt in OneDrive und bestätige unten den Haken.';
+    }
+  }
+
+  function evaluate(progress){
+    var wasCompleted=progress.completed===true;
+    progress.completed=isCompleted(progress);
+    if(progress.completed&&!wasCompleted){
+      progress.completedAt=new Date().toISOString();
+      if(!progress.rewarded&&typeof addGlobalXP==='function'){
+        addGlobalXP(50);
+        progress.rewarded=true;
+      }
+    }
+    syncCompatibilityScore(progress.completed===true);
     saveProgress(progress);
-    showCompleted(progress);
+    renderCompleted(progress);
   }
 
   document.addEventListener('DOMContentLoaded',function(){
-    var unlocked=isQuestUnlocked('q7');
-    byId('a3-lock-screen').style.display=unlocked?'none':'flex';
-    byId('a3-content-wrap').style.display=unlocked?'block':'none';
+    var progress=parseProgress();
+    saveProgress(progress);
 
-    var download=byId('docx-download-btn');
-    if(download)download.addEventListener('click',downloadDocx);
-
-    document.querySelectorAll('.choice-btn').forEach(function(btn){
-      btn.addEventListener('click',function(){
-        var progress=parseProgress();
-        progress.preference=btn.dataset.choice;
-        saveProgress(progress);
-        applyReflection(progress);
+    document.querySelectorAll('.shortcut-choice').forEach(function(input,index){
+      input.value=(progress.choices[index]&&progress.choices[index].shortcut)||'';
+      input.addEventListener('input',function(){
+        progress.choices[index].shortcut=input.value;
+        evaluate(progress);
       });
     });
 
-    var remember=byId('remember-shortcut');
-    if(remember)remember.addEventListener('change',function(){
-      var progress=parseProgress();
-      progress.rememberShortcut=remember.value;
-      saveProgress(progress);
+    document.querySelectorAll('.shortcut-reason').forEach(function(input,index){
+      input.value=(progress.choices[index]&&progress.choices[index].reason)||'';
+      input.addEventListener('input',function(){
+        progress.choices[index].reason=input.value;
+        evaluate(progress);
+      });
     });
 
-    if(unlocked)refreshFromProgress();
-  });
+    var checkbox=byId('onedrive-confirm');
+    if(checkbox)checkbox.addEventListener('change',function(){
+      progress.onedriveStored=checkbox.checked;
+      evaluate(progress);
+    });
 
-  window.startBossChallenge=startBossChallenge;
-  window.stopBossChallenge=stopBossChallenge;
+    var download=byId('theory-download');
+    if(download)download.addEventListener('click',function(){
+      progress.downloaded=true;
+      if(!progress.downloadedAt)progress.downloadedAt=new Date().toISOString();
+      evaluate(progress);
+    });
+
+    evaluate(progress);
+  });
 })();

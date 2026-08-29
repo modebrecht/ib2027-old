@@ -100,9 +100,10 @@
   }
 
   document.addEventListener('DOMContentLoaded',function(){
-    var unlocked=isQuestUnlocked('q4');
-    byId('a2-lock-screen').style.display=unlocked?'none':'flex';
-    byId('a2-content-wrap').style.display=unlocked?'block':'none';
+    // Das Arbeitsblatt A2 ist immer offen. Nur die Quests innerhalb von A2
+    // bauen weiterhin aufeinander auf.
+    byId('a2-lock-screen').style.display='none';
+    byId('a2-content-wrap').style.display='block';
     var next=byId('q6-to-a3-btn');if(next)next.setAttribute('href','A3.html');
     var q6Tab=byId('tab-4');if(q6Tab)q6Tab.textContent='🧠 Q6: Memory';
     var q6Heading=byId('q6-card')&&byId('q6-card').firstElementChild;if(q6Heading)q6Heading.textContent='🧠 Memory – Aus dem Gedächtnis';

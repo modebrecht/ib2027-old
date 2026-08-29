@@ -8,17 +8,6 @@
   var counter=0;
   var LOOP_MS=4400;
 
-  function keyMarkup(keys){
-    var x=0;
-    return keys.map(function(key,index){
-      var w=key==='Ctrl'?68:(key.length>2?70:48);
-      var base='translate('+x+' 0)';
-      var out='<g class="tk2-u-key" data-base="'+base+'" transform="'+base+'"><rect width="'+w+'" height="42" rx="10" fill="#172033" stroke="#475569" stroke-width="1.5"/><text x="'+(w/2)+'" y="27" text-anchor="middle" font-family="Arial,sans-serif" font-size="'+(key.length>4?11:14)+'" font-weight="800" fill="#dbeafe">'+key+'</text></g>';
-      x+=w;
-      if(index<keys.length-1){out+='<text x="'+(x+9)+'" y="27" font-family="Arial,sans-serif" font-size="16" font-weight="800" fill="#64748b">+</text>';x+=26;}
-      return out;
-    }).join('');
-  }
 
   function polishCard(container,mode){
     var card=container.closest&&container.closest('.anim-card');
@@ -66,7 +55,7 @@
       +'</g></g>'
       +'<rect x="362" y="78" width="8" height="181" rx="4" fill="#e2e8f0"/><rect class="scroll-thumb" x="362" y="'+startThumb+'" width="8" height="38" rx="4" fill="#64748b"/></g>'
       +'<g class="position-badge" transform="translate(416 72)"><rect width="120" height="78" rx="14" fill="#111c30" stroke="#334155"/><text x="60" y="21" text-anchor="middle" font-family="Arial" font-size="9" fill="#94a3b8">Cursor + Ansicht</text><text class="pos-text" x="60" y="45" text-anchor="middle" font-family="Arial" font-size="14" font-weight="800" fill="#7dd3fc">'+(toTop?'Ende':'Anfang')+'</text><text class="page-text" x="60" y="63" text-anchor="middle" font-family="Arial" font-size="9" fill="#94a3b8">'+(toTop?'Seite 6 von 6':'Seite 1 von 6')+'</text></g>'
-      +'<g class="keys" transform="translate(406 230)">'+keyMarkup(['Ctrl',toTop?'Home':'End'])+'</g>'
+      +'<g class="keys" transform="translate(406 230)">'+window.tk2SceneKeycaps.markup(['Ctrl',toTop?'Home':'End'],'utility')+'</g>'
       +'<g class="toast" transform="translate(388 20)" opacity="0"><rect width="158" height="30" rx="15" fill="#052e2b" stroke="#10b981"/><text class="toast-text" x="79" y="19" text-anchor="middle" font-family="Arial" font-size="11" font-weight="700" fill="#a7f3d0">'+(toTop?'Cursor am Anfang':'Cursor am Ende')+'</text></g>'
       +'</svg>';
 
@@ -81,20 +70,12 @@
     function opacity(el,val){if(el)el.setAttribute('opacity',String(val));}
 
     function pressKeys(){
-      $$('.tk2-u-key').forEach(function(k,i){
-        later(i*115,function(){
-          var base=k.getAttribute('data-base');
-          trans(k,'transform 100ms ease, filter 100ms ease');
-          k.setAttribute('transform',base+' translate(0 4)');
-          k.style.filter='drop-shadow(0 0 8px rgba(56,189,248,.75))';
-          later(170,function(){k.setAttribute('transform',base);k.style.filter='';});
-        });
-      });
+      window.tk2SceneKeycaps.pressSequence($$('.tk2-u-key'),later,trans,'utility');
     }
 
     function reset(){
       clearTimers();running=false;
-      $$('.tk2-u-key').forEach(function(k){k.style.transition='none';k.style.filter='';k.setAttribute('transform',k.getAttribute('data-base'));});
+      window.tk2SceneKeycaps.resetMany($$('.tk2-u-key'));
       trans($('.doc-strip'),'none');trans($('.scroll-thumb'),'none');trans($('.caret-start'),'none');trans($('.caret-end'),'none');
       $('.doc-strip').setAttribute('transform',startTransform);$('.scroll-thumb').setAttribute('y',startThumb);
       opacity($('.caret-start'),toTop?0:1);opacity($('.caret-end'),toTop?1:0);opacity($('.toast'),0);
