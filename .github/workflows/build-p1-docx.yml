@@ -1,0 +1,48 @@
+name: Build P1 DOCX
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - dev
+    paths:
+      - 'hw/create_p1_docx.py'
+      - 'hw/add_p1_bonus.py'
+      - 'hw/sync_p1_index.py'
+      - '.github/workflows/build-p1-docx.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependency
+        run: pip install python-docx
+
+      - name: Build DOCX and sync index
+        run: |
+          python hw/create_p1_docx.py
+          python hw/add_p1_bonus.py
+          python hw/sync_p1_index.py
+
+      - name: Commit generated files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add hw/P1.docx index.html
+          if git diff --cached --quiet; then
+            echo "No generated changes"
+            exit 0
+          fi
+          git commit -m "Build P1 DOCX and sync index"
+          git push
