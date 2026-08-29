@@ -1,0 +1,37 @@
+name: Sync latest ib2026 main once
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/sync-latest-ib2026-main-once.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout ib2027 main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 1
+
+      - name: Copy changed files from ib2026 main
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/modebrecht/ib2026/main/index.html -o index.html
+          curl -fsSL https://raw.githubusercontent.com/modebrecht/ib2026/main/tk2/index.html -o tk2/index.html
+
+      - name: Commit sync
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html tk2/index.html
+          if git diff --cached --quiet; then
+            echo "Already synced"
+            exit 0
+          fi
+          git commit -m "sync: latest ib2026 main -> ib2027 main"
+          git push origin main
