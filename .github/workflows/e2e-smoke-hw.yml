@@ -1,0 +1,54 @@
+name: E2E Smoke HW A1-A14
+
+on:
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: Vercel production base URL
+        required: true
+        default: https://ib2026.vercel.app
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: e2e-smoke-hw-a1-a14
+  cancel-in-progress: false
+
+jobs:
+  smoke:
+    name: Chromium smoke A1-A14
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      BASE_URL: ${{ inputs.base_url }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install Playwright
+        run: |
+          npm init -y >/dev/null
+          npm install --no-save @playwright/test
+          npx playwright install --with-deps chromium
+
+      - name: Run A1-A14 production smoke + score history + persistence contract
+        run: npx playwright test e2e/hw-a1-a14.spec.js e2e/hw-score-history-fast.spec.js e2e/hw-persistence-contract.spec.js --browser=chromium --workers=1 --reporter=line,html
+
+      - name: Upload failure evidence
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-smoke-hw-a1-a14-${{ github.run_id }}
+          path: |
+            test-results/
+            playwright-report/
+          if-no-files-found: ignore
+          retention-days: 7
